@@ -32,7 +32,31 @@ class EmployeeController(ABC):
         pass
 
 class PunchController(ABC):
-    pass
+    @abstractmethod
+    def createPunch(self,
+                    employeeId: int,
+                    datetime: time.struct_time,
+                    createdByEmployeeId: int) -> Punch:
+        pass
+
+    @abstractmethod
+    def getPunchById(self, punchId: int) -> Punch:
+        pass
+
+    @abstractmethod
+    def getPunchesByEmployeeId(self,
+                            employeeId: int,
+                            startDatetime: time.struct_time,
+                            endDatetime: time.struct_time) -> List[Punch]:
+        pass
+    
+    @abstractmethod
+    def modifyPunch(self, punch: Punch) -> Punch:
+        pass
+
+    @abstractmethod
+    def getPunchCountUpToPunchId(self, punchId: int) -> int:
+        pass
 
 class AuthController(ABC):
     pass
@@ -42,5 +66,7 @@ class TimeClock:
                 employeeController: EmployeeController,
                 punchController: PunchController,
                 authController: AuthController):
-        pass
+        self.employeeController = employeeController
+        self.punchController = punchController
+        self.authController = authController
     pass
