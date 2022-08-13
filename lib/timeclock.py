@@ -60,13 +60,3 @@ class PunchController(ABC):
 
 class AuthController(ABC):
     pass
-
-class TimeClock:
-    def __init__(self, 
-                employeeController: EmployeeController,
-                punchController: PunchController,
-                authController: AuthController):
-        self.employeeController = employeeController
-        self.punchController = punchController
-        self.authController = authController
-    pass
