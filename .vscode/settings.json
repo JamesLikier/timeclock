@@ -2,5 +2,14 @@
     "emmet.includeLanguages": {
         "javascript": "javascriptreact", 
         "typescript": "typescriptreact"
-    }
+    },
+    "python.testing.unittestArgs": [
+        "-v",
+        "-s",
+        ".",
+        "-p",
+        "*_test.py"
+    ],
+    "python.testing.pytestEnabled": false,
+    "python.testing.unittestEnabled": true
 }
