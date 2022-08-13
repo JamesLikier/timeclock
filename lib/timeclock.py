@@ -47,7 +47,7 @@ class PunchController(ABC):
     def getPunchesByEmployeeId(self,
                             employeeId: int,
                             startDatetime: time.struct_time,
-                            endDatetime: time.struct_time) -> List[Punch]:
+                            endDatetime: time.struct_time) -> list[Punch]:
         pass
     
     @abstractmethod
