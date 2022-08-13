@@ -3,6 +3,9 @@ import string
 from dataclasses import dataclass, field
 import time
 
+class EmployeeNotFound(Exception):
+    pass
+
 @dataclass
 class Punch:
     id: int = -1

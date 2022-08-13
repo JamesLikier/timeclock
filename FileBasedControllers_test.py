@@ -1,11 +1,44 @@
 import unittest
+import FileBasedControllers as fbc
+import os
+import lib.timeclock as tc
 
 class TestFileBasedEmployeeController(unittest.TestCase):
+    def setUp(self):
+        try:
+            os.remove("employeetestfile")
+        except Exception:
+            pass
+        self.ec = fbc.FileBasedEmployeeController("employeetestfile")
+
     def test_createEmployee(self):
-        pass
+        e = self.ec.createEmployee("Jon","Doe",False)
+        self.assertEqual(e.id,1)
+        self.assertEqual(e.fname, "Jon")
+        self.assertEqual(e.lname, "Doe")
+        self.assertEqual(e.admin, False)
+
+        e = self.ec.createEmployee("Bob","Dole",True)
+        self.assertEqual(e.id,2)
+        self.assertEqual(e.fname, "Bob")
+        self.assertEqual(e.lname, "Dole")
+        self.assertEqual(e.admin, True)
 
     def test_getEmployeeById(self):
-        pass
+        self.assertRaises(tc.EmployeeNotFound,self.ec.getEmployeeById,(-1,))
+        self.assertRaises(tc.EmployeeNotFound,self.ec.getEmployeeById,(0,))
+        self.assertRaises(tc.EmployeeNotFound,self.ec.getEmployeeById,(1,))
+
+        self.ec.createEmployee("Jon","Doe",False)
+
+        self.assertRaises(tc.EmployeeNotFound,self.ec.getEmployeeById,(-1,))
+        self.assertRaises(tc.EmployeeNotFound,self.ec.getEmployeeById,(0,))
+
+        e = self.ec.getEmployeeById(1)
+        self.assertEqual(e.id,1)
+        self.assertEqual(e.fname, "Jon")
+        self.assertEqual(e.lname, "Doe")
+        self.assertEqual(e.admin, False)
 
     def test_modifyEmployee(self):
         pass
