@@ -5,7 +5,6 @@ import time
 
 class FileBasedEmployeeController(timeclock.EmployeeController):
     def __init__(self, filename: string):
-        super().__init__(self)
         self.filename = filename
 
     def createEmployee(self, fname: string, lname: string, admin: bool) -> Employee:
