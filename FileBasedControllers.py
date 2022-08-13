@@ -1,4 +1,7 @@
-import lib.timeclock
+import lib.timeclock as timeclock
+from lib.timeclock import Employee, Punch
+import string
+import time
 
 class FileBasedEmployeeController(timeclock.EmployeeController):
     def __init__(self, filename: string):
@@ -31,13 +34,13 @@ class FileBasedPunchController(timeclock.PunchController):
     def getPunchesByEmployeeId(self,
                             employeeId: int,
                             startDatetime: time.struct_time,
-                            endDatetime: time.struct_time) -> List[Punch]:
+                            endDatetime: time.struct_time) -> list[Punch]:
         pass
 
     def modifyPunch(self, punch: Punch) -> Punch:
         pass
 
-    def getPunchCountUpToPunchId(self, punchId: int) -> int:
+    def getPunchCountUpToPunch(self, punch: Punch) -> int:
         pass
 
 class FileBasedAuthController(timeclock.AuthController):

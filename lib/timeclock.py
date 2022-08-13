@@ -55,7 +55,7 @@ class PunchController(ABC):
         pass
 
     @abstractmethod
-    def getPunchCountUpToPunchId(self, punchId: int) -> int:
+    def getPunchCountUpToPunch(self, punch: Punch) -> int:
         pass
 
 class AuthController(ABC):
