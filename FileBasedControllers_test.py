@@ -11,6 +11,15 @@ class TestFileBasedEmployeeController(unittest.TestCase):
             pass
         self.ec = fbc.FileBasedEmployeeController("employeetestfile")
 
+    def test_fileSaveAndLoad(self):
+        self.assertEqual(len(self.ec.employeeDict),0)
+        for x in range(5):
+            self.ec.createEmployee("Jon","Doe",False)
+        self.assertEqual(len(self.ec.employeeDict),5)
+
+        self.ec = fbc.FileBasedEmployeeController("employeetestfile")
+        self.assertEqual(len(self.ec.employeeDict),5)
+
     def test_createEmployee(self):
         e = self.ec.createEmployee("Jon","Doe",False)
         self.assertEqual(e.id,1)
