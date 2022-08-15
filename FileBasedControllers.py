@@ -10,12 +10,39 @@ class FileBasedEmployeeController(timeclock.EmployeeController):
         self.nextEmployeeId = 1
         self.employeeDict = dict()
 
+        try:
+            with open(str(filename), "r") as f:
+                self.nextEmployeeId = int(f.readline())
+                for employeeString in f.readlines():
+                    fields = employeeString.strip("\n").split(",")
+                    e = Employee(id=int(fields[0]),
+                                fname=fields[1],
+                                lname=fields[2],
+                                admin=(fields[3]=="True"))
+                    self.employeeDict[e.id] = e
+        except Exception:
+            pass
+
+    def exportFile(self):
+        with open(str(self.filename),"w") as f:
+            f.write(f"{self.nextEmployeeId}\n")
+            for employee in self.employeeDict.values():
+                fields = []
+                fields.append(str(employee.id))
+                fields.append(employee.fname)
+                fields.append(employee.lname)
+                fields.append(str(employee.admin))
+                line = ','.join(fields) + "\n"
+                f.write(line)
+
     def createEmployee(self, fname: string, lname: string, admin: bool) -> Employee:
         id = self.nextEmployeeId
         self.nextEmployeeId += 1
 
         e = Employee(id=id, fname=fname, lname=lname, admin=admin)
         self.employeeDict[id] = e
+
+        self.exportFile()
 
         return copy.deepcopy(e)
 
@@ -28,6 +55,7 @@ class FileBasedEmployeeController(timeclock.EmployeeController):
     def modifyEmployee(self, employee: Employee) -> Employee:
         if employee.id in self.employeeDict.keys():
             self.employeeDict[employee.id] = copy.deepcopy(employee)
+            self.exportFile()
         else:
             raise EmployeeNotFound
         return employee
