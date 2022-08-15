@@ -52,6 +52,16 @@ class TestFileBasedEmployeeController(unittest.TestCase):
         self.assertEqual(results[0], testEmployees[offset+0])
         self.assertEqual(results[1], testEmployees[offset+1])
 
+        results = self.ec.getEmployeeById(0,2,"fname")
+        self.assertEqual(len(results),2)
+        self.assertEqual(results[0].fname,"Bob")
+        self.assertEqual(results[1].fname,"Bruce")
+
+        results = self.ec.getEmployeeById(0,2,"lname")
+        self.assertEqual(len(results),2)
+        self.assertEqual(results[0].lname,"Doe")
+        self.assertEqual(results[1].lname,"Dole")
+
         
     def test_createEmployee(self):
         e = self.ec.createEmployee("Jon","Doe",False)
