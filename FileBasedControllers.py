@@ -1,20 +1,36 @@
 import lib.timeclock as timeclock
-from lib.timeclock import Employee, Punch
+from lib.timeclock import Employee, EmployeeNotFound, Punch
 import string
 import time
+import copy
 
 class FileBasedEmployeeController(timeclock.EmployeeController):
     def __init__(self, filename: string):
         self.filename = filename
+        self.nextEmployeeId = 1
+        self.employeeDict = dict()
 
     def createEmployee(self, fname: string, lname: string, admin: bool) -> Employee:
-        pass
+        id = self.nextEmployeeId
+        self.nextEmployeeId += 1
+
+        e = Employee(id=id, fname=fname, lname=lname, admin=admin)
+        self.employeeDict[id] = e
+
+        return copy.deepcopy(e)
 
     def getEmployeeById(self, employeeId: int) -> Employee:
-        pass
+        e = self.employeeDict.get(employeeId, None)
+        if e == None:
+            raise EmployeeNotFound
+        return copy.deepcopy(e)
 
     def modifyEmployee(self, employee: Employee) -> Employee:
-        pass
+        if employee.id in self.employeeDict.keys():
+            self.employeeDict[employee.id] = copy.deepcopy(employee)
+        else:
+            raise EmployeeNotFound
+        return employee
     
 class FileBasedPunchController(timeclock.PunchController):
     def __init__(self, filename: string):
