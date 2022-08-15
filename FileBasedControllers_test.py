@@ -13,12 +13,22 @@ class TestFileBasedEmployeeController(unittest.TestCase):
 
     def test_fileSaveAndLoad(self):
         self.assertEqual(len(self.ec.employeeDict),0)
-        for x in range(5):
-            self.ec.createEmployee("Jon","Doe",False)
+        testEmployees = []
+        testEmployees.append(self.ec.createEmployee("Jon","Doe",False))
+        testEmployees.append(self.ec.createEmployee("Bob","Dole",False))
+        testEmployees.append(self.ec.createEmployee("Clark","Kent",True))
+        testEmployees.append(self.ec.createEmployee("Bruce","Wayne",False))
+        testEmployees.append(self.ec.createEmployee("Tony","Stark",True))
         self.assertEqual(len(self.ec.employeeDict),5)
 
         self.ec = fbc.FileBasedEmployeeController("employeetestfile")
         self.assertEqual(len(self.ec.employeeDict),5)
+        for employee in testEmployees:
+            e = self.ec.getEmployeeById(employee.id)
+            self.assertEqual(e.id,employee.id)
+            self.assertEqual(e.fname,employee.fname)
+            self.assertEqual(e.lname,employee.lname)
+            self.assertEqual(e.admin,employee.admin)
 
     def test_createEmployee(self):
         e = self.ec.createEmployee("Jon","Doe",False)
