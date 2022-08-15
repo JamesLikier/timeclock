@@ -4,6 +4,7 @@ import os
 import lib.timeclock as tc
 
 class TestFileBasedEmployeeController(unittest.TestCase):
+
     def setUp(self):
         try:
             os.remove("employeetestfile")
@@ -32,6 +33,26 @@ class TestFileBasedEmployeeController(unittest.TestCase):
             self.assertEqual(e.admin,employee.admin)
         self.assertEqual(self.ec.nextEmployeeId,6)
 
+    def test_getEmployeeList(self):
+        testEmployees = []
+        testEmployees.append(self.ec.createEmployee("Jon","Doe",False))
+        testEmployees.append(self.ec.createEmployee("Bob","Dole",False))
+        testEmployees.append(self.ec.createEmployee("Clark","Kent",True))
+        testEmployees.append(self.ec.createEmployee("Bruce","Wayne",False))
+        testEmployees.append(self.ec.createEmployee("Tony","Stark",True))
+
+        offset,count = 0,2
+        results = self.ec.getEmployeeList(offset,count,"id")
+        self.assertEqual(len(results),count)
+        self.assertEqual(results[0], testEmployees[offset+0])
+        self.assertEqual(results[1], testEmployees[offset+1])
+
+        results = self.ec.getEmployeeList(2,2,"id")
+        self.assertEqual(len(results),2)
+        self.assertEqual(results[0], testEmployees[offset+0])
+        self.assertEqual(results[1], testEmployees[offset+1])
+
+        
     def test_createEmployee(self):
         e = self.ec.createEmployee("Jon","Doe",False)
         self.assertEqual(e.id,1)

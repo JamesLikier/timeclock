@@ -29,6 +29,10 @@ class EmployeeController(ABC):
     @abstractmethod
     def getEmployeeById(self, employeeId: int) -> Employee:
         pass
+
+    @abstractmethod
+    def getEmployeeList(self, offset: int, count: int, sortBy: string) -> list[Employee]:
+        pass
     
     @abstractmethod
     def modifyEmployee(self, employee: Employee) -> Employee:

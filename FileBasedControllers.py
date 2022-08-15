@@ -51,6 +51,9 @@ class FileBasedEmployeeController(timeclock.EmployeeController):
         if e == None:
             raise EmployeeNotFound
         return copy.deepcopy(e)
+    
+    def getEmployeeList(self, offset: int, count: int, sortBy: string) -> list[Employee]:
+        return []
 
     def modifyEmployee(self, employee: Employee) -> Employee:
         if employee.id in self.employeeDict.keys():
