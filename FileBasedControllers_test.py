@@ -40,7 +40,7 @@ class TestFileBasedEmployeeController(unittest.TestCase):
         self.assertEqual(e.lname, "Doe")
         self.assertEqual(e.admin, False)
 
-        self.assertRaises(tc.EmployeeNotFound,self.ec.getEmployeeById,(2,))
+        self.assertRaises(tc.EmployeeNotFound,self.ec.getEmployeeById,2)
 
         self.ec.createEmployee("Bob","Dole",True)
         e = self.ec.getEmployeeById(2)
@@ -73,6 +73,8 @@ class TestFileBasedEmployeeController(unittest.TestCase):
         self.assertEqual(e2.lname, "Daniels")
         self.assertEqual(e2.admin, True)
 
+        e.id = 3
+        self.assertRaises(tc.EmployeeNotFound,self.ec.modifyEmployee,e)
 
 class TestFileBasedPunchController(unittest.TestCase):
     def test_createPunch(self):
