@@ -40,8 +40,39 @@ class TestFileBasedEmployeeController(unittest.TestCase):
         self.assertEqual(e.lname, "Doe")
         self.assertEqual(e.admin, False)
 
+        self.assertRaises(tc.EmployeeNotFound,self.ec.getEmployeeById,(2,))
+
+        self.ec.createEmployee("Bob","Dole",True)
+        e = self.ec.getEmployeeById(2)
+        self.assertEqual(e.id,2)
+        self.assertEqual(e.fname, "Bob")
+        self.assertEqual(e.lname, "Dole")
+        self.assertEqual(e.admin, True)
+
     def test_modifyEmployee(self):
-        pass
+        e = self.ec.createEmployee("Jon","Doe",False)
+        self.assertEqual(e.id,1)
+        self.assertEqual(e.fname, "Jon")
+        self.assertEqual(e.lname, "Doe")
+        self.assertEqual(e.admin, False)
+
+        e.fname = 'Tom'
+        e.lname = 'Daniels'
+        e.admin = True
+
+        e2 = self.ec.getEmployeeById(e.id)
+        self.assertEqual(e2.id,1)
+        self.assertEqual(e2.fname, "Jon")
+        self.assertEqual(e2.lname, "Doe")
+        self.assertEqual(e2.admin, False)
+
+        self.ec.modifyEmployee(e)
+        e2 = self.ec.getEmployeeById(e.id)
+        self.assertEqual(e2.id,1)
+        self.assertEqual(e2.fname, "Tom")
+        self.assertEqual(e2.lname, "Daniels")
+        self.assertEqual(e2.admin, True)
+
 
 class TestFileBasedPunchController(unittest.TestCase):
     def test_createPunch(self):
