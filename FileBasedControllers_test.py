@@ -245,7 +245,7 @@ class TestFileBasedPunchController(unittest.TestCase):
         for punch in results:
             punch: tc.Punch
             self.assertEqual(punch.employeeId,2)
-            self.assertEqual((punch in e2_3wp),True)
+            self.assertEqual((punch in e2_cp),True)
     
     def test_modifyPunch(self):
         pass
