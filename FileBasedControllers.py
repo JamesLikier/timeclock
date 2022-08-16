@@ -53,7 +53,23 @@ class FileBasedEmployeeController(timeclock.EmployeeController):
         return copy.deepcopy(e)
     
     def getEmployeeList(self, offset: int, count: int, sortBy: string) -> list[Employee]:
-        return []
+        sortFn = None
+        if sortBy == "id":
+            sortFn = lambda employee : employee.id
+        elif sortBy == "fname":
+            sortFn = lambda employee : employee.fname
+        elif sortBy == "lname":
+            sortFn = lambda employee : employee.lname
+        
+        if sortFn == None:
+            return []
+        if offset > len(self.employeeDict):
+            return []
+        if count > (len(self.employeeDict) - offset):
+            count = len(self.employeeDict) - offset
+
+        sortedList = sorted(self.employeeDict.values(),key=sortFn)
+        return sortedList[offset:offset+count]
 
     def modifyEmployee(self, employee: Employee) -> Employee:
         if employee.id in self.employeeDict.keys():
