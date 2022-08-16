@@ -135,7 +135,10 @@ class FileBasedPunchController(timeclock.PunchController):
         return [copy.deepcopy(p) for p in self.punchDict.values() if p.employeeId == employeeId and time.mktime(p.datetime) > time.mktime(startDatetime) and time.mktime(p.datetime) <= time.mktime(endDatetime)]
         
     def modifyPunch(self, punch: Punch, modifiedByEmployeeId: int) -> Punch:
-        pass
+        self.punchDict[punch.id] = copy.deepcopy(punch)
+        self.punchDict[punch.id].modifiedByEmployeeId = modifiedByEmployeeId
+        self.exportFile()
+        return copy.deepcopy(self.punchDict[punch.id])
 
     def getPunchCountUpToPunch(self, punch: Punch) -> int:
         count = 0
