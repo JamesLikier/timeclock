@@ -215,7 +215,37 @@ class TestFileBasedPunchController(unittest.TestCase):
 
     
     def test_getPunchesByEmployeeId(self):
-        pass
+        currentDatetime = time.localtime()
+        fourWeeksAgo = time.localtime(time.mktime(currentDatetime) - (4 * 60 * 60 * 24 * 7))
+        threeWeeksAgo = time.localtime(time.mktime(currentDatetime) - (3 * 60 * 60 * 24 * 7))
+        twoWeeksAgo = time.localtime(time.mktime(currentDatetime) - (2 * 60 * 60 * 24 * 7))
+        e1_cp = []
+        e1_3wp = []
+        e2_cp = []
+        e2_3wp = []
+        e1_cp.append(self.pc.createPunch(1,currentDatetime,1))
+        e1_cp.append(self.pc.createPunch(1,currentDatetime,1))
+        e1_cp.append(self.pc.createPunch(1,currentDatetime,1))
+        e1_3wp.append(self.pc.createPunch(1,threeWeeksAgo,1))
+        e1_3wp.append(self.pc.createPunch(1,threeWeeksAgo,1))
+        e2_cp.append(self.pc.createPunch(2,currentDatetime,2))
+        e2_cp.append(self.pc.createPunch(2,currentDatetime,2))
+        e2_cp.append(self.pc.createPunch(2,currentDatetime,2))
+        e2_3wp.append(self.pc.createPunch(2,threeWeeksAgo,2))
+        e2_3wp.append(self.pc.createPunch(2,threeWeeksAgo,2))
+
+        results = self.pc.getPunchesByEmployeeId(1,fourWeeksAgo,currentDatetime)
+        self.assertEqual(len(results),5)
+        for punch in results:
+            punch: tc.Punch
+            self.assertEqual(punch.employeeId,1)
+            self.assertEqual((punch in e1_cp) or (punch in e1_3wp),True)
+        results = self.pc.getPunchesByEmployeeId(2,twoWeeksAgo,currentDatetime)
+        self.assertEqual(len(results),3)
+        for punch in results:
+            punch: tc.Punch
+            self.assertEqual(punch.employeeId,2)
+            self.assertEqual((punch in e2_3wp),True)
     
     def test_modifyPunch(self):
         pass
