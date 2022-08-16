@@ -149,6 +149,30 @@ class TestFileBasedPunchController(unittest.TestCase):
             pass
         self.pc = fbc.FileBasedPunchController("punchtestfile")
 
+    def test_fileSaveAndLoad(self):
+        self.assertEqual(len(self.pc.punchDict),0)
+        testPunches = []
+        testPunches.append(self.pc.createPunch(1,time.localtime(),1))
+        testPunches.append(self.pc.createPunch(1,time.localtime(),1))
+        testPunches.append(self.pc.createPunch(1,time.localtime(),1))
+        testPunches.append(self.pc.createPunch(1,time.localtime(),1))
+        testPunches.append(self.pc.createPunch(1,time.localtime(),1))
+        self.assertEqual(len(self.pc.punchDict),5)
+        self.assertEqual(self.pc.nextPunchId,6)
+
+        self.pc = fbc.FileBasedPunchController("punchtestfile")
+        self.assertEqual(len(self.pc.punchDict),5)
+        self.assertEqual(self.pc.nextPunchId,6)
+        for punch in testPunches:
+            punch: tc.Punch
+            p = self.pc.getPunchById(punch.id)
+            self.assertEqual(p.id,punch.id)
+            self.assertEqual(p.employeeId,punch.employeeId)
+            self.assertEqual(p.datetime,punch.datetime)
+            self.assertEqual(p.createdByEmployeeId,punch.createdByEmployeeId)
+            self.assertEqual(p.modifiedByEmployeeId,punch.modifiedByEmployeeId)
+            self.assertEqual(p,punch)
+
     def test_createPunch(self):
         createdTime = time.localtime()
         p = self.pc.createPunch(1,createdTime,1)
