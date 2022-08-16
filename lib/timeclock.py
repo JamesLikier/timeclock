@@ -6,6 +6,9 @@ import time
 class EmployeeNotFound(Exception):
     pass
 
+class PunchNotFound(Exception):
+    pass
+
 @dataclass
 class Punch:
     id: int = -1
