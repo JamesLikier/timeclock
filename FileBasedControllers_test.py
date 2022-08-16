@@ -248,7 +248,23 @@ class TestFileBasedPunchController(unittest.TestCase):
             self.assertEqual((punch in e2_cp),True)
     
     def test_modifyPunch(self):
-        pass
+        t = time.localtime()
+        p = self.pc.createPunch(1,t,1)
+        self.assertEqual(p.id,1)
+        self.assertEqual(p.employeeId,1)
+        self.assertEqual(p.datetime,t)
+        self.assertEqual(p.createdByEmployeeId,1)
+        self.assertEqual(p.modifiedByEmployeeId,-1)
+
+        t2 = time.localtime(time.mktime(t) - 60*60*24)
+        p.datetime = t2
+        p2 = self.pc.modifyPunch(p,2)
+        self.assertNotEqual(p,p2)
+        self.assertEqual(p2.id,1)
+        self.assertEqual(p2.datetime,t2)
+        self.assertEqual(p2.employeeId,1)
+        self.assertEqual(p2.modifiedByEmployeeId,2)
+
 
     def test_getPunchCountUpToPunch(self):
         timeInSec = time.time()
