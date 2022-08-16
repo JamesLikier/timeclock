@@ -134,11 +134,16 @@ class FileBasedPunchController(timeclock.PunchController):
                             endDatetime: time.struct_time) -> list[Punch]:
         return [copy.deepcopy(p) for p in self.punchDict.values() if p.employeeId == employeeId and time.mktime(p.datetime) > time.mktime(startDatetime) and time.mktime(p.datetime) <= time.mktime(endDatetime)]
         
-    def modifyPunch(self, punch: Punch) -> Punch:
+    def modifyPunch(self, punch: Punch, modifiedByEmployeeId: int) -> Punch:
         pass
 
     def getPunchCountUpToPunch(self, punch: Punch) -> int:
-        pass
+        count = 0
+        for p in self.punchDict.values():
+            p: Punch
+            if p.employeeId == punch.employeeId and time.mktime(p.datetime) < time.mktime(punch.datetime):
+                count += 1
+        return count
 
 class FileBasedAuthController(timeclock.AuthController):
     def __init__(self, filename: string):
