@@ -61,7 +61,7 @@ class PunchController(ABC):
         pass
     
     @abstractmethod
-    def modifyPunch(self, punch: Punch) -> Punch:
+    def modifyPunch(self, punch: Punch, modifiedByEmployeeId: int) -> Punch:
         pass
 
     @abstractmethod
