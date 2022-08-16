@@ -1,5 +1,6 @@
+from datetime import date
 import lib.timeclock as timeclock
-from lib.timeclock import Employee, EmployeeNotFound, Punch
+from lib.timeclock import Employee, EmployeeNotFound, Punch, PunchNotFound
 import string
 import time
 import copy
@@ -81,17 +82,51 @@ class FileBasedEmployeeController(timeclock.EmployeeController):
     
 class FileBasedPunchController(timeclock.PunchController):
     def __init__(self, filename: string):
-        super().__init__(self)
         self.filename = filename
+        self.nextPunchId = 1
+        self.punchDict = dict()
+        try:
+            with open(str(filename), "r") as f:
+                self.nextPunchId = int(f.readline())
+                for punchString in f.readlines():
+                    fields = punchString.strip("\n").split(",")
+                    p = Punch(int(fields[0]),int(fields[1]),time.localtime(float(fields[2])),int(fields[3]),int(fields[4]))
+                    self.punchDict[p.id] = p
+        except Exception:
+            pass
+
+    def exportFile(self) -> None:
+        try:
+            with open(str(self.filename),"w") as f:
+                f.write(f"{self.nextPunchId}\n")
+                for punch in self.punchDict.values():
+                    punch: Punch
+                    fields = []
+                    fields.append(str(punch.id))
+                    fields.append(str(punch.employeeId))
+                    fields.append(str(time.mktime(punch.datetime)))
+                    fields.append(str(punch.createdByEmployeeId))
+                    fields.append(str(punch.modifiedByEmployeeId))
+                    line = ",".join(fields) + "\n"
+                    f.write(line)
+        except Exception:
+            pass
 
     def createPunch(self,
                     employeeId: int,
                     datetime: time.struct_time,
                     createdByEmployeeId: int) -> Punch:
-        pass
+        p = Punch(self.nextPunchId,employeeId=employeeId,datetime=datetime,createdByEmployeeId=createdByEmployeeId)
+        self.punchDict[p.id] = p
+        self.nextPunchId += 1
+        self.exportFile()
+        return copy.deepcopy(p)
 
     def getPunchById(self, punchId: int) -> Punch:
-        pass
+        p = self.punchDict.get(punchId,None)
+        if p == None:
+            raise PunchNotFound
+        return copy.deepcopy(p)
 
     def getPunchesByEmployeeId(self,
                             employeeId: int,
