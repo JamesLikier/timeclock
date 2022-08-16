@@ -132,8 +132,8 @@ class FileBasedPunchController(timeclock.PunchController):
                             employeeId: int,
                             startDatetime: time.struct_time,
                             endDatetime: time.struct_time) -> list[Punch]:
-        pass
-
+        return [copy.deepcopy(p) for p in self.punchDict.values() if p.employeeId == employeeId and time.mktime(p.datetime) > time.mktime(startDatetime) and time.mktime(p.datetime) <= time.mktime(endDatetime)]
+        
     def modifyPunch(self, punch: Punch) -> Punch:
         pass
 
