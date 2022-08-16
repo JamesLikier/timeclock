@@ -2,6 +2,7 @@ import unittest
 import FileBasedControllers as fbc
 import os
 import lib.timeclock as tc
+import time
 
 class TestFileBasedEmployeeController(unittest.TestCase):
 
@@ -141,11 +142,53 @@ class TestFileBasedEmployeeController(unittest.TestCase):
         self.assertRaises(tc.EmployeeNotFound,self.ec.modifyEmployee,e)
 
 class TestFileBasedPunchController(unittest.TestCase):
+    def setUp(self) -> None:
+        try:
+            os.remove("punchtestfile")
+        except Exception:
+            pass
+        self.pc = fbc.FileBasedPunchController("punchtestfile")
+
     def test_createPunch(self):
-        pass
+        createdTime = time.localtime()
+        p = self.pc.createPunch(1,createdTime,1)
+        self.assertEqual(p.id,1)
+        self.assertEqual(p.employeeId,1)
+        self.assertEqual(p.datetime,createdTime)
+        self.assertEqual(p.createdByEmployeeId,1)
+
+        time.sleep(1)
+        createdTime = time.localtime()
+        p = self.pc.createPunch(1,createdTime,1)
+        self.assertEqual(p.id,2)
+        self.assertEqual(p.employeeId,1)
+        self.assertEqual(p.datetime,createdTime)
+        self.assertEqual(p.createdByEmployeeId,1)
 
     def test_getPunchById(self):
-        pass
+        self.assertRaises(tc.PunchNotFound,self.pc.getPunchById,-1)
+        self.assertRaises(tc.PunchNotFound,self.pc.getPunchById,0)
+        self.assertRaises(tc.PunchNotFound,self.pc.getPunchById,1)
+
+        createdTime = time.localtime()
+        p = self.pc.createPunch(1,createdTime,1)
+        p2 = self.pc.getPunchById(1)
+        self.assertEqual(p.id,p2.id)
+        self.assertEqual(p.employeeId,p2.employeeId)
+        self.assertEqual(p.datetime,p2.datetime)
+        self.assertEqual(p.createdByEmployeeId,p2.createdByEmployeeId)
+        self.assertEqual(p,p2)
+
+        time.sleep(1)
+        createdTime = time.localtime()
+        p = self.pc.createPunch(2,createdTime,2)
+        p2 = self.pc.getPunchById(2)
+        self.assertEqual(p.id,p2.id)
+        self.assertEqual(p.employeeId,p2.employeeId)
+        self.assertEqual(p.datetime,p2.datetime)
+        self.assertEqual(p.createdByEmployeeId,p2.createdByEmployeeId)
+        self.assertEqual(p,p2)
+
     
     def test_getPunchesByEmployeeId(self):
         pass
