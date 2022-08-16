@@ -47,21 +47,33 @@ class TestFileBasedEmployeeController(unittest.TestCase):
         self.assertEqual(results[0], testEmployees[offset+0])
         self.assertEqual(results[1], testEmployees[offset+1])
 
-        results = self.ec.getEmployeeList(2,2,"id")
-        self.assertEqual(len(results),2)
+        offset,count = 2,2
+        results = self.ec.getEmployeeList(offset,count,"id")
+        self.assertEqual(len(results),count)
         self.assertEqual(results[0], testEmployees[offset+0])
         self.assertEqual(results[1], testEmployees[offset+1])
 
-        results = self.ec.getEmployeeById(0,2,"fname")
+        results = self.ec.getEmployeeList(0,2,"fname")
         self.assertEqual(len(results),2)
         self.assertEqual(results[0].fname,"Bob")
         self.assertEqual(results[1].fname,"Bruce")
 
-        results = self.ec.getEmployeeById(0,2,"lname")
+        results = self.ec.getEmployeeList(0,2,"lname")
         self.assertEqual(len(results),2)
         self.assertEqual(results[0].lname,"Doe")
         self.assertEqual(results[1].lname,"Dole")
 
+        results = self.ec.getEmployeeList(10,5,"id")
+        self.assertEqual(len(results),0)
+
+        results = self.ec.getEmployeeList(0,10,"id")
+        self.assertEqual(len(results),5)
+
+        results = self.ec.getEmployeeList(2,10,"id")
+        self.assertEqual(len(results),3)
+
+        results = self.ec.getEmployeeList(0,5,"invalid")
+        self.assertEqual(len(results),0)
         
     def test_createEmployee(self):
         e = self.ec.createEmployee("Jon","Doe",False)
