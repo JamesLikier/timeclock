@@ -251,7 +251,25 @@ class TestFileBasedPunchController(unittest.TestCase):
         pass
 
     def test_getPunchCountUpToPunch(self):
-        pass
+        timeInSec = time.time()
+        dayInSec = 60 * 60 * 24
+        p1 = self.pc.createPunch(1,time.localtime(timeInSec-(5*dayInSec)),1)
+        self.pc.createPunch(1,time.localtime(timeInSec-(4*dayInSec)),1)
+        p2 = self.pc.createPunch(1,time.localtime(timeInSec-(3*dayInSec)),1)
+        self.pc.createPunch(1,time.localtime(timeInSec-(2*dayInSec)),1)
+        p3 = self.pc.createPunch(1,time.localtime(timeInSec-(1*dayInSec)),1)
+        self.pc.createPunch(2,time.localtime(timeInSec-(5*dayInSec)),2)
+        self.pc.createPunch(2,time.localtime(timeInSec-(4*dayInSec)),2)
+        self.pc.createPunch(2,time.localtime(timeInSec-(3*dayInSec)),2)
+        self.pc.createPunch(2,time.localtime(timeInSec-(2*dayInSec)),2)
+        self.pc.createPunch(2,time.localtime(timeInSec-(1*dayInSec)),2)
+
+        count = self.pc.getPunchCountUpToPunch(p1)
+        self.assertEqual(count,0)
+        count = self.pc.getPunchCountUpToPunch(p2)
+        self.assertEqual(count,2)
+        count = self.pc.getPunchCountUpToPunch(p3)
+        self.assertEqual(count,4)
 
 if __name__ == "__main__":
     unittest.main()
