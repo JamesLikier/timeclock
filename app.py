@@ -20,7 +20,7 @@ def routeStatic(req: httprequest, match: Match, sock: socket):
 def routeRoot(req: httprequest, match: Match, sock: socket):
     with open('index.html','rb') as f:
         resp = httpresponse(statuscodes.OK)
-        resp.body = f.read()
+        resp.body = f.read().replace(b'@placeholder',b'')
         resp.send(sock)
 
 server.start()
