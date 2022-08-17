@@ -3,3 +3,37 @@
     margin-left: auto;
     margin-right: auto;
 }
+
+#navbar {
+    width: max-content;
+    margin-left: auto;
+    margin-right: auto;
+}
+#navbar a {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+#notfound404 {
+    margin-left: auto;
+    margin-right: auto;
+    width: max-content;
+}
+
+#newemployee {
+    width: max-content;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+label {
+    display: inline-block;
+    min-width: 100px;
+    text-align: right;
+}
+
+#submit {
+    margin-right: 0px;
+    margin-left: auto;
+    display: block;
+}
