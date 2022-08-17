@@ -32,12 +32,17 @@ def routeRoot(req: httprequest, match: Match, sock: socket):
 
 @server.register(("GET","POST"),"/employee/new$")
 def routeRoot(req: httprequest, match: Match, sock: socket):
+    resp = httpresponse(statuscodes.OK)
     with open('index.html','rb') as index:
-        with open('templates/employee_new.html','rb') as template:
-            templateData = template.read()
-            resp = httpresponse(statuscodes.OK)
-            resp.body = index.read().replace(b'@placeholder',templateData)
-            resp.send(sock)
+        if req.method == "GET":
+            with open('templates/employee_new.html','rb') as template:
+                templateData = template.read()
+                resp.body = index.read().replace(b'@placeholder',templateData)
+        elif req.method == "POST":
+            e = employeeController.createEmployee(fname=req.form.data["fname"].value,lname=req.form.data["lname"].value,admin=req.form.data.get("admin","")=="True")
+            data = f'<div class="message">Created New Employee: <a href="/employee/{e.id}">{e.lname}, {e.fname}</a></div>'.encode()
+            resp.body = index.read().replace(b'@placeholder',data)
+    resp.send(sock)
 
 server.start()
 while(True):

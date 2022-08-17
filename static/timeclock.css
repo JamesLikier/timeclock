@@ -20,6 +20,12 @@
     width: max-content;
 }
 
+.message {
+    width: max-content;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 #newemployee {
     width: max-content;
     margin-left: auto;
