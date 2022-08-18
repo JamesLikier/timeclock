@@ -12,7 +12,7 @@ punchController: tc.PunchController = fbc.FileBasedPunchController("punchfile")
 def timeclock404(req: httprequest, match: Match, sock: socket):
     with open('index.html','rb') as index:
         resp = httpresponse(statuscodes.NOT_FOUND)
-        resp.body = index.read().replace(b'@placeholder',b'<h1 id="notfound404">404 - Not Found</h1>')
+        resp.body = index.read().replace(b'@placeholder',b'<h1 class="message">404 - Not Found</h1>')
         resp.send(sock)
 server.handler404 = timeclock404
 
@@ -31,7 +31,7 @@ def routeRoot(req: httprequest, match: Match, sock: socket):
         resp.send(sock)
 
 @server.register(("GET","POST"),"/employee/new$")
-def routeRoot(req: httprequest, match: Match, sock: socket):
+def routeEmployeeNew(req: httprequest, match: Match, sock: socket):
     resp = httpresponse(statuscodes.OK)
     with open('index.html','rb') as index:
         if req.method == "GET":
@@ -42,6 +42,29 @@ def routeRoot(req: httprequest, match: Match, sock: socket):
             e = employeeController.createEmployee(fname=req.form.data["fname"].value,lname=req.form.data["lname"].value,admin=req.form.data.get("admin","")=="True")
             data = f'<div class="message">Created New Employee: <a href="/employee/{e.id}">{e.lname}, {e.fname}</a></div>'.encode()
             resp.body = index.read().replace(b'@placeholder',data)
+    resp.send(sock)
+
+@server.register(("GET",),"/employee/list$")
+def routeEmployeeList(req: httprequest, match: Match, sock: socket):
+    resp = httpresponse(statuscodes.OK)
+    with open('index.html','rb') as indexFile:
+        indexTemplate = indexFile.read()
+        with open('templates/employee_list.html','rb') as listFile:
+            listTemplate = listFile.read()
+            with open('templates/employee_listitem.html','rb') as itemFile:
+                itemTemplate = itemFile.read()
+                items = []
+                rowAlt = True
+                for e in employeeController.getEmployeeList():
+                    rowclass = b'r1' if rowAlt else b'r2'
+                    rowAlt = not rowAlt
+                    i = itemTemplate.replace(b'@rowclass',rowclass)
+                    i = i.replace(b'@employeeid',str(e.id).encode())
+                    i = i.replace(b'@employeename',f'{e.lname}, {e.fname}'.encode())
+                    items.append(i)
+                list = b''.join(items)
+                body = indexTemplate.replace(b'@placeholder',listTemplate.replace(b'@employeelist',list))
+                resp.body = body
     resp.send(sock)
 
 server.start()

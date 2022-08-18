@@ -26,7 +26,7 @@ class Employee:
 
 class EmployeeController(ABC):
     @abstractmethod
-    def createEmployee(self, fname: string, lname: string, admin: bool) -> Employee:
+    def createEmployee(self, fname: string, lname: string, admin: bool = False) -> Employee:
         pass
 
     @abstractmethod
@@ -34,7 +34,7 @@ class EmployeeController(ABC):
         pass
 
     @abstractmethod
-    def getEmployeeList(self, offset: int, count: int, sortBy: string) -> list[Employee]:
+    def getEmployeeList(self, offset: int = 0, count: int = 0, sortBy: string = "") -> list[Employee]:
         pass
     
     @abstractmethod

@@ -1,10 +1,4 @@
-#title {
-    width: min-content;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-#navbar {
+.centered,.message {
     width: max-content;
     margin-left: auto;
     margin-right: auto;
@@ -13,33 +7,27 @@
     margin-left: 10px;
     margin-right: 10px;
 }
-
-#notfound404 {
-    margin-left: auto;
-    margin-right: auto;
-    width: max-content;
-}
-
-.message {
-    width: max-content;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-#newemployee {
-    width: max-content;
-    margin-left: auto;
-    margin-right: auto;
-}
-
 label {
     display: inline-block;
     min-width: 100px;
     text-align: right;
 }
-
 #submit {
     margin-right: 0px;
     margin-left: auto;
     display: block;
+}
+#employeelist {
+}
+.employeelistitem {
+    width: 300px;
+    text-align: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+.r1 {
+    background-color:lavender;
+}
+.r2 {
+    background-color:beige;
 }

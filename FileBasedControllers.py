@@ -36,7 +36,7 @@ class FileBasedEmployeeController(timeclock.EmployeeController):
                 line = ','.join(fields) + "\n"
                 f.write(line)
 
-    def createEmployee(self, fname: string, lname: string, admin: bool) -> Employee:
+    def createEmployee(self, fname: string, lname: string, admin: bool = False) -> Employee:
         id = self.nextEmployeeId
         self.nextEmployeeId += 1
 
@@ -53,7 +53,7 @@ class FileBasedEmployeeController(timeclock.EmployeeController):
             raise EmployeeNotFound
         return copy.deepcopy(e)
     
-    def getEmployeeList(self, offset: int, count: int, sortBy: string) -> list[Employee]:
+    def getEmployeeList(self, offset: int = 0, count: int = 0, sortBy: string = "id") -> list[Employee]:
         sortFn = None
         if sortBy == "id":
             sortFn = lambda employee : employee.id
@@ -68,6 +68,8 @@ class FileBasedEmployeeController(timeclock.EmployeeController):
             return []
         if count > (len(self.employeeDict) - offset):
             count = len(self.employeeDict) - offset
+        
+        if count == 0: count = len(self.employeeDict)
 
         sortedList = sorted(self.employeeDict.values(),key=sortFn)
         return sortedList[offset:offset+count]
