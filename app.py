@@ -44,6 +44,22 @@ def routeEmployeeNew(req: httprequest, match: Match, sock: socket):
             resp.body = index.read().replace(b'@placeholder',data)
     resp.send(sock)
 
+@server.register(("GET",),"/employee/([0-9]+)$")
+def routeEmployee(req: httprequest, match: Match, sock: socket):
+    resp = httpresponse(statuscodes.OK)
+    with open('index.html','rb') as indexFile:
+        indexTemplate = indexFile.read()
+        try:
+            e = employeeController.getEmployeeById(int(match.group(1)))
+            with open('templates/employee.html','rb') as employeeFile:
+                employeeTemplate = employeeFile.read()
+                body = employeeTemplate.replace(b'@employeename',f'{e.lname}, {e.fname}'.encode())
+                body = indexTemplate.replace(b'@placeholder',body)
+                resp.body = body
+        except tc.EmployeeNotFound:
+            resp.body = indexTemplate.replace(b'@placeholder',b'<div class="message">Employee Not Found</div>')
+    resp.send(sock)
+
 @server.register(("GET",),"/employee/list$")
 def routeEmployeeList(req: httprequest, match: Match, sock: socket):
     resp = httpresponse(statuscodes.OK)
