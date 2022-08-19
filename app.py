@@ -11,7 +11,7 @@ punchController: tc.PunchController = fbc.FileBasedPunchController("punchfile")
 
 def timeclock404(req: httprequest, match: Match, sock: socket):
     with open('index.html','rb') as index:
-        resp = httpresponse(statuscodes.NOT_FOUND)
+        resp = httpresponse()
         resp.body = index.read().replace(b'@placeholder',b'<h1 class="message">404 - Not Found</h1>')
         resp.send(sock)
 server.handler404 = timeclock404
@@ -19,20 +19,20 @@ server.handler404 = timeclock404
 @server.registerstatic("/static/.*")
 def routeStatic(req: httprequest, match: Match, sock: socket):
     with open(f"./{req.uri}", 'rb') as f:
-        resp = httpresponse(statuscodes.OK)
+        resp = httpresponse()
         resp.body = f.read()
         resp.send(sock)
 
 @server.register(("GET",),"/$")
 def routeRoot(req: httprequest, match: Match, sock: socket):
     with open('index.html','rb') as f:
-        resp = httpresponse(statuscodes.OK)
+        resp = httpresponse()
         resp.body = f.read().replace(b'@placeholder',b'')
         resp.send(sock)
 
 @server.register(("GET","POST"),"/employee/new$")
 def routeEmployeeNew(req: httprequest, match: Match, sock: socket):
-    resp = httpresponse(statuscodes.OK)
+    resp = httpresponse()
     with open('index.html','rb') as index:
         if req.method == "GET":
             with open('templates/employee_new.html','rb') as template:
@@ -46,7 +46,7 @@ def routeEmployeeNew(req: httprequest, match: Match, sock: socket):
 
 @server.register(("GET",),"/employee/([0-9]+)$")
 def routeEmployee(req: httprequest, match: Match, sock: socket):
-    resp = httpresponse(statuscodes.OK)
+    resp = httpresponse()
     with open('index.html','rb') as indexFile:
         indexTemplate = indexFile.read()
         try:
@@ -62,7 +62,7 @@ def routeEmployee(req: httprequest, match: Match, sock: socket):
 
 @server.register(("GET",),"/employee/list$")
 def routeEmployeeList(req: httprequest, match: Match, sock: socket):
-    resp = httpresponse(statuscodes.OK)
+    resp = httpresponse()
     with open('index.html','rb') as indexFile:
         indexTemplate = indexFile.read()
         with open('templates/employee_list.html','rb') as listFile:
