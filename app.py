@@ -9,7 +9,7 @@ from lib.cachedfilemanager import CachedFileManager
 server = httpserver("10.0.0.100",80)
 employeeController: tc.EmployeeController = fbc.FileBasedEmployeeController("employeefile")
 punchController: tc.PunchController = fbc.FileBasedPunchController("punchfile")
-templateCache: CachedFileManager = CachedFileManager(basedir="./templates")
+templateCache: CachedFileManager = CachedFileManager(basedir="templates")
 
 def timeclock404(req: httprequest, match: Match, sock: socket):
     marker = b'placeholder'
@@ -32,16 +32,16 @@ def routeRoot(req: httprequest, match: Match, sock: socket):
     marker = b'@placeholder'
     msg = b''
     resp = httpresponse()
-    resp.body = templateCache["index.html"].replace(marker,msg)
+    resp.body = templateCache.files["index.html"].replace(marker,msg)
     resp.send(sock)
 
 @server.register(("GET","POST"),"/employee/new$")
 def routeEmployeeNew(req: httprequest, match: Match, sock: socket):
     marker = b'@placeholder'
-    indexTemplate = templateCache["index.html"]
+    indexTemplate = templateCache.files["index.html"]
     resp = httpresponse()
     if req.method == "GET":
-        employeeNewTemplate = templateCache["employee_new.html"]
+        employeeNewTemplate = templateCache.files["employee_new.html"]
         resp.body = indexTemplate.replace(marker,employeeNewTemplate)
     elif req.method == "POST":
         e = employeeController.createEmployee(fname=req.form.data["fname"].value,lname=req.form.data["lname"].value,admin=req.form.data.get("admin","")=="True")
@@ -51,12 +51,12 @@ def routeEmployeeNew(req: httprequest, match: Match, sock: socket):
 
 @server.register(("GET",),"/employee/([0-9]+)$")
 def routeEmployee(req: httprequest, match: Match, sock: socket):
-    indexTemplate = templateCache["index.html"]
+    indexTemplate = templateCache.files["index.html"]
     indexMarker = b'@placeholder'
     resp = httpresponse()
     try:
         e = employeeController.getEmployeeById(int(match.group(1)))
-        employeeTemplate = templateCache["employee.html"]
+        employeeTemplate = templateCache.files["employee.html"]
         employeeMarker = b'@employeename'
         body = employeeTemplate.replace(employeeMarker,f'{e.lname}, {e.fname}'.encode())
         body = indexTemplate.replace(indexMarker,body)
@@ -69,9 +69,9 @@ def routeEmployee(req: httprequest, match: Match, sock: socket):
 @server.register(("GET",),"/employee/list$")
 def routeEmployeeList(req: httprequest, match: Match, sock: socket):
     resp = httpresponse()
-    indexTemplate = templateCache["index.html"]
-    empListTemplate = templateCache["employee_list.html"]
-    empListItemTemplate = templateCache["employee_listitem.html"]
+    indexTemplate = templateCache.files["index.html"]
+    empListTemplate = templateCache.files["employee_list.html"]
+    empListItemTemplate = templateCache.files["employee_listitem.html"]
 
     items = []
     rowAlt = True

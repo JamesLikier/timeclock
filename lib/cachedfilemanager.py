@@ -3,6 +3,7 @@ import os
 import threading
 import time
 import re
+from os import DirEntry
 
 class CachedFileManager():
     def __init__(self, basedir=".", verbose=True, filters=None):
@@ -14,15 +15,17 @@ class CachedFileManager():
         self.thread = None
         filters = filters if filters != None else []
         self.filters = [re.compile(exp) for exp in filters]
+        self.scan()
 
     def cacheFile(self, entry: DirEntry = None):
         if entry == None: return
 
         eStat = entry.stat()
-        if eStat.st_mtime > self.modifiedTimes[entry.path]:
-            self.modifiedTimes[entry.path] = eStat.st_mtime
+        eKeyName = entry.path[len(self.basedir+'\\'):]
+        if eStat.st_mtime > self.modifiedTimes[eKeyName]:
+            self.modifiedTimes[eKeyName] = eStat.st_mtime
             with open(entry.path,'rb') as file:
-                self.files[entry.path] = file.read()
+                self.files[eKeyName] = file.read()
                 if self.verbose:
                     print(f'Updating Cached File: {entry.path}')
 
@@ -50,16 +53,16 @@ class CachedFileManager():
         if self.running: return
 
         self.running = True
-        self.thread = threading.Thread(target=TemplateManager.loop,args=(self,interval),daemon=True)
+        self.thread = threading.Thread(target=cfm.loop,kwargs={"interval":interval},daemon=True)
         self.thread.start()
 
     def stop(self):
         self.running = False
 
 if __name__ == "__main__":
-    tm = TemplateManager("templates")
-    tm.start()
+    cfm = CachedFileManager("templates")
+    cfm.start(5)
     i = input()
-    tm.stop()
-    tm.thread.join()
+    cfm.stop()
+    cfm.thread.join()
     
