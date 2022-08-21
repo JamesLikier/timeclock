@@ -21,7 +21,7 @@ class CachedFileManager():
         if entry == None: return
 
         eStat = entry.stat()
-        eKeyName = entry.path[len(self.basedir+'\\'):]
+        eKeyName = entry.path[len(os.path.join(self.basedir,"")):]
         if eStat.st_mtime > self.modifiedTimes[eKeyName]:
             self.modifiedTimes[eKeyName] = eStat.st_mtime
             with open(entry.path,'rb') as file:
