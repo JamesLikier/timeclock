@@ -285,14 +285,14 @@ class httpserver():
             if match:
                 handler = self.statichandlers[uriRegex]
                 break
-
-        #app handlers next
-        for uriRegex in self.handlers.keys():
-            uriRegex: re
-            match = uriRegex.match(r.uri)
-            if match:
-                handler = self.handlers[uriRegex].get(r.method,None)
-                break
+        if match == None:
+            #app handlers next
+            for uriRegex in self.handlers.keys():
+                uriRegex: re
+                match = uriRegex.match(r.uri)
+                if match:
+                    handler = self.handlers[uriRegex].get(r.method,None)
+                    break
         
         if handler == None: handler = self.handler404
 
