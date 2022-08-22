@@ -13,25 +13,39 @@ templateCache: CachedFileManager = CachedFileManager(basedir="templates")
 scriptCache: CachedFileManager = CachedFileManager(basedir="static",filterExp=".*\.js$")
 
 def timeclock404(req: httprequest, match: Match, sock: socket):
-    marker = b'placeholder'
+    marker = b'@placeholder'
     msg = b'<h1 class="message">404 - Not Found</h1>'
     resp = httpresponse()
-    resp.body = templateCache["index.html"].replace(marker,msg)
+    resp.body = templateCache.files["index.html"].replace(marker,msg)
     resp.send(sock)
 
 server.handler404 = timeclock404
 
-@server.registerstatic("/static/.*")
+@server.registerstatic("/static/(.*)$")
 def routeStatic(req: httprequest, match: Match, sock: socket):
-    with open(f"./{req.uri}", 'rb') as f:
-        resp = httpresponse()
-        resp.body = f.read()
-        resp.send(sock)
+    resp = httpresponse()
+    f = scriptCache.files.get(match.group(1),None)
+    if f != None:
+        resp.body = f
+    else:
+        with open(f"./{req.uri}", 'rb') as f:
+            resp.body = f.read()
+    resp.send(sock)
 
 @server.register(("GET",),"/$")
 def routeRoot(req: httprequest, match: Match, sock: socket):
     marker = b'@placeholder'
     msg = b''
+    resp = httpresponse()
+    resp.body = templateCache.files["index.html"].replace(marker,msg)
+    resp.send(sock)
+
+@server.register(("GET",),"/refreshcache$")
+def routeRefreshCache(req: httprequest, match: Match, sock: socket):
+    templateCache.scan()
+    scriptCache.scan()
+    marker = b'@placeholder'
+    msg = b'<div class="centered">Cache Refreshed</div>'
     resp = httpresponse()
     resp.body = templateCache.files["index.html"].replace(marker,msg)
     resp.send(sock)
