@@ -10,6 +10,7 @@ server = httpserver("10.0.0.100",80)
 employeeController: tc.EmployeeController = fbc.FileBasedEmployeeController("employeefile")
 punchController: tc.PunchController = fbc.FileBasedPunchController("punchfile")
 templateCache: CachedFileManager = CachedFileManager(basedir="templates")
+scriptCache: CachedFileManager = CachedFileManager(basedir="static",filterExp=".*\.js$")
 
 def timeclock404(req: httprequest, match: Match, sock: socket):
     marker = b'placeholder'

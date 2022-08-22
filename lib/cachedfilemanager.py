@@ -6,15 +6,15 @@ import re
 from os import DirEntry
 
 class CachedFileManager():
-    def __init__(self, basedir=".", verbose=True, filters=None):
+    def __init__(self, basedir=".", verbose=True, filterExp=""):
         self.basedir = basedir
         self.verbose = verbose
         self.files = dict()
         self.modifiedTimes = defaultdict(float)
         self.running = False
         self.thread = None
-        filters = filters if filters != None else []
-        self.filters = [re.compile(exp) for exp in filters]
+        self.filterRe = re.compile(filterExp)
+        self.filterExp = filterExp
         self.scan()
 
     def cacheFile(self, entry: DirEntry = None):
@@ -34,11 +34,10 @@ class CachedFileManager():
         with os.scandir(dir) as it:
             for entry in it:
                 if entry.is_file():
-                    if len(self.filters) > 0:
-                        for f in self.filters:
-                            m = f.match(entry.name)
-                            if m != None:
-                                self.cacheFile(entry)
+                    if self.filterExp != "":
+                        m = self.filterRe.match(entry.name)
+                        if m != None:
+                            self.cacheFile(entry)
                     else:
                         self.cacheFile(entry)
                 if entry.is_dir():
