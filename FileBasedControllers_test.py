@@ -12,6 +12,12 @@ class TestFileBasedEmployeeController(unittest.TestCase):
         except Exception:
             pass
         self.ec = fbc.FileBasedEmployeeController("employeetestfile")
+    
+    def tearDown(self):
+        try:
+            os.remove("employeetestfile")
+        except Exception:
+            pass
 
     def test_fileSaveAndLoad(self):
         self.assertEqual(len(self.ec.employeeDict),0)
@@ -148,6 +154,12 @@ class TestFileBasedPunchController(unittest.TestCase):
         except Exception:
             pass
         self.pc = fbc.FileBasedPunchController("punchtestfile")
+    
+    def tearDown(self):
+        try:
+            os.remove("punchtestfile")
+        except Exception:
+            pass
 
     def test_fileSaveAndLoad(self):
         self.assertEqual(len(self.pc.punchDict),0)
