@@ -1,40 +1,49 @@
-.centered,.message {
-    width: max-content;
-    margin-left: auto;
-    margin-right: auto;
+:root {
+    --body-bg-color: #f0f0f0;
+    --navbar-bg-color: #d0d0d0;
+    --visited-color: black;
 }
-#navbar a {
-    margin-left: 10px;
+html {
+    box-sizing: border-box;
+}
+* {
+    box-sizing: inherit;
+}
+body {
+    background-color: var(--body-bg-color);
+    position: relative;
+    margin: 0px;
+    padding: 0px;
+}
+.nav-backdrop {
+    background-color: var(--navbar-bg-color);
+}
+.container {
+    margin-left: 10%;
+    margin-right: 10%;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+.navbar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+.navbar :any-link {
+    color: var(--visited-color);
+}
+.nav-brand {
     margin-right: 10px;
+    text-decoration: none;
+    font-size: 2em;
 }
-label {
-    display: inline-block;
-    min-width: 100px;
-    text-align: right;
+.nav-item {
+    margin-right: 10px;
+    text-decoration: none;
+    font-size: 1.2em;
+    padding: 0.2em;
 }
-#submit {
-    margin-right: 0px;
-    margin-left: auto;
-    display: block;
-}
-.employeeList {
-    min-width: 200px;
-    border-radius: 25px;
-    border: 2px solid black;
-    padding: 10px;
-}
-.employeeListItem {
-    border-radius: 10px;
-    border-left: 5px solid blue;
-    padding-left: 5px;
-    padding-top: 5px;
-    padding-bottom: 5px;
-    margin-top: 3px;
-    margin-bottom: 3px;
-}
-.r1 {
-    background-color: #e3e3e3;
-}
-.r2 {
-    background-color: #e3e3e3;
+.nav-item:hover {
+    outline: 1px solid;
+    border-radius: 0.2em;
 }

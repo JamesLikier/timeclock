@@ -1,20 +1,28 @@
 <!DOCTYPE html>
 <html>
- <head>
+
+<head>
   {% block head %}
   <title>{% block title %}{% endblock %} - TimeClock</title>
   <link rel="stylesheet" href="/static/timeclock.css">
   {% endblock %}
- </head>
- <body>
-    <h1 id="title" class="centered">TimeClock</h1>
-    <div id="navbar" class="centered">
-      <a href="/employee/new">New Employee</a>
-      <a href="/employee/list">List Employees</a>
+</head>
+
+<body>
+  <div class="nav-backdrop">
+    <div class="container">
+      <div class="navbar">
+        <a class="nav-brand" href="/">TimeClock</a>
+        <a class="nav-item" href="/employee/new">New Employee</a>
+        <a class="nav-item" href="/employee/list">List Employees</a>
+        <a class="nav-item" href="/test">Test</a>
+      </div>
     </div>
-    <br>
-    <br>
-    <br>
-    {% block content %}{% endblock %}
- </body>
+  </div>
+  <br>
+  <br>
+  <br>
+  {% block content %}{% endblock %}
+</body>
+
 </html>
