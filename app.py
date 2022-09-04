@@ -4,16 +4,13 @@ from socket import socket
 import FileBasedControllers as fbc
 import lib.timeclock as tc
 from re import Match
-from lib.cachedfilemanager import CachedFileManager
 from jinja2 import Environment, PackageLoader, select_autoescape, FileSystemLoader
+from lib.cachedfilemanager import CachedFileManager
 
 server = httpserver("10.0.0.100",80)
 employeeController: tc.EmployeeController = fbc.FileBasedEmployeeController("employeefile")
 punchController: tc.PunchController = fbc.FileBasedPunchController("punchfile")
-templateCache: CachedFileManager = CachedFileManager(basedir="templates")
-scriptCache: CachedFileManager = CachedFileManager(basedir="static",filterExp=".*\.(js|css)$")
-
-scriptCache.start(5)
+cache = CachedFileManager()
 
 env = Environment(
     loader = FileSystemLoader("templates"),
@@ -29,7 +26,7 @@ server.handler404 = timeclock404
 @server.registerstatic("/static/(.*)$")
 def routeStatic(req: httprequest, match: Match, sock: socket):
     resp = httpresponse()
-    f = scriptCache.files.get(match.group(1),None)
+    f = cache.get(match.group(1))
     if f != None:
         resp.body = f
     else:

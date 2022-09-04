@@ -1,67 +1,41 @@
-from collections import defaultdict
 import os
-import threading
-import time
-import re
-from os import DirEntry
+
+class CachedFile():
+    def __init__(self, path: str):
+        self.path = path
+        self.mtime = 0
+        self.data = None
+    
+    def revalidate(self):
+        try:
+            statresult = os.stat(self.path)
+            if self.mtime < statresult.st_mtime:
+                self.mtime = statresult.st_mtime
+                with open(self.path,'rb') as file:
+                    self.data = file.read()
+        except Exception:
+            self.mtime = 0
+            self.data = None
+    
+    def get(self):
+        self.revalidate()
+        return self.data
 
 class CachedFileManager():
-    def __init__(self, basedir=".", verbose=True, filterExp=""):
-        self.basedir = basedir
-        self.verbose = verbose
-        self.files = dict()
-        self.modifiedTimes = defaultdict(float)
-        self.running = False
-        self.thread = None
-        self.filterRe = re.compile(filterExp)
-        self.filterExp = filterExp
-        self.scan()
+    def __init__(self):
+        self.cache = dict()
 
-    def cacheFile(self, entry: DirEntry = None):
-        if entry == None: return
+    def get(self, *path) -> bytes:
+        if len(path) > 1:
+            filepath = os.path.join(*path)
+        else:
+            filepath, = path
 
-        eStat = entry.stat()
-        eKeyName = entry.path[len(os.path.join(self.basedir,"")):]
-        if eStat.st_mtime > self.modifiedTimes[eKeyName]:
-            self.modifiedTimes[eKeyName] = eStat.st_mtime
-            with open(entry.path,'rb') as file:
-                self.files[eKeyName] = file.read()
-                if self.verbose:
-                    print(f'Updating Cached File: {entry.path}')
-
-    def scan(self, dir=None):
-        dir = dir if dir != None else self.basedir
-        with os.scandir(dir) as it:
-            for entry in it:
-                if entry.is_file():
-                    if self.filterExp != "":
-                        m = self.filterRe.match(entry.name)
-                        if m != None:
-                            self.cacheFile(entry)
-                    else:
-                        self.cacheFile(entry)
-                if entry.is_dir():
-                    self.scan(dir=entry.path)
-
-    def loop(self, interval):
-        while self.running:
-            self.scan()
-            time.sleep(interval)
-
-    def start(self, interval=60):
-        if self.running: return
-
-        self.running = True
-        self.thread = threading.Thread(target=CachedFileManager.loop,args=(self,),kwargs={"interval":interval},daemon=True)
-        self.thread.start()
-
-    def stop(self):
-        self.running = False
+        if(filepath not in self.cache.keys()):
+            self.cache[filepath] = CachedFile(filepath)
+        return self.cache[filepath].get()
 
 if __name__ == "__main__":
-    cfm = CachedFileManager("templates")
-    cfm.start(5)
-    i = input()
-    cfm.stop()
-    cfm.thread.join()
-    
+    cfm = CachedFileManager()
+    data = cfm.get(".","templates","index.html")
+    print(data)
