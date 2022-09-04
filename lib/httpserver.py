@@ -45,7 +45,9 @@ class httpresponse():
             self.headers[b'Content-Length'] = str(len(self.body)).encode()
         rebuiltHeaders = [k+b': '+v for k,v in self.headers.items()]
 
-        return startline + b'\r\n'.join(rebuiltHeaders) + b'\r\n\r\n' + self.body
+        bodybytes = self.body if type(self.body) == bytes else self.body.encode()
+
+        return startline + b'\r\n'.join(rebuiltHeaders) + b'\r\n\r\n' + bodybytes
 
     def send(self, sock: socket.socket):
         sock.send(self.format())

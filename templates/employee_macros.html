@@ -1,0 +1,22 @@
+{% import "form_macros.html" as formMacros %}
+{% macro displayEmployee(employee) %}
+    <div class="centered">
+        <h2>{{ employee.lname }}, {{ employee.fname }}</h2>
+    </div>
+{% endmacro %}
+{% macro displayEmployeeList(employees,pg,pgSize,displayCount) %}
+    <div class="centered employeeList">
+        {% for employee in employees %}
+            <div class="{{ loop.cycle('r1','r2') }} employeeListItem">{{ employee.lname }}, {{ employee.fname }}</div>
+        {% endfor %}
+    </div>
+{% endmacro %}
+{% macro displayNewEmployee() %}
+    <div class="centered">
+        <form method="POST" action="/employee/new">
+            {{ formMacros.input("fname",label="First Name:")}}
+            {{ formMacros.input("lname",label="Last Name:")}}
+            {{ formMacros.input("admin",type="radio",label="Admin:")}}
+        </form>
+    </div>
+{% endmacro %}

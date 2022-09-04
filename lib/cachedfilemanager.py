@@ -52,7 +52,7 @@ class CachedFileManager():
         if self.running: return
 
         self.running = True
-        self.thread = threading.Thread(target=cfm.loop,kwargs={"interval":interval},daemon=True)
+        self.thread = threading.Thread(target=CachedFileManager.loop,args=(self,),kwargs={"interval":interval},daemon=True)
         self.thread.start()
 
     def stop(self):

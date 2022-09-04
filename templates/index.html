@@ -1,20 +1,4 @@
-<!DOCTYPE html>
-<html>
- <head>
- <title>TimeClock</title>
- <script src="/static/react.development@18.2.0.js"></script>
- <script src="/static/react-dom.development@18.2.0.js"></script>
- <link rel="stylesheet" href="/static/timeclock.css"/>
- </head>
- <body>
-    <h1 id="title" class="centered">TimeClock</h1>
-    <div id="navbar" class="centered">
-      <a href="/employee/new">New Employee</a>
-      <a href="/employee/list">List Employees</a>
-    </div>
-    <br>
-    <br>
-    <br>
-    @placeholder
- </body>
-</html>
+{% extends "base.html" %}
+{% block title %}Index{% endblock %}
+{% block head %}{{ super() }}{% endblock %}
+{% block content %}{% endblock %}

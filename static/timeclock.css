@@ -17,17 +17,24 @@ label {
     margin-left: auto;
     display: block;
 }
-#employeelist {
+.employeeList {
+    min-width: 200px;
+    border-radius: 25px;
+    border: 2px solid black;
+    padding: 10px;
 }
-.employeelistitem {
-    width: 300px;
-    text-align: center;
-    padding-top: 10px;
-    padding-bottom: 10px;
+.employeeListItem {
+    border-radius: 10px;
+    border-left: 5px solid blue;
+    padding-left: 5px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-top: 3px;
+    margin-bottom: 3px;
 }
 .r1 {
-    background-color:lavender;
+    background-color: #e3e3e3;
 }
 .r2 {
-    background-color:beige;
+    background-color: #e3e3e3;
 }

@@ -1,4 +1,9 @@
-<div class="centered">
-    <h2 class="centered">@employeename</h2>
-    @punchlist
-</div>
+{% extends "base.html" %}
+{% import "employee_macros.html" as employeeMacros %}
+{% block title %}Employee: {{ employee.lname }}, {{ employee.fname }}{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block content %}
+    {{ employeeMacros.displayEmployee(employee) }}
+{% endblock %}
