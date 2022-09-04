@@ -55,6 +55,23 @@ def routeEmployee(req: httprequest, match: Match, sock: socket):
     resp.body = template.render(employee=employee)
     resp.send(sock)
 
+@server.register(("POST",), "/employee/new$")
+def routeEmployeeNewPOST(req: httprequest, match: Match, sock: socket):
+    resp = httpresponse()
+    e = employeeController.createEmployee(fname=req.form.data["fname"].asStr(),
+                                          lname=req.form.data["lname"].asStr(),
+                                          admin=req.form.data["admin"].asBool())
+    template = env.get_template("employeeNewPOST.html")
+    resp.body = template.render(employee=e)
+    resp.send(sock)
+
+@server.register(("GET",), "/employee/new$")
+def routeEmployeeNewGET(req: httprequest, match: Match, sock: socket):
+    resp = httpresponse()
+    template = env.get_template("employeeNewGET.html")
+    resp.body = template.render()
+    resp.send(sock)
+
 @server.register(("GET",), "/employee/list$|/employee/list\?pg\=([0-9]+)\&pgSize\=([0-9]+)$")
 def routeEmployeeList(req: httprequest, match: Match, sock: socket):
     resp = httpresponse()

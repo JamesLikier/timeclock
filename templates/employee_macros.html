@@ -1,22 +1,28 @@
 {% import "form_macros.html" as formMacros %}
 {% macro displayEmployee(employee) %}
-    <div class="centered">
+    <div>
         <h2>{{ employee.lname }}, {{ employee.fname }}</h2>
     </div>
 {% endmacro %}
 {% macro displayEmployeeList(employees,pg,pgSize,displayCount) %}
-    <div class="centered employeeList">
+    <div>
         {% for employee in employees %}
             <div class="{{ loop.cycle('r1','r2') }} employeeListItem">{{ employee.lname }}, {{ employee.fname }}</div>
         {% endfor %}
     </div>
 {% endmacro %}
 {% macro displayNewEmployee() %}
-    <div class="centered">
+    <div>
         <form method="POST" action="/employee/new">
             {{ formMacros.input("fname",label="First Name:")}}
             {{ formMacros.input("lname",label="Last Name:")}}
-            {{ formMacros.input("admin",type="radio",label="Admin:")}}
+            {{ formMacros.input("admin",type="checkbox",label="Admin:",value="True")}}
+            {{ formMacros.input("submit",type="submit",value="Submit") }}
         </form>
+    </div>
+{% endmacro %}
+{% macro displayNewEmployeeSuccess(employee) %}
+    <div>
+        Successfuly created new employee: <a href="/employee/{{ employee.id }}">{{ employee.lname }}, {{ employee.fname }}</a>
     </div>
 {% endmacro %}

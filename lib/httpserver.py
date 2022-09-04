@@ -15,7 +15,7 @@ class formdata():
     filename: str = None
 
     def formatUrlEnc(self):
-        return f"{self.name}=".encode() + self.value.encode()
+        return f"{self.name}=".encode() + self.value
     
     def formatFormData(self):
         header = f'Content-Disposition: form-data; name="{self.name}"'
@@ -26,6 +26,15 @@ class formdata():
         body = self.value
 
         return header.encode() + b'\r\n\r\n' + body + b'\r\n'
+    
+    def asStr(self):
+        return self.value.decode()
+    
+    def asBytes(self):
+        return self.value
+    
+    def asBool(self):
+        return self.value == b'True'
 
 class statuscodes(Enum):
     OK = (200,"OK")
@@ -56,10 +65,7 @@ class httpform():
     def __init__(self, contenttype="", boundary=b'', data=None):
         self.contenttype = contenttype
         self.boundary = boundary
-        if data == None:
-            self.data = dict()
-        else:
-            self.data = data
+        self.data = defaultdict(lambda: formdata("UNDEFINED",b''), data if data != None else dict())
         
     def format(self):
         if self.contenttype == "multipart/form-data":
@@ -82,17 +88,18 @@ class httpform():
     def parseurlencoded(data: bytes):
         contenttype = "application/x-www-form-urlencoded"
         parsed = dict()
-        data = data.decode()
 
-        bsep = "&"
-        kvsep = "="
+        bsep = b"&"
+        kvsep = b"="
 
         keyvalpair,foundsep,remainder = data.partition(bsep)
-        while foundsep != "":
+        while foundsep != b"":
             key,_,val = keyvalpair.partition(kvsep)
+            key = key.decode()
             parsed[key] = formdata(key,val)
             keyvalpair,foundsep,remainder = remainder.partition(bsep)
         key,_,val = keyvalpair.partition(kvsep)
+        key = key.decode()
         parsed[key] = formdata(key,val)
 
         return httpform(contenttype=contenttype,data=parsed)
@@ -298,7 +305,7 @@ class httpserver():
         
         if handler == None: handler = self.handler404
 
-        logging.info(f"Dispatching {r.uri}")
+        logging.info(f"Dispatching {r.method}:{r.uri}")
         handler(r,match,sock)
 
 def acceptloop(*args, **kwargs):
