@@ -6,11 +6,14 @@ import lib.timeclock as tc
 from re import Match
 from jinja2 import Environment, PackageLoader, select_autoescape, FileSystemLoader
 from lib.cachedfilemanager import CachedFileManager
+import logging
 
 server = httpserver("10.0.0.100",80)
 employeeController: tc.EmployeeController = fbc.FileBasedEmployeeController("employeefile")
 punchController: tc.PunchController = fbc.FileBasedPunchController("punchfile")
 cache = CachedFileManager()
+
+logging.basicConfig(filename="timeclock.log", filemode="w", level=logging.DEBUG)
 
 env = Environment(
     loader = FileSystemLoader("templates"),
@@ -26,15 +29,14 @@ server.handler404 = timeclock404
 @server.registerstatic("/static/(.*)$")
 def routeStatic(req: httprequest, match: Match, sock: socket):
     resp = httpresponse()
-    f = cache.get(match.group(1))
+    urlFilepath = match.group(1)
+    paths = tuple(urlFilepath.split("/"))
+
+    f = cache.get(".","static",*paths)
     if f != None:
         resp.body = f
     else:
-        try:
-            with open(f"./{req.uri}", 'rb') as f:
-                resp.body = f.read()
-        except Exception:
-            resp.statuscode = statuscodes.NOT_FOUND
+        resp.statuscode = statuscodes.NOT_FOUND
         
     resp.send(sock)
 

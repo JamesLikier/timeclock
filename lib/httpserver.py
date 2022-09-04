@@ -3,9 +3,9 @@ from enum import Enum
 from collections import defaultdict
 from dataclasses import dataclass
 import socket
-import time
 import threading
 import re
+import logging
 
 @dataclass(frozen=True)
 class formdata():
@@ -298,7 +298,7 @@ class httpserver():
         
         if handler == None: handler = self.handler404
 
-        print(f"Dispatching {r.uri}")
+        logging.info(f"Dispatching {r.uri}")
         handler(r,match,sock)
 
 def acceptloop(*args, **kwargs):
