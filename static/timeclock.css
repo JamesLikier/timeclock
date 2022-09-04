@@ -2,6 +2,8 @@
     --body-bg-color: #f0f0f0;
     --navbar-bg-color: #d0d0d0;
     --visited-color: black;
+    --row1-bg-color: #c4e2ff;
+    --row2-bg-color: #ddf0ff;
 }
 html {
     box-sizing: border-box;
@@ -18,9 +20,20 @@ body {
 .nav-backdrop {
     background-color: var(--navbar-bg-color);
 }
+@media (min-width: 300px) {
+    .container {
+        margin-left: 10px;
+        margin-right: 0px;
+    }
+}
+@media (min-width: 700px) {
+    .container {
+        width: 650px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
 .container {
-    margin-left: 10%;
-    margin-right: 10%;
     padding-top: 10px;
     padding-bottom: 10px;
 }
@@ -46,4 +59,40 @@ body {
 .nav-item:hover {
     outline: 1px solid;
     border-radius: 0.2em;
+}
+.page-link {
+    margin-left: 0.2em;
+}
+.employee-list {
+    width: max-content;
+    border: 1px solid;
+    display: flex;
+    flex-direction: column;
+}
+.employee-list-item {
+    padding: 0.3em;
+}
+.employee-list-footer {
+    padding: 0.2em;
+    border-top: 1px solid;
+}
+.r1 {
+    background-color: var(--row1-bg-color);
+}
+.r2 {
+    background-color: var(--row2-bg-color);
+}
+.flex-row {
+    display: flex;
+    flex-direction: row;
+}
+.mr {
+    margin-right: auto;
+}
+.ml {
+    margin-left: auto;
+}
+.mx {
+    margin-left: auto;
+    margin-right: auto;
 }

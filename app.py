@@ -19,9 +19,12 @@ env = Environment(
     loader = FileSystemLoader("templates"),
     autoescape = select_autoescape()
 )
+env.filters["floor"] = lambda val, floor: val if val > floor else floor
+env.filters["ceil"] = lambda val, ceil: val if val < ceil else ceil
 
 def timeclock404(req: httprequest, match: Match, sock: socket):
     resp = httpresponse()
+    resp.body = b'404 - Not Found'
     resp.send(sock)
 
 server.handler404 = timeclock404
@@ -77,9 +80,9 @@ def routeEmployeeList(req: httprequest, match: Match, sock: socket):
     resp = httpresponse()
     template = env.get_template("employeeList.html")
     pg = 1 if match.group(1) == None else int(match.group(1))
-    pgSize = 10 if match.group(2) == None else int(match.group(2))
+    pgSize = 20 if match.group(2) == None else int(match.group(2))
     employees = employeeController.getEmployeeList(offset=(pg-1)*pgSize,count=pgSize)
-    resp.body = template.render(employees=employees,pg=pg,pgSize=pgSize,displayCount=len(employees))
+    resp.body = template.render(employees=employees,pg=pg,pgSize=pgSize,displayCount=len(employees),totalEmployees=len(employeeController.employeeDict))
     resp.send(sock)
 
 @server.register(("GET",),"/api/(xhr|json)/employee/list\?pg=([0-9]+)\&pgSize=([0-9]+)$")

@@ -3,5 +3,5 @@
 {% block title %}Employee List{% endblock %}
 {% block head %}{{ super() }}{% endblock %}
 {% block content %}
-    {{ employeeMacros.displayEmployeeList(employees,pg,pgSize,displayCount) }}
+    {{ employeeMacros.displayEmployeeList(employees,pg,pgSize,displayCount,totalEmployees) }}
 {% endblock %}
