@@ -1,14 +1,11 @@
 {% import "form_macros.html" as formMacros %}
+{% import "pagination_macros.html" as paginationMacros %}
 {% macro displayEmployee(employee) %}
     <div>
         <h2>{{ employee.lname }}, {{ employee.fname }}</h2>
     </div>
 {% endmacro %}
 {% macro displayEmployeeList(employees,pg,pgSize,displayCount,totalEmployees) %}
-    {% set pgLeftRight = 3 %}
-    {% set pgStart = ((pg - pgLeftRight) | floor(1)) %}
-    {% set lastPg = ((totalEmployees/pgSize)|round(method="ceil")) | int %}
-    {% set pgEnd = (pg + pgLeftRight) | ceil(lastPg) %}
     <h2>Employees</h2>
     <div class="employee-list">
         {% for employee in employees %}
@@ -16,13 +13,7 @@
         {% endfor %}
         <div class="flex-row employee-list-footer">
             Page 
-            {% if (pg - pgLeftRight > 1) %}<a href="/employee/list?pg=1&pgSize={{pgSize}}" class="page-link"><<</a>{% endif %}
-            {% for num in range(pgStart,pgEnd+1) %}
-                {% if pg != num %}<a href="/employee/list?pg={{num}}&pgSize={{pgSize}}">{% endif %}
-                <span class="page-link {% if pg == num %}page-active{% endif %}">{{num}}</span>
-                {% if pg != num %}</a>{% endif %}
-            {% endfor %}
-            {% if lastPg - pg > pgLeftRight %}<a href="/employee/list?pg={{lastPg}}&pgSize={{pgSize}}" class="page-link">>></a>{% endif %}
+            {{ paginationMacros.paginate(url="/employee/list",pgLeftRight=2,pg=pg,pgSize=pgSize,totalItems=totalEmployees) }}
             <div style="width: 25px;"></div>
             <div class="ml">Displaying {{ displayCount }} of {{ totalEmployees }}</div>
         </div>

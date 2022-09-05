@@ -1,0 +1,19 @@
+{% macro paginate(url,pgLeftRight,pg,pgSize,totalItems) %}
+    {% set pgStart = ((pg - pgLeftRight) | floor(1)) %}
+    {% set lastPg = ((totalItems/pgSize)|round(method="ceil")) | int %}
+    {% set pgEnd = (pg + pgLeftRight) | ceil(lastPg) %}
+
+    {% if (pg - pgLeftRight > 1) %}
+        <a href="{{url}}?pg=1&pgSize={{pgSize}}" class="page-link"><<</a>
+    {% endif %}
+    {% for num in range(pgStart,pgEnd+1) %}
+        {% if pg != num %}
+            <a href="{{url}}?pg={{num}}&pgSize={{pgSize}}">
+        {% endif %}
+        <span class="page-link {% if pg == num %}page-active{% endif %}">{{num}}</span>
+        {% if pg != num %}</a>{% endif %}
+    {% endfor %}
+    {% if lastPg - pg > pgLeftRight %}
+        <a href="{{url}}?pg={{lastPg}}&pgSize={{pgSize}}" class="page-link">>></a>
+    {% endif %}
+{% endmacro %}
