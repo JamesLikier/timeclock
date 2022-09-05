@@ -9,9 +9,9 @@
     <h2>Employees</h2>
     <div class="employee-list">
         {% for employee in employees %}
-            <div class="{{ loop.cycle('r1','r2') }} employee-list-item"><a href="/employee/{{ employee.id }}">{{ employee.lname }}, {{ employee.fname }}</a></div>
+            <div class="{{ loop.cycle('r1','r2') }} list-item"><a href="/employee/{{ employee.id }}">{{ employee.lname }}, {{ employee.fname }}</a></div>
         {% endfor %}
-        <div class="flex-row employee-list-footer">
+        <div class="flex-row list-footer">
             Page 
             {{ paginationMacros.paginate(url="/employee/list",pgLeftRight=2,pg=pg,pgSize=pgSize,totalItems=totalEmployees) }}
             <div style="width: 25px;"></div>
@@ -21,14 +21,14 @@
 {% endmacro %}
 {% macro displayNewEmployee() %}
     <h2>New Employee</h2>
-    <div>
-        <form method="POST" action="/employee/new">
-            {{ formMacros.input("fname",label="First Name:")}}
-            {{ formMacros.input("lname",label="Last Name:")}}
-            {{ formMacros.input("admin",type="checkbox",label="Admin:",value="True")}}
-            {{ formMacros.input("submit",type="submit",value="Submit") }}
-        </form>
-    </div>
+    <form method="POST" action="/employee/new">
+        <table>
+            {{ formMacros.input("fname",label="First Name:",table=True)}}
+            {{ formMacros.input("lname",label="Last Name:",table=True)}}
+            {{ formMacros.input("admin",type="checkbox",label="Admin:",value="True",table=True)}}
+        </table>
+        {{ formMacros.input("submit",type="submit",value="Submit") }}
+    </form>
 {% endmacro %}
 {% macro displayNewEmployeeSuccess(employee) %}
     <h2>

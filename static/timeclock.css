@@ -4,6 +4,7 @@
     --visited-color: black;
     --row1-bg-color: #c4e2ff;
     --row2-bg-color: #ddf0ff;
+    --border-color: #aaaaaa;
 }
 html {
     box-sizing: border-box;
@@ -73,19 +74,40 @@ body {
     border: 1px solid;
     display: flex;
     flex-direction: column;
+    border-color: var(--border-color);
 }
-.employee-list-item {
+.list-item {
     padding: 0.3em;
 }
-.employee-list-footer {
+.list-footer {
     padding: 0.2em;
     border-top: 1px solid;
+    border-color: inherit;
 }
 .r1 {
     background-color: var(--row1-bg-color);
 }
 .r2 {
     background-color: var(--row2-bg-color);
+}
+form {
+    width: max-content;
+    padding: 1em;
+    border: 1px solid;
+    border-color: var(--border-color);
+}
+td.label {
+    text-align: right;
+}
+td.input {
+    text-align: left;
+}
+td.input input {
+    margin-left: 0px;
+}
+form input[type="submit"] {
+    display: block;
+    margin-left: auto;
 }
 .flex-row {
     display: flex;

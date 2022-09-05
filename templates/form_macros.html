@@ -1,6 +1,12 @@
-{% macro input(name, value='', type='text', size=20, label="") %}
+{% macro input(name, value='', type='text', size=20, label="",table=False) %}
+    {% if table %}<tr>{% endif %}
     {% if label != "" %}
-    <label for="{{ name }}">{{ label|e }}</label>
+        {% if table %}<td class="label">{% endif %}
+        <label for="{{ name }}">{{ label|e }}</label>
+        {% if table %}</td>{% endif %}
     {% endif %}
+    {% if table %}<td class="input">{% endif %}
     <input type="{{ type }}" name="{{ name }}" value="{{ value|e }}" size="size">
+    {% if table %}</td>{% endif %}
+    {% if table %}</tr>{% endif %}
 {% endmacro %}
