@@ -75,12 +75,18 @@ def routeEmployeeNewGET(req: httprequest, match: Match, sock: socket):
     resp.body = template.render()
     resp.send(sock)
 
-@server.register(("GET",), "/employee/list$|/employee/list\?pg\=([0-9]+)\&pgSize\=([0-9]+)$")
+@server.register(("GET",), "/employee/list$|/employee/list\?(\&?(pg|pgSize)=([0-9]+))(\&?(pg|pgSize)=([0-9]+))")
 def routeEmployeeList(req: httprequest, match: Match, sock: socket):
     resp = httpresponse()
     template = env.get_template("employeeList.html")
-    pg = 1 if match.group(1) == None else int(match.group(1))
-    pgSize = 20 if match.group(2) == None else int(match.group(2))
+    pg = 1
+    pgSize = 20
+    if match.group(2) == "pg":
+        pg = int(match.group(3))
+        pgSize = int(match.group(6))
+    elif match.group(2) == "pgSize":
+        pg = int(match.group(6))
+        pgSize = int(match.group(3))
     employees = employeeController.getEmployeeList(offset=(pg-1)*pgSize,count=pgSize)
     resp.body = template.render(employees=employees,pg=pg,pgSize=pgSize,displayCount=len(employees),totalEmployees=len(employeeController.employeeDict))
     resp.send(sock)
