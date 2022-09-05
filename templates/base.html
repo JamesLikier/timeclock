@@ -12,17 +12,20 @@
 <body>
   <div class="nav-backdrop">
     <div class="container">
-      <div class="navbar">
+      <div class="navbar flex-row">
         <a class="nav-brand" href="/">TimeClock</a>
-        <a class="nav-item" href="/employee/new">New Employee</a>
-        <a class="nav-item" href="/employee/list">List Employees</a>
-        <a class="nav-item" href="/test">Test</a>
+        <div class="collapse">
+          <a class="nav-item" href="/employee/new">New Employee</a>
+          <a class="nav-item" href="/employee/list">List Employees</a>
+        </div>
+        <div class="collapse-toggle"></div>
       </div>
     </div>
   </div>
   <div class="container">
   {% block content %}{% endblock %}
   </div>
+  <script src="/static/timeclock.js"></script>
 </body>
 
 </html>
