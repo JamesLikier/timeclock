@@ -26,7 +26,7 @@ body {
     background-color: var(--navbar-bg-color);
 }
 
-@media (min-width: 300px) {
+@media (max-width: 1000px) {
     .container {
         margin-left: 10px;
         margin-right: 0px;
@@ -37,8 +37,8 @@ body {
     }
 
     .collapse {
+        display: flex;
         flex-direction: column;
-        display: none;
     }
 
     .collapse-toggle {
@@ -51,7 +51,7 @@ body {
     }
 }
 
-@media (min-width: 700px) {
+@media (min-width: 1000px) {
     .container {
         width: 650px;
         margin-left: auto;
@@ -72,9 +72,17 @@ body {
         display: none;
     }
 }
+.t-fade {
+   transition: opacity 1s; 
+}
+.t-resize {
+    transition: height 1s;
+}
+.t-fade-resize {
+    transition: height 1s, opacity 1s;
+}
 
 .collapse {
-    transition: height 1s, opacity 1s;
     opacity: 1;
 }
 
