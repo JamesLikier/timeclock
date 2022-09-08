@@ -66,7 +66,7 @@ document.addEventListener("click", event => {
     }
 });
 let lastWidth = -1;
-let collapseWidth = 1000;
+let collapseWidth = 800;
 function initializeCollapseState() {
     let e = document.querySelector(".collapse");
     //window first created
