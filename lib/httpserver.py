@@ -41,22 +41,46 @@ class statuscodes(Enum):
     NOT_FOUND = (404,"Not Found")
     NOT_DEFINED = (-1,"Not Defined")
 
+@dataclass
+class httpheader():
+    def __init__(self, key: str, val: str):
+        self.key = key
+        self.val = val
+    
+    def format(self):
+        return (f'{self.key}: {self.val}\r\n').encode()
+
+@dataclass
+class httpcookie():
+    def __init__(self, key: str, val: str):
+        self.key = key
+        self.val = val
+    
+    def format(self):
+        return (f'Set-Cookie: {self.key}={self.val}\r\n').encode()
+
 class httpresponse():
     def __init__(self, httpvers = "HTTP/1.1", statuscode = statuscodes.OK, body = b'', headers=None):
         self.httpvers = httpvers
         self.statuscode = statuscode
         self.body = body
-        self.headers = headers if headers != None else dict()
+        self.headers = dict()
+        self.cookies = []
     
     def format(self):
         startline = self.httpvers.encode() + f' {self.statuscode.value[0]} {self.statuscode.value[1]}\r\n'.encode()
-        if self.headers.get(b'Content-Length',None) == None:
-            self.headers[b'Content-Length'] = str(len(self.body)).encode()
-        rebuiltHeaders = [k+b': '+v for k,v in self.headers.items()]
+
+        ##find our Content-Length header
+        contentLength = self.headers.get("Content-Length",None)
+        ## if we don't find it, add it and set it to our body length
+        if contentLength == None:
+            self.headers["Content-Length"] = httpheader("Content-Length",str(len(self.body)))
+        rebuiltHeaders = b''.join([header.format() for header in self.headers.values()])
+        rebuiltCookies = b''.join([cookie.format() for cookie in self.cookies])
 
         bodybytes = self.body if type(self.body) == bytes else self.body.encode()
 
-        return startline + b'\r\n'.join(rebuiltHeaders) + b'\r\n\r\n' + bodybytes
+        return startline + rebuiltHeaders + rebuiltCookies + b'\r\n' + bodybytes
 
     def send(self, sock: socket.socket):
         sock.send(self.format())
@@ -156,11 +180,12 @@ class httprequest():
         self.httpvers = httpvers
         self.body = body
         if headers == None:
-            self.headers = defaultdict(bytes)
+            self.headers = dict()
         else:
             self.headers = headers
         self.form = form if form != None else httpform()
         self.raw = raw
+        logging.debug(b"Raw Request: " + self.raw)
     
     def format(self):
         if self.raw != b'':
@@ -169,8 +194,8 @@ class httprequest():
         lines = []
         lines.append(f"{self.method} {self.uri} {self.httpvers}".encode())
         lines.append(b'\r\n')
-        for k,v in self.headers.items():
-            lines.append(f"{k}: ".encode() + v + b'\r\n')
+        for h in self.headers.values():
+            lines.append(h.format() + b'\r\n')
         lines.append(b'\r\n')
         if self.body != b'':
             lines.append(self.body)
@@ -195,22 +220,22 @@ class httprequest():
         startline = startlinebytes.decode()
 
         #the rest are http headers
-        headers = defaultdict(bytes)
+        headers = dict()
         while headerbytes != b'':
             headerlinebytes,_,headerbytes = headerbytes.partition(clrf)
             headerkey,_,headerval = headerlinebytes.partition(headersep)
-            headers[headerkey.decode()] = headerval
+            headers[headerkey.decode()] = httpheader(headerkey.decode(),headerval.decode())
 
         #assign our properties from parsed values
         method,_,reststartline = startline.partition(" ")
         uri,_,httpvers = reststartline.partition(" ")
-        contenttype,_,boundary = headers["Content-Type"].partition(b'; boundary=')
+        contenttype,_,boundary = headers.get("Content-Type",httpheader("","")).val.partition('; boundary=')
 
         #next, handle the form data from body
         form = None
-        if contenttype == b"multipart/form-data":
-            form = httpform.parsemultipart(bodybytes, boundary)
-        elif contenttype == b"application/x-www-form-urlencoded":
+        if contenttype == "multipart/form-data":
+            form = httpform.parsemultipart(bodybytes, boundary.encode())
+        elif contenttype == "application/x-www-form-urlencoded":
             form = httpform.parseurlencoded(bodybytes)
         
         return httprequest(method=method,uri=uri,httpvers=httpvers,headers=headers,body=bodybytes,form=form,raw=databytes)
