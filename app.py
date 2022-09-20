@@ -43,14 +43,14 @@ def routeStatic(req: httpserver.Request, match: Match, sock: socket):
         
     resp.send(sock)
 
-@server.register(("GET",),"/$")
+@server.register(["GET"],"/$")
 def routeRoot(req: httpserver.Request, match: Match, sock: socket):
     resp = httpserver.Response()
     template = env.get_template("index.html")
     resp.body = template.render()
     resp.send(sock)
 
-@server.register(("GET",), "/employee/([0-9]+)$")
+@server.register(["GET"], "/employee/([0-9]+)$")
 def routeEmployee(req: httpserver.Request, match: Match, sock: socket):
     resp = httpserver.Response()
     template = env.get_template("employee.html")
@@ -58,7 +58,7 @@ def routeEmployee(req: httpserver.Request, match: Match, sock: socket):
     resp.body = template.render(employee=employee)
     resp.send(sock)
 
-@server.register(("POST",), "/employee/new$")
+@server.register(["POST"], "/employee/new$")
 def routeEmployeeNewPOST(req: httpserver.Request, match: Match, sock: socket):
     resp = httpserver.Response()
     e = employeeController.createEmployee(fname=req.form.data["fname"].asStr(),
@@ -68,14 +68,14 @@ def routeEmployeeNewPOST(req: httpserver.Request, match: Match, sock: socket):
     resp.body = template.render(employee=e)
     resp.send(sock)
 
-@server.register(("GET",), "/employee/new$")
+@server.register(["GET"], "/employee/new$")
 def routeEmployeeNewGET(req: httpserver.Request, match: Match, sock: socket):
     resp = httpserver.Response()
     template = env.get_template("employeeNewGET.html")
     resp.body = template.render()
     resp.send(sock)
 
-@server.register(("GET",), "/employee/list$|/employee/list\?(\&?(pg|pgSize)=([0-9]+))(\&?(pg|pgSize)=([0-9]+))")
+@server.register(["GET"], "/employee/list$|/employee/list\?(\&?(pg|pgSize)=([0-9]+))(\&?(pg|pgSize)=([0-9]+))")
 def routeEmployeeList(req: httpserver.Request, match: Match, sock: socket):
     resp = httpserver.Response()
     template = env.get_template("employeeList.html")
@@ -91,7 +91,7 @@ def routeEmployeeList(req: httpserver.Request, match: Match, sock: socket):
     resp.body = template.render(employees=employees,pg=pg,pgSize=pgSize,displayCount=len(employees),totalEmployees=len(employeeController.employeeDict))
     resp.send(sock)
 
-@server.register(("GET",), "/login/([0-9]+)$")
+@server.register(["GET"], "/login/([0-9]+)$")
 def routeLogin(req: httpserver.Request, match: Match, sock: socket):
     resp = httpserver.Response()
     employeeid = int(match.group(1))
@@ -104,7 +104,7 @@ def routeLogin(req: httpserver.Request, match: Match, sock: socket):
         resp.body = "Invalid Login"
     resp.send(sock)
 
-@server.register(("GET",), "/logout$")
+@server.register(["GET"], "/logout$")
 def routeLogout(req: httpserver.Request, match: Match, sock: socket):
     resp = httpserver.Response()
     resp.cookies["employeeid"] = ""
@@ -112,7 +112,7 @@ def routeLogout(req: httpserver.Request, match: Match, sock: socket):
     resp.body = template.render()
     resp.send(sock)
 
-@server.register(("GET",),"/api/(xhr|json)/employee/list\?pg=([0-9]+)\&pgSize=([0-9]+)$")
+@server.register(["GET"],"/api/(xhr|json)/employee/list\?pg=([0-9]+)\&pgSize=([0-9]+)$")
 def routeApiEmployeeList(req: httpserver.Request, match: Match, sock: socket):
     resp = httpserver.Response()
     resp.send(sock)
