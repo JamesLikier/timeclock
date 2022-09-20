@@ -1,355 +1,390 @@
-from difflib import Match
-from enum import Enum
-from collections import defaultdict
 from dataclasses import dataclass
+import logging
 import socket
 import threading
+from collections import namedtuple
+from collections.abc import MutableMapping
+from typing import Any
 import re
-import logging
 
-@dataclass(frozen=True)
-class formdata():
-    name: str
-    value: bytes
-    contenttype: str = ""
-    filename: str = None
+StatusCode = namedtuple("StatusCode","code text")
+STATUS_CODES = {
+    404: StatusCode(404,"Not Found"),
+    200: StatusCode(200,"OK")
+}
+CONTENT_TYPES = {
+    "URLEnc": "application/x-www-form-urlencoded",
+    "MultiPart": "multipart/form-data"
+}
+class IncompleteStartline(Exception):
+    pass
+class FormDataRequired(Exception):
+    pass
 
-    def formatUrlEnc(self):
-        return f"{self.name}=".encode() + self.value
-    
-    def formatFormData(self):
-        header = f'Content-Disposition: form-data; name="{self.name}"'
-        if self.filename != None:
-            header += f'; filename="{self.filename}"'
-        if self.contenttype != "":
-            header += f'\r\nContent-Type: {self.contenttype}'
-        body = self.value
+def partitions(line: str | bytes, sep: str | bytes):
+    start,_,end = line.partition(sep)
+    while(len(start) > 0):
+        yield start
+        start,_,end = end.partition(sep)
 
-        return header.encode() + b'\r\n\r\n' + body + b'\r\n'
-    
-    def asStr(self):
-        return self.value.decode()
-    
-    def asBytes(self):
-        return self.value
-    
-    def asBool(self):
-        return self.value == b'True'
-
-class statuscodes(Enum):
-    OK = (200,"OK")
-    NOT_FOUND = (404,"Not Found")
-    NOT_DEFINED = (-1,"Not Defined")
-
-@dataclass
-class httpheader():
-    def __init__(self, key: str, val: str):
-        self.key = key
-        self.val = val
-    
-    def format(self):
-        return (f'{self.key}: {self.val}\r\n').encode()
-
-@dataclass
-class httpcookie():
-    def __init__(self, key: str, val: str):
-        self.key = key
-        self.val = val
-    
-    def format(self):
-        return (f'Set-Cookie: {self.key}={self.val}\r\n').encode()
-
-class httpresponse():
-    def __init__(self, httpvers = "HTTP/1.1", statuscode = statuscodes.OK, body = b'', headers=None):
+class HTTPBase():
+    def __init__(self,
+                httpvers: str = "HTTP/1.1",
+                body: str | bytes | None = None,
+                headers: dict | None = None,
+                cookies: dict | None = None,
+                sock: socket.socket | None = None):
         self.httpvers = httpvers
-        self.statuscode = statuscode
         self.body = body
-        self.headers = dict()
-        self.cookies = []
+        self.headers = headers or dict()
+        self.cookies = cookies or dict()
+        self.sock = sock
+
+    def formatStartline(self):
+        raise NotImplementedError
+
+    def formatHeaders(self):
+        headerlines = [f'{k}: {v}\r\n'.encode() for k,v in self.headers.items()]
+        return b''.join(headerlines)
+    
+    def formatCookies(self):
+        raise NotImplementedError
+    
+    def formatBody(self):
+        return self.body if isinstance(self.body, bytes) else (self.body or '').encode()
     
     def format(self):
-        startline = self.httpvers.encode() + f' {self.statuscode.value[0]} {self.statuscode.value[1]}\r\n'.encode()
+        raise NotImplementedError
 
-        ##find our Content-Length header
-        contentLength = self.headers.get("Content-Length",None)
-        ## if we don't find it, add it and set it to our body length
-        if contentLength == None:
-            self.headers["Content-Length"] = httpheader("Content-Length",str(len(self.body)))
-        rebuiltHeaders = b''.join([header.format() for header in self.headers.values()])
-        rebuiltCookies = b''.join([cookie.format() for cookie in self.cookies])
+    def send(self, sock: socket.socket | None = None):
+        sock = sock or self.sock
+        if sock is not None:
+            sock.send(self.format())
 
-        bodybytes = self.body if type(self.body) == bytes else self.body.encode()
+class Response(HTTPBase):
+    def __init__(self,
+                statuscode: StatusCode = STATUS_CODES[200],
+                httpvers: str = "HTTP/1.1",
+                body: str | bytes | None = None,
+                headers: dict | None = None,
+                cookies: dict | None = None,
+                sock: socket.socket | None = None):
+        super().__init__(httpvers=httpvers,
+                        body=body,
+                        headers=headers,
+                        cookies=cookies,
+                        sock=sock)
+        self.statuscode = statuscode
+    
+    def formatStartline(self):
+        return f'{self.httpvers} {self.statuscode.code} {self.statuscode.text}\r\n'.encode()
 
-        return startline + rebuiltHeaders + rebuiltCookies + b'\r\n' + bodybytes
+    def formatCookies(self):
+        cookielines = [f'Set-Cookie: {k}={v}\r\n'.encode() for k,v in self.cookies.items()]
+        return b''.join(cookielines)
+    
+    def format(self):
+        sl = self.formatStartline()
+        h = self.formatHeaders()
+        if "Content-Length" not in self.headers and self.body is not None:
+            h+= (f'Content-Length: {len(self.body)}\r\n').encode()
+        c = self.formatCookies()
+        b = self.formatBody()
+        return sl + h + c + b'\r\n' + b
 
-    def send(self, sock: socket.socket):
-        sock.send(self.format())
+@dataclass
+class FormData():
+    name: str = ""
+    value: bytes | str | None = b''
+    contentType: str | None = None
+    filename: str | None = None
 
-class httpform():
-    def __init__(self, contenttype="", boundary=b'', data=None):
-        self.contenttype = contenttype
+    def asStr(self) -> str:
+        if isinstance(self.value,str):
+            return self.value
+        elif isinstance(self.value,bytes):
+            return self.value.decode()
+        elif isinstance(self.value,int):
+            return str(self.value)
+    def asBytes(self) -> bytes:
+        if isinstance(self.value,str):
+            return self.value.encode()
+        elif isinstance(self.value,bytes):
+            return self.value
+        elif isinstance(self.value,int):
+            return (str(self.value)).encode()
+    def asBool(self) -> bool:
+        return self.asBytes() == b'True'
+    def asInt(self) -> int:
+        if isinstance(self.value,str):
+            return int(self.value)
+        elif isinstance(self.value,bytes):
+            return int(self.value.decode())
+        elif isinstance(self.value,int):
+            return self.value
+    def formatURLEnc(self) -> bytes:
+        return f"{self.name}=".encode() + self.asBytes()
+    def formatMultiPart(self) -> bytes:
+        header = f'Content-Disposition: form-data; name="{self.name}"'
+        if self.filename is not None:
+            header += f'; filename="{self.filename}"'
+        if self.contentType is not None:
+            header += f'\r\nContent-Type: {self.contentType}'
+        return header.encode() + b'\r\n\r\n' + self.asBytes()
+
+class Form(MutableMapping):
+    def __init__(self, contentType: str = CONTENT_TYPES["URLEnc"],
+                boundary: bytes | str | None = None):
+        self.contentType = contentType
         self.boundary = boundary
-        self.data = defaultdict(lambda: formdata("UNDEFINED",b''), data if data != None else dict())
-        
-    def format(self):
-        if self.contenttype == "multipart/form-data":
-            start = self.boundary + b'\r\n'
-            end = self.boundary+b'--\r\n'
-            data = []
-            for k,v in self.data.items():
-                v: formdata
-                data.append(v.formatFormData())
-            return start + (self.boundary+b'\r\n').join(data) + end
-        elif self.contenttype == "application/x-www-form-urlencoded":
-            data = []
-            for k,v in self.data.items():
-                v: formdata
-                data.append(v.formatUrlEnc())
-            return b'&'.join(data)
+        self._data = dict()
+    def __getitem__(self,key) -> Any:
+        return self._data[key]
+    def __setitem__(self,key,value):
+        if not isinstance(value,FormData):
+            raise FormDataRequired
+        self._data[key] = value
+    def __delitem__(self,key):
+        del self._data[key]
+    def __iter__(self):
+        return iter(self._data)
+    def __len__(self) -> int:
+        return len(self._data)
+    def boundaryAsBytes(self) -> bytes:
+        if isinstance(self.boundary,str):
+            return self.boundary.encode()
         else:
-            return b''
-    
-    def parseurlencoded(data: bytes):
-        contenttype = "application/x-www-form-urlencoded"
-        parsed = dict()
-
-        bsep = b"&"
-        kvsep = b"="
-
-        keyvalpair,foundsep,remainder = data.partition(bsep)
-        while foundsep != b"":
-            key,_,val = keyvalpair.partition(kvsep)
-            key = key.decode()
-            parsed[key] = formdata(key,val)
-            keyvalpair,foundsep,remainder = remainder.partition(bsep)
-        key,_,val = keyvalpair.partition(kvsep)
-        key = key.decode()
-        parsed[key] = formdata(key,val)
-
-        return httpform(contenttype=contenttype,data=parsed)
-
-    def parsemultipart(data: bytes, boundary: bytes):
-        formcontenttype = "multipart/form-data"
-        clrf = b'\r\n'
+            return self.boundary
+    def fromURLEncStr(data: str) -> 'Form':
+        f = Form(contentType=CONTENT_TYPES["URLEnc"])
+        for part in partitions(data,'&'):
+            k,_,v = part.partition('=')
+            f[k] = FormData(name=k,value=v)
+        return f
+    def fromMultiPartBytes(data: bytes, boundary: bytes | str) -> 'Form':
+        boundary = boundary if isinstance(boundary,bytes) else boundary.encode()
+        f = Form(contentType=CONTENT_TYPES["MultiPart"],
+                boundary=boundary)
+        ##per http spec, boundary is preceeded with "--"
         boundary = b'--' + boundary
+        CRLF = b'\r\n'
 
-        blocks = dict()
-        blockbytes,foundboundary,bodybytesremainder = data.partition(boundary)
-        while foundboundary == boundary:
-            headername = ""
-            filename = None
-            contenttype = ""
-            #if blockbytes == b'', then we have encountered the intial boundary
-            if blockbytes == b'':
-                blockbytes,foundboundary,bodybytesremainder = bodybytesremainder.partition(boundary)
-                continue
+        _,_,data = data.partition(boundary)
+        ##per http spec, boundary must always be preceeded with CRLF,
+        ##and that the CRLF should be included as part of the boundary
+        for part in partitions(data,CRLF+boundary):
+            ##per http spec, terminal boundary has trailing "--" in addition
+            ##to preceeding "--"
+            if part.startswith(b'--'):
+                ##we have found our terminal boundary
+                break
+            ##per http spec, header is signaled as ending with double CRLF.  Body is optional.
+            header,_,body = part.partition(CRLF+CRLF)
+            ##per http spec, headers are in USASCII encoding.
+            header = header.decode()
 
-            #headers continue until double CLRF
-            headerbytes,_,bodybytes = blockbytes.partition(clrf + clrf)
-            #trim \r\n from bodybytes
-            bodybytes = bodybytes[:-2]
+            match: re.Match
+            match = re.search('Content-Disposition: form-data;\s?name="([^"]*)"',header)
+            name = match.group(1) if match is not None else ""
 
-            #treat headerbytes as string
-            header = headerbytes.decode()
+            match = re.search('filename="([^"]*)"',header)
+            filename = match.group(1) if match is not None else None
 
-            #find all header values (ie key: val)
-            matches = re.findall("([\S]+): ([^;]+)",header)
-            for k,v in matches:
-                if "Content-Type" in k:
-                    contenttype = v
+            match = re.search('Content-Type: ([^;\r\n]+)',header)
+            contenttype = match.group(1) if match is not None else None
 
-            #find all attributes (ie key=val)
-            matches = re.findall("([\S]+)=\"?([^\";]*)\"?",header)
-            for k,v in matches:
-                if "name" == k:
-                    headername = v
-                elif "filename" == k:
-                    filename = v
+            f[name] = FormData(name=name,value=body,contentType=contenttype,filename=filename)
+        return f
+    def format(self) -> bytes:
+        if self.contentType == CONTENT_TYPES['URLEnc']:
+            return b'&'.join([fd.formatURLEnc() for fd in self._data.values()])
+        elif self.contentType == CONTENT_TYPES['MultiPart']:
+            boundary = b'--' + self.boundaryAsBytes()
+            data = b''
+            if len(self._data) > 0:
+                data = boundary + b'\r\n' + (b'\r\n' + boundary + b'\r\n').join([fd.formatMultiPart() for fd in self._data.values()]) + b'\r\n' + boundary + b'--\r\n'
+            return data
+        return b''
 
-            fd = formdata(headername,bodybytes,contenttype=contenttype,filename=filename)
-            blocks[headername] = fd
-
-            blockbytes,foundboundary,bodybytesremainder = bodybytesremainder.partition(boundary)
-
-        return httpform(contenttype=formcontenttype,boundary=boundary,data=blocks)
-
-class httprequest():
-    def __init__(self,method="",uri="",httpvers="HTTP/1.1",headers=None,body=b'',form=None,raw=b''):
+class Request(HTTPBase):
+    def __init__(self,
+                method: str = "",
+                uri: str = "",
+                form: Form | None = None,
+                raw: bytes | None = None,
+                httpvers: str = "HTTP/1.1",
+                body: str | bytes | None = None,
+                headers: dict | None = None,
+                cookies: dict | None = None,
+                sock: socket.socket | None = None):
+        super().__init__(httpvers=httpvers,
+                        body=body,
+                        headers=headers,
+                        cookies=cookies,
+                        sock = sock)
         self.method = method
         self.uri = uri
-        self.httpvers = httpvers
-        self.body = body
-        if headers == None:
-            self.headers = dict()
-        else:
-            self.headers = headers
-        self.form = form if form != None else httpform()
+        self.form = form or Form()
         self.raw = raw
-        logging.debug(b"Raw Request: " + self.raw)
     
-    def format(self):
-        if self.raw != b'':
-            return self.raw
+    def formatStartline(self) -> bytes:
+        if self.method == '' or self.uri == '':
+            raise IncompleteStartline
+        return (f'{self.method} {self.uri} {self.httpvers}\r\n').encode()
 
-        lines = []
-        lines.append(f"{self.method} {self.uri} {self.httpvers}".encode())
-        lines.append(b'\r\n')
-        for h in self.headers.values():
-            lines.append(h.format() + b'\r\n')
-        lines.append(b'\r\n')
-        if self.body != b'':
-            lines.append(self.body)
-        elif self.form != None:
-            self.form: httpform
-            lines.append(self.form.format())
-        lines.append(b'\r\n')
+    def formatCookies(self) -> bytes:
+        fcookies = ' '.join([f'{k}={v};' for k,v in self.cookies.items()])
+        if len(fcookies) > 0:
+            return (f'Cookie: {fcookies}\r\n').encode()
+        return b''
+    
+    def formatBody(self) -> bytes:
+        body = self.body or self.form or None
+        if body is not None:
+            if isinstance(body,bytes):
+                return body
+            elif isinstance(body,str):
+                return body.encode()
+            elif isinstance(body,Form):
+                return body.format()
+        return b''
+    
+    def format(self) -> bytes:
+        sl = self.formatStartline()
+        h = self.formatHeaders()
+        c = self.formatCookies()
+        b = self.formatBody()
+        cl = b''
+        if 'Content-Length' not in self.headers and len(b) > 0:
+            cl = (f'Content-Length: {len(b)}\r\n').encode()
+        return sl + h + cl + c + b'\r\n' + b
+    
+    def fromBytes(data: bytes) -> 'Request':
+        ##per http spec, header and bytes are separated by 2 CRLF
+        headerbytes,_,bodybytes = data.partition(b'\r\n\r\n')
 
-        return b''.join(lines)
+        ##per http spec, header is in USASCII encoding
+        headerstr = headerbytes.decode()
 
-    def send(self, sock: socket.socket):
-        sock.send(self.format())
+        ##per http spec, first line is always startline
+        startline,_,headerstr = headerstr.partition('\r\n')
+        m = re.match("([^\s]+) ([^\s]+) ([^\s]+)",startline)
+        method = m.group(1)
+        uri = m.group(2)
+        httpvers = m.group(3)
 
-    def frombytes(databytes: bytes):
-        clrf = b'\r\n'
-        headersep = b': '
-        headerend = clrf+clrf
-        headerbytes,_,bodybytes = databytes.partition(headerend)
-
-        #first line of header is the startline
-        startlinebytes,_,headerbytes = headerbytes.partition(clrf)
-        startline = startlinebytes.decode()
-
-        #the rest are http headers
+        ##per http spec, the rest of this section is all headers
         headers = dict()
-        while headerbytes != b'':
-            headerlinebytes,_,headerbytes = headerbytes.partition(clrf)
-            headerkey,_,headerval = headerlinebytes.partition(headersep)
-            headers[headerkey.decode()] = httpheader(headerkey.decode(),headerval.decode())
-
-        #assign our properties from parsed values
-        method,_,reststartline = startline.partition(" ")
-        uri,_,httpvers = reststartline.partition(" ")
-        contenttype,_,boundary = headers.get("Content-Type",httpheader("","")).val.partition('; boundary=')
-
-        #next, handle the form data from body
+        cookies = dict()
+        for h in partitions(headerstr,'\r\n'):
+            hkey,_,hval = h.partition(': ')
+            if hkey == "Cookie":
+                for c in partitions(hval,'; '):
+                    c = c.strip(';')
+                    ckey,_,cval = c.partition('=')
+                    cookies[ckey] = cval
+            else:
+                headers[hkey] = hval
         form = None
-        if contenttype == "multipart/form-data":
-            form = httpform.parsemultipart(bodybytes, boundary.encode())
-        elif contenttype == "application/x-www-form-urlencoded":
-            form = httpform.parseurlencoded(bodybytes)
+        if 'Content-Type' in headers:
+            m = re.match("([^;]+);\s?boundary=(.*)",headers["Content-Type"])
+            if m is not None:
+                ct = m.group(1)
+                b = m.group(2)
+                if ct == CONTENT_TYPES['MultiPart']:
+                    form = Form.fromMultiPartBytes(bodybytes,b)
+            elif headers['Content-Type'] == CONTENT_TYPES['URLEnc']:
+                form = Form.fromURLEncStr(bodybytes.decode())
+        body = bodybytes
         
-        return httprequest(method=method,uri=uri,httpvers=httpvers,headers=headers,body=bodybytes,form=form,raw=databytes)
+        return Request(method=method,uri=uri,httpvers=httpvers,headers=headers,
+                        cookies=cookies,body=body,form=form,raw=data)
 
-    def fromsocket(sock: socket.socket):
-        clrf = b'\r\n'
-        headerend = b'\r\n\r\n'
+    def fromSocket(sock: socket.socket) -> 'Request':
         recvsize = 1024
-
         data = sock.recv(recvsize)
-
-        #http headers continue until two CLRF
-
-        #if we cannot find two CLRF in our data and len(data) is recvsize,
-        #we need to call recv again
-        headerendindex = data.find(headerend)
-        while headerendindex == -1:
+        ##per http spec, headers continue until 2 CRLF
+        hsepIndex = data.find(b'\r\n\r\n')
+        ##while we don't find 2 CRLF in our data, get more data
+        while hsepIndex == -1:
             data += sock.recv(recvsize)
-            headerendindex = data.find(headerend)
-        
-        marker = b'Content-Length: '
-        begin = data.find(marker)
+            hsepIndex = data.find(b'\r\n\r\n')
+        m = re.search(b'Content-Length: ([^\r\n]+)',data)
+        if m is not None:
+            cl = int(m.group(1))
+            while((len(data) - (hsepIndex + 4)) < cl):
+                data += sock.recv(recvsize)
+        return Request.fromBytes(data)
 
-        #no Content-Length was found, so we do not have a body to receive
-        if begin == -1:
-            return httprequest.frombytes(data)
-
-        #Content-Length was found, make sure we receive body data
-        end = data.find(clrf,begin)
-        contentlength = int(data[begin+len(marker):end].decode())
-        
-        bodystartindex = headerendindex + len(headerend)
-        while (len(data) - bodystartindex) < contentlength:
-            data += sock.recv(recvsize)
-
-        return httprequest.frombytes(data)
-    
-class httpserver():
-
-    def __init__(self, addr: str, port: int):
+class Server():
+    def __init__(self,addr: str, port: int):
         self.addr = addr
         self.port = port
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.listenthread = threading.Thread(target=serverloop,args=(self,))
+        self.listenthread = None
         self.listening = False
-        self.handlers = defaultdict(dict)
+        self.handlers = dict()
         self.statichandlers = dict()
-        self.handler404 = httpserver.default404
+        self.handler404 = Server.handler404
+
+    def handler404(req: Request, match: re.Match, sock: socket.socket):
+        resp = Response(sock=sock)
+        resp.statuscode = STATUS_CODES[404]
+        resp.send()
+    
+    def register404(self,func):
+        self.handler404 = func
+    
+    def register(self, methods: list, uriRegex: str):
+        def inner(func):
+            for method in methods:
+                if method not in self.handlers:
+                    self.handlers[method] = dict()
+                self.handlers[method][re.compile(uriRegex)] = func
+        return inner
+    
+    def registerstatic(self, uriRegex: str):
+        def inner(func):
+            self.statichandlers[re.compile(uriRegex)] = func
+        return inner
+
+    def dispatch(self, req: Request, sock: socket.socket):
+        handler = None
+        m = None
+        if req.method in self.handlers:
+            for uriRegex in self.handlers[req.method].keys():
+                uriRegex: re.Pattern
+                m = uriRegex.match(req.uri)
+                if m is not None:
+                    handler = self.handlers[req.method][uriRegex]
+                    break
+        if handler is None:
+            for uriRegex in self.statichandlers.keys():
+                uriRegex: re.Pattern
+                m = uriRegex.match(req.uri)
+                if m is not None:
+                    handler = self.statichandlers[uriRegex]
+                    break
+        handler = handler or Server.handler404
+        handler(req, m, sock)
+
+    def accept(self,conn):
+        sock = conn[0]
+        req = Request.fromSocket(sock)
+        req.socket = sock
+        self.dispatch(req,sock)
+        sock.close()
+
+    def listen(self):
+        self.socket.bind((self.addr, self.port))
+        self.socket.listen()
+        while self.listening:
+            conn = self.socket.accept()
+            threading.Thread(target=self.accept,args=(conn,),daemon=True).start()
+        self.socket.close()
 
     def start(self):
         if not self.listening:
             self.listening = True
+            self.listenthread = threading.Thread(target=self.listen)
             self.listenthread.start()
-            
-    def stop(self):
-        if self.listening:
-            self.listening = False
-
-    def default404(req: httprequest, match: Match, sock: socket.socket):
-        resp = httpresponse(statuscodes.NOT_FOUND)
-        sock.send(resp.format())
-
-    def register(self, methods: tuple, uri: str):
-        def inner(func):
-            for method in methods:
-                self.handlers[re.compile(uri)][method] = func
-        return inner
-    
-    def registerstatic(self, uri: str):
-        def inner(func):
-            self.statichandlers[re.compile(uri)] = func
-        return inner
-    
-    def dispatch(self, r: httprequest, sock: socket):
-        #check static handlers first
-        handler = None
-        match = None
-        for uriRegex in self.statichandlers.keys():
-            uriRegex: re
-            match = uriRegex.match(r.uri)
-            if match:
-                handler = self.statichandlers[uriRegex]
-                break
-        if match == None:
-            #app handlers next
-            for uriRegex in self.handlers.keys():
-                uriRegex: re
-                match = uriRegex.match(r.uri)
-                if match:
-                    handler = self.handlers[uriRegex].get(r.method,None)
-                    break
-        
-        if handler == None: handler = self.handler404
-
-        logging.info(f"Dispatching {r.method}:{r.uri}")
-        handler(r,match,sock)
-
-def acceptloop(*args, **kwargs):
-    server: httpserver
-    sock: socket.socket
-
-    server = args[0]
-    sock = args[1][0]
-    r = httprequest.fromsocket(sock)
-    server.dispatch(r,sock)
-
-    sock.close()
-
-def serverloop(*args, **kwargs):
-    server: httpserver
-    server = args[0]
-    server.socket.bind((server.addr,server.port))
-    server.socket.listen()
-    while server.listening:
-        c = server.socket.accept()
-        threading.Thread(target=acceptloop,args=(server,c),daemon=True).start()
-    server.socket.close()

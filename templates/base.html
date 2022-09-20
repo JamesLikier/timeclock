@@ -15,8 +15,8 @@
       <div class="navbar">
         <a class="nav-brand" href="/">TimeClock</a>
         <div class="collapse" transition="t-fade-resize">
-          <a class="nav-item" href="/employee/new">New Employee</a>
-          <a class="nav-item" href="/employee/list">List Employees</a>
+          {% block navbar %}
+          {% endblock %}
         </div>
         <div class="collapse-toggle"></div>
       </div>

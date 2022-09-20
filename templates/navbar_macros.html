@@ -1,0 +1,9 @@
+{% macro displayNavbar(user) %}
+    {% if (user is not defined) %}
+        <a class="nav-item" href="/login/1">Login</a>
+    {% endif %}
+    {% if (user is defined) %}
+        <a class="nav-item" href="/employee/new">New Employee</a>
+        <a class="nav-item" href="/employee/list">List Employees</a>
+    {% endif %}
+{% endmacro %}
