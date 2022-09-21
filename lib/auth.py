@@ -28,10 +28,10 @@ class AuthHandler():
 
         storedSession = self.sessions.get(userid,'')
         if storedSession == '':
-            return False
+            return False, None
         if storedSession == sessionid:
-            return True
-        return False
+            return True, userid
+        return False, None
     
     ##invalide session and set cookies if Response is supplied
     def invalidateSession(self,userid: int = None, req: Request = None, resp: Response = None) -> Response | None:
