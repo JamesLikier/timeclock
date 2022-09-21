@@ -96,20 +96,16 @@ def routeEmployeeList(req: httpserver.Request, match: Match, sock: socket):
 @server.register(["GET"], "/login/([0-9]+)$")
 def routeLogin(req: httpserver.Request, match: Match, sock: socket):
     resp = httpserver.Response()
-    employeeid = int(match.group(1))
+    userid = int(match.group(1))
+    authHandler.createSession(userid=userid, resp=resp)
     template = env.get_template("index.html")
-    try:
-        employee = employeeController.getEmployeeById(employeeid)
-        resp.cookies["employeeid"] = f'{employeeid}; Path=/' 
-        resp.body = template.render()
-    except tc.EmployeeNotFound:
-        resp.body = "Invalid Login"
+    resp.body = template.render()
     resp.send(sock)
 
 @server.register(["GET"], "/logout$")
 def routeLogout(req: httpserver.Request, match: Match, sock: socket):
     resp = httpserver.Response()
-    resp.cookies["employeeid"] = ""
+    authHandler.invalidateSession(req=req, resp=resp)
     template = env.get_template("index.html")
     resp.body = template.render()
     resp.send(sock)
