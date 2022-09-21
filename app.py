@@ -7,11 +7,13 @@ from re import Match
 from jinja2 import Environment, PackageLoader, select_autoescape, FileSystemLoader
 from lib.cachedfilemanager import CachedFileManager
 import logging
+import lib.auth as auth
 
 server = httpserver.Server("10.0.0.100",80)
 employeeController: tc.EmployeeController = fbc.FileBasedEmployeeController("employeefile")
 punchController: tc.PunchController = fbc.FileBasedPunchController("punchfile")
 cache = CachedFileManager()
+authHandler = auth.AuthHandler()
 
 logging.basicConfig(filename="timeclock.log", filemode="w", level=logging.DEBUG)
 
