@@ -132,8 +132,12 @@ def routeLogin(req: httpserver.Request, match: Match, sock: socket):
     resp = httpserver.Response()
     userid = int(match.group(1))
     authHandler.createSession(userid=userid, resp=resp)
+    user = employeeController.getEmployeeById(userid)
     template = env.get_template("index.html")
-    resp.body = template.render()
+    args = {
+        "user": user
+    }
+    resp.body = template.render(**args)
     resp.send(sock)
 
 @server.register(["GET"], "/logout$")

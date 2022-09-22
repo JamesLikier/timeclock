@@ -35,7 +35,7 @@ class AuthHandler():
     
     ##invalide session and set cookies if Response is supplied
     def invalidateSession(self,userid: int = None, req: Request = None, resp: Response = None) -> Response | None:
-        userid = userid or int(req.cookies.get(self.userCookie,'-1'))
+        userid = userid or int(req.cookies.get(self.userCookie,'') or -1)
         self.sessions[userid] = ''
         if resp is not None:
             resp.cookies[self.userCookie] = ''
