@@ -106,14 +106,8 @@ def routeEmployeeNewGET(req: httpserver.Request, match: Match, sock: socket):
 def routeEmployeeList(req: httpserver.Request, match: Match, sock: socket):
     resp = httpserver.Response()
     template = env.get_template("employeeList.html")
-    pg = 1
-    pgSize = 20
-    if match.group(2) == "pg":
-        pg = int(match.group(3))
-        pgSize = int(match.group(6))
-    elif match.group(2) == "pgSize":
-        pg = int(match.group(6))
-        pgSize = int(match.group(3))
+    pg = int(match.group(3) or 1) if match.group(2) == 'pg' else int(match.group(6) or 1)
+    pgSize = int(match.group(6) or 20) if match.group(2) == 'pg' else int(match.group(3) or 20)
     employees = employeeController.getEmployeeList(offset=(pg-1)*pgSize,count=pgSize)
     user = getUserFromSession(req)
     args = {
