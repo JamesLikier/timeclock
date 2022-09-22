@@ -23,7 +23,7 @@ class AuthHandler():
 
     ##returns valid session: bool
     def validateSession(self, userid: int = None, sessionid: str = None, req: Request = None) -> bool:
-        userid = userid or int(req.cookies.get(self.userCookie,'-1'))
+        userid = userid or int(req.cookies.get(self.userCookie,'') or -1)
         sessionid = sessionid or req.cookies.get(self.sessionCookie,'')
 
         storedSession = self.sessions.get(userid,'')

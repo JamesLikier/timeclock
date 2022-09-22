@@ -1,5 +1,5 @@
 {% macro displayNavbar(user=None) %}
-    {% if user is None %}
+    {% if user == None %}
         <a class="nav-item" href="/login/1">Login</a>
     {% else %}
         <a class="nav-item" href="/employee/new">New Employee</a>

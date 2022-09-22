@@ -26,7 +26,7 @@ env.filters["ceil"] = lambda val, ceil: val if val < ceil else ceil
 
 def getUserFromSession(req: httpserver.Request) -> tc.Employee or None:
     user = None
-    valid, userid = authHandler.validateSession(req)
+    valid, userid = authHandler.validateSession(req=req)
     if valid:
         user = employeeController.getEmployeeById(userid)
     return user
