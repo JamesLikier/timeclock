@@ -116,9 +116,15 @@ def routeEmployeeList(req: httpserver.Request, match: Match, sock: socket):
         pgSize = int(match.group(3))
     employees = employeeController.getEmployeeList(offset=(pg-1)*pgSize,count=pgSize)
     user = getUserFromSession(req)
+    args = {
+        "user": user,
+        "pg": pg,
+        "pgSize": pgSize,
+        "employees": employees,
+        "displayCount": len(employees),
+        "totalEmployees": len(employeeController.employeeDict)
+    }
     resp.body = template.render(**args)
-    ##todo: finish
-    resp.body = template.render(employees=employees,pg=pg,pgSize=pgSize,displayCount=len(employees),totalEmployees=len(employeeController.employeeDict))
     resp.send(sock)
 
 @server.register(["GET"], "/login/([0-9]+)$")
