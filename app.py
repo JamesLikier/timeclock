@@ -24,7 +24,7 @@ env = Environment(
 env.filters["floor"] = lambda val, floor: val if val > floor else floor
 env.filters["ceil"] = lambda val, ceil: val if val < ceil else ceil
 
-def getUserFromSession(req: Request) -> Employee or None:
+def getUserFromSession(req: httpserver.Request) -> tc.Employee or None:
     user = None
     valid, userid = authHandler.validateSession(req)
     if valid:
