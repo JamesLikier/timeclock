@@ -66,59 +66,67 @@ def routeRoot(req: httpserver.Request, match: Match, sock: socket):
 @server.register(["GET"], "/employee/([0-9]+)$")
 def routeEmployee(req: httpserver.Request, match: Match, sock: socket):
     resp = httpserver.Response()
-    template = env.get_template("employee.html")
     user = getUserFromSession(req)
-    employee = employeeController.getEmployeeById(int(match.group(1)))
-    args = {
-        "user": user,
-        "employee": employee
-    }
-    resp.body = template.render(**args)
+    if user is not None:
+        employee = employeeController.getEmployeeById(int(match.group(1)))
+        args = {
+            "user": user,
+            "employee": employee
+        }
+        resp.body = env.get_template("employee.html").render(**args)
+    else:
+        resp.body = env.get_template("login_required.html").render()
     resp.send(sock)
 
 @server.register(["POST"], "/employee/new$")
 def routeEmployeeNewPOST(req: httpserver.Request, match: Match, sock: socket):
     resp = httpserver.Response()
-    template = env.get_template("employeeNewPOST.html")
     user = getUserFromSession(req)
-    e = employeeController.createEmployee(fname=req.form.data["fname"].asStr(),
-                                          lname=req.form.data["lname"].asStr(),
-                                          admin=req.form.data["admin"].asBool())
-    args = {
-        "user": user,
-        "employee": e
-    }
-    resp.body = template.render(**args)
+    if user is not None:
+        e = employeeController.createEmployee(fname=req.form.data["fname"].asStr(),
+                                            lname=req.form.data["lname"].asStr(),
+                                            admin=req.form.data["admin"].asBool())
+        args = {
+            "user": user,
+            "employee": e
+        }
+        resp.body = env.get_template("employeeNewPOST.html").render(**args)
+    else:
+        resp.body = env.get_template("login_required.html").render()
     resp.send(sock)
 
 @server.register(["GET"], "/employee/new$")
 def routeEmployeeNewGET(req: httpserver.Request, match: Match, sock: socket):
     resp = httpserver.Response()
-    template = env.get_template("employeeNewGET.html")
     user = getUserFromSession(req)
-    args = {
-        "user": user
-    }
-    resp.body = template.render(**args)
+    if user is not None:
+        args = {
+            "user": user
+        }
+        resp.body = env.get_template("employeeNewGET.html").render(**args)
+    else:
+        resp.body = env.get_template("login_required.html").render()
     resp.send(sock)
 
 @server.register(["GET"], "/employee/list$|/employee/list\?(\&?(pg|pgSize)=([0-9]+))(\&?(pg|pgSize)=([0-9]+))")
 def routeEmployeeList(req: httpserver.Request, match: Match, sock: socket):
     resp = httpserver.Response()
-    template = env.get_template("employeeList.html")
-    pg = int(match.group(3) or 1) if match.group(2) == 'pg' else int(match.group(6) or 1)
-    pgSize = int(match.group(6) or 20) if match.group(2) == 'pg' else int(match.group(3) or 20)
-    employees = employeeController.getEmployeeList(offset=(pg-1)*pgSize,count=pgSize)
     user = getUserFromSession(req)
-    args = {
-        "user": user,
-        "pg": pg,
-        "pgSize": pgSize,
-        "employees": employees,
-        "displayCount": len(employees),
-        "totalEmployees": len(employeeController.employeeDict)
-    }
-    resp.body = template.render(**args)
+    if user is not None:
+        pg = int(match.group(3) or 1) if match.group(2) == 'pg' else int(match.group(6) or 1)
+        pgSize = int(match.group(6) or 20) if match.group(2) == 'pg' else int(match.group(3) or 20)
+        employees = employeeController.getEmployeeList(offset=(pg-1)*pgSize,count=pgSize)
+        args = {
+            "user": user,
+            "pg": pg,
+            "pgSize": pgSize,
+            "employees": employees,
+            "displayCount": len(employees),
+            "totalEmployees": len(employeeController.employeeDict)
+        }
+        resp.body = env.get_template("employeeList.html").render(**args)
+    else:
+        resp.body = env.get_template("login_required.html").render()
     resp.send(sock)
 
 @server.register(["GET"], "/login/([0-9]+)$")
