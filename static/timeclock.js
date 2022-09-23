@@ -1,5 +1,6 @@
 (function () {
 
+    /* Punch Clock */
     function updateClockTime() {
         let e = document.querySelector(".clock");
         let d = new Date()
@@ -7,6 +8,23 @@
     }
     updateClockTime()
     setInterval(updateClockTime,1000);
+
+    document.addEventListener("click",e => {
+        let numpadDisplay = document.querySelector(".numpad-display");
+        let numpadValue = document.querySelector(".numpad-value");
+        let value = e.target.textContent;
+        if(e.target.classList.contains("numpad-key")){
+            if (numpadDisplay.classList.contains("private")) {
+                numpadDisplay.textContent += "*";
+            } else {
+                numpadDisplay.textContent += value;
+            }
+        } else if (e.target.classList.contains("numpad-clear")){
+        } else if (e.target.classList.contains("numpad-enter")){
+        }
+    });
+
+    /* End Punch Clock */
 
     function collapsed(e) {
         if (e.target.getAttribute("collapse") === "hide") {

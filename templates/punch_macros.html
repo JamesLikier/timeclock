@@ -1,26 +1,29 @@
 {% macro displayNumPad() %}
     <div class="numpad">
+        <span class="numpad-display"></span>
         <table>
             <tr>
-                <td>1</td>
-                <td>2</td>
-                <td>3</td>
+                <td class="numpad-key">1</td>
+                <td class="numpad-key">2</td>
+                <td class="numpad-key">3</td>
             </tr>
             <tr>
-                <td>4</td>
-                <td>5</td>
-                <td>6</td>
+                <td class="numpad-key">4</td>
+                <td class="numpad-key">5</td>
+                <td class="numpad-key">6</td>
             </tr>
             <tr>
-                <td>7</td>
-                <td>8</td>
-                <td>9</td>
+                <td class="numpad-key">7</td>
+                <td class="numpad-key">8</td>
+                <td class="numpad-key">9</td>
             </tr>
             <tr>
-                <td>0</td>
-                <td colspan="2" class="numpad-enter">Enter</td>
+                <td class="numpad-key">0</td>
+                <td class="numpad-clear">Clear</td>
+                <td class="numpad-enter">Enter</td>
             </tr>
         </table>
+        <input name="numpad-value" type="hidden">
     </div>
 {% endmacro %}
 {% macro displayTimeClock() %}

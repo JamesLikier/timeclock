@@ -206,8 +206,11 @@ form input[type="submit"] {
     border: .05em solid;
     border-style: outset;
 }
+.numpad-clear {
+    width: 33%;
+}
 .numpad-enter {
-    width: 66%;
+    width: 33%;
 }
 .flex-row {
     display: flex;
