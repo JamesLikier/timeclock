@@ -1,4 +1,13 @@
 (function () {
+
+    function updateClockTime() {
+        let e = document.querySelector(".clock");
+        let d = new Date()
+        e.textContent = d.toLocaleTimeString()
+    }
+    updateClockTime()
+    setInterval(updateClockTime,1000);
+
     function collapsed(e) {
         if (e.target.getAttribute("collapse") === "hide") {
             e.target.classList.add("d-none");

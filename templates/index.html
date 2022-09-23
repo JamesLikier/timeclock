@@ -1,4 +1,8 @@
+{% import "punch_macros.html" as punchMacros %}
 {% extends "base.html" %}
 {% block title %}Index{% endblock %}
 {% block head %}{{ super() }}{% endblock %}
-{% block content %}{% endblock %}
+{% block content %}
+    <br>
+    {{ punchMacros.displayTimeClock() }}
+{% endblock %}
