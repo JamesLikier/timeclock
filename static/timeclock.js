@@ -27,9 +27,9 @@
         } else if (e.target.classList.contains("numpad-enter")){
         }
     });
-
     /* End Punch Clock */
 
+    /* Collapse */
     function collapsed(e) {
         if (e.target.getAttribute("collapse") === "hide") {
             e.target.classList.add("d-none");
@@ -119,4 +119,5 @@
     window.addEventListener("resize", event => {
         initializeCollapseState();
     });
+    /* End Collapse */
 })();
