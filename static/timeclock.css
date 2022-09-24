@@ -49,6 +49,18 @@ body {
         top: 1em;
         right: 1em;
     }
+    .big-clock {
+        font-size: 2em;
+    }
+    .punch-clock td {
+        font-size: 2em;
+    }
+    .numpad-clear {
+        font-size: 1em;
+    }
+    .numpad-enter {
+        font-size: 1em;
+    }
 }
 
 @media (min-width: 800px) {
@@ -70,6 +82,13 @@ body {
 
     .collapse-toggle {
         display: none;
+    }
+
+    .big-clock {
+        font-size: 4em;
+    }
+    .punch-clock td {
+        font-size: 4em;
     }
 }
 .t-fade {
@@ -188,34 +207,27 @@ form input[type="submit"] {
     margin-left: auto;
 }
 
-.timeclock {
+.punch-clock {
     width: min-content;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-left: auto;
+    margin-right: auto;
 }
-.big-clock {
-    font-size: 5em;
-    width: 6em;
-    padding: .2em;
-}
-.timeclock table {
+.punch-clock table {
     width: 100%;
 }
-.timeclock td {
-    font-size: 4em;
-    border: .05em solid;
+.punch-clock td {
+    border: 3px solid;
     border-style: outset;
     width: 2em;
-}
-.numpad-clear {
-    font-size: 3em !important;
-}
-.numpad-enter {
-    font-size: 3em !important;
 }
 .numpad-display {
     height: 1.5em;
 }
-form {
+#punch-clock-form {
     border: none;
     margin: 0px;
     padding: 0px;
