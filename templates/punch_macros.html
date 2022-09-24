@@ -1,6 +1,6 @@
 {% macro displayNumPad() %}
     <div class="numpad">
-        <span class="numpad-display"></span>
+        <table><tr><td class="numpad-display"></td></tr></table>
         <table>
             <tr>
                 <td class="numpad-key">1</td>
@@ -29,7 +29,7 @@
 {% macro displayTimeClock() %}
     <div class="timeclock">
         <div class="clock big-clock">00:00:00</div>
-        <form id="punch-clock-form">
+        <form id="punch-clock-form" class="mx">
             {{ displayNumPad() }}
         </form>
     </div>
