@@ -23,12 +23,14 @@
                 <td class="numpad-enter">Enter</td>
             </tr>
         </table>
-        <input name="numpad-value" type="hidden">
+        <input id="numpad-value" name="numpad-value" type="hidden">
     </div>
 {% endmacro %}
 {% macro displayTimeClock() %}
     <div class="timeclock">
         <div class="clock big-clock">00:00:00</div>
-        {{ displayNumPad() }}
+        <form id="punch-clock-form">
+            {{ displayNumPad() }}
+        </form>
     </div>
 {% endmacro %}

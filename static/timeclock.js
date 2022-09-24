@@ -11,15 +11,19 @@
 
     document.addEventListener("click",e => {
         let numpadDisplay = document.querySelector(".numpad-display");
-        let numpadValue = document.querySelector(".numpad-value");
-        let value = e.target.textContent;
+        let numpadValue = document.querySelector("#numpad-value");
+        let value = e.target.textContent.trim();
         if(e.target.classList.contains("numpad-key")){
             if (numpadDisplay.classList.contains("private")) {
                 numpadDisplay.textContent += "*";
+                numpadValue.value += value;
             } else {
                 numpadDisplay.textContent += value;
+                numpadValue.value += value;
             }
         } else if (e.target.classList.contains("numpad-clear")){
+            numpadDisplay.textContent = "";
+            numpadValue.value = "";
         } else if (e.target.classList.contains("numpad-enter")){
         }
     });
