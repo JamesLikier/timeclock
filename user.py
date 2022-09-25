@@ -1,5 +1,5 @@
 import settings
-from lib.http import Request
+from httphelper import Request
 from dataclasses import dataclass
 
 session = settings.SESSION_HANDLER

@@ -1,8 +1,8 @@
-import lib.timeclock as tc
+import timeclock as tc
 import FileBasedControllers as fbc
-from  lib.cachedfilemanager import CachedFileManager
-from lib.routehandler import RouteHandler
-from lib.sessionhandler import SessionHandler
+from  cachedfilemanager import CachedFileManager
+from routehandler import RouteHandler
+from sessionhandler import SessionHandler
 from jinja2 import Environment, PackageLoader, select_autoescape, FileSystemLoader
 import logging
 

@@ -1,6 +1,6 @@
 import re
 from socket import socket
-from lib.http import Request, Response, STATUS_CODES
+from httphelper import Request, Response, STATUS_CODES
 
 class RouteHandler():
     def __init__(self):

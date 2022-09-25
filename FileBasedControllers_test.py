@@ -1,7 +1,7 @@
 import unittest
 import FileBasedControllers as fbc
 import os
-import lib.timeclock as tc
+import timeclock as tc
 import time
 
 class TestFileBasedEmployeeController(unittest.TestCase):

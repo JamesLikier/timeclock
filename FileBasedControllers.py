@@ -1,6 +1,6 @@
 from datetime import date
-import lib.timeclock as timeclock
-from lib.timeclock import Employee, EmployeeNotFound, Punch, PunchNotFound
+import timeclock as timeclock
+from timeclock import Employee, EmployeeNotFound, Punch, PunchNotFound
 import string
 import time
 import copy

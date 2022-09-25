@@ -1,24 +1,23 @@
-import settings
+from routehandler import RouteHandler
 import logging
 import socket
 import threading
-from lib.http import Request
-
-rh = settings.ROUTE_HANDLER
+from httphelper import Request
 
 class Server():
-    def __init__(self,addr: str, port: int):
+    def __init__(self,addr: str, port: int, rh: RouteHandler):
         self.addr = addr
         self.port = port
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.listenthread = None
         self.listening = False
+        self.rh = rh
     
     def accept(self,conn):
         sock = conn[0]
         req = Request.fromSocket(sock)
         req.socket = sock
-        rh.dispatch(req,sock)
+        self.rh.dispatch(req,sock)
         sock.close()
 
     def listen(self):

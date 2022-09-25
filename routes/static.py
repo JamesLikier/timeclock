@@ -1,6 +1,6 @@
 import settings
-from lib.http import Request, Response, STATUS_CODES
-from lib.user import User
+from httphelper import Request, Response, STATUS_CODES
+from user import User
 import re
 from socket import socket
 
