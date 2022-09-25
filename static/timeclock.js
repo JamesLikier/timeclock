@@ -4,7 +4,9 @@
     function updateClockTime() {
         let e = document.querySelector(".clock");
         let d = new Date()
-        e.textContent = d.toLocaleTimeString()
+        if (e) {
+            e.textContent = d.toLocaleTimeString()
+        }
     }
     updateClockTime()
     setInterval(updateClockTime,1000);
