@@ -232,6 +232,19 @@ form input[type="submit"] {
     margin: 0px;
     padding: 0px;
 }
+div #login {
+    cursor: pointer;
+}
+div #login * {
+    cursor: auto;
+}
+#login {
+    position: relative;
+}
+.login-float {
+    position: absolute;
+    background-color: white;
+}
 .flex-row {
     display: flex;
     flex-direction: row;

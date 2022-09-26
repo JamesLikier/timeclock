@@ -10,13 +10,18 @@ class SessionHandler():
         self.sessionCookie = 'sessionid'
 
     ##returns sessionid: str
-    def createSession(self, userid: int, resp: Response = None) -> Response | str:
+    def createSession(self, userid: int, resp: Response = None, d: dict = None) -> Response | str:
         sid = os.urandom(self.sessionByteSize).hex()
         self.sessions[userid] = sid
+        uCookie = f'{userid}; Path=/'
+        sCookie = f'{sid}; Path=/'
         if resp is not None:
-            resp.cookies[self.userCookie] = f'{userid}; Path=/'
-            resp.cookies[self.sessionCookie] = f'{sid}; Path=/'
-        return resp or sid
+            resp.cookies[self.userCookie] =  uCookie
+            resp.cookies[self.sessionCookie] = sCookie
+        elif d is not None:
+            d[self.userCookie] = uCookie
+            d[self.sessionCookie] = sCookie
+        return resp or sid or d
 
     ##returns valid session: bool
     def validateSession(self, userid: int = None, sessionid: str = None, req: Request = None) -> Any:
@@ -35,7 +40,7 @@ class SessionHandler():
         userid = userid or int(req.cookies.get(self.userCookie,'') or -1)
         self.sessions[userid] = ''
         if resp is not None:
-            resp.cookies[self.userCookie] = ''
-            resp.cookies[self.sessionCookie] = ''
+            resp.cookies[self.userCookie] = '; Path=/'
+            resp.cookies[self.sessionCookie] = '; Path=/'
         return resp
     

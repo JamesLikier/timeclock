@@ -1,0 +1,10 @@
+{% import "form_macros.html" as formMacros %}
+{% macro displayLogin() %}
+<form id="login" action="/api/login" method="POST">
+    <table>
+        {{ formMacros.input(name="username",label="Username:",type="text",table=True) }}
+        {{ formMacros.input(name="password",label="Password:",type="text",table=True) }}
+    </table>
+    {{ formMacros.input(name="submit",value="Login",type="submit") }}
+</form>
+{% endmacro %}

@@ -1,4 +1,57 @@
 (function () {
+    let loginFloat = undefined;
+    /* Login/Logout */
+    function showLogin(p) {
+        if (loginFloat == undefined){
+            e = document.createElement("div");
+            e.classList.add("login-float");
+            fetch("/api/login", {
+                "method": "GET"
+            }).then(r => {
+                if (r.ok) {
+                    r.text().then(s => {
+                        loginFloat = e;
+                        e.innerHTML = s;
+                        p.append(e);
+                    });
+                }
+            });
+        }
+    }
+    document.addEventListener("submit",e=>{
+        if(e.target.id == "login") {
+            e.preventDefault();
+            fd = new FormData(e.target);
+            fetch("/api/login", {
+                "method": "POST",
+                "body": fd
+            }).then(r => {
+                if (r.ok) {
+                    r.json().then(o => { if(o["result"] == "success") document.location = "/"; });
+                }
+            });
+        }
+    });
+    document.addEventListener("click",e=>{
+        if (loginFloat != undefined && !loginFloat.contains(e.target)) {
+            loginFloat.remove();
+            loginFloat = undefined;
+        }
+        if (e.target.id == "logout") {
+            e.preventDefault();
+            fetch("/api/logout",{
+                "method": "POST"
+            }).then(r => {
+                if (r.ok) {
+                    r.json().then(o => { if(o["result"] == "success") document.location = "/"; });
+                }
+            });
+        } else if (e.target.id == "login") {
+            e.preventDefault();
+            showLogin(e.target);
+        }
+    });
+    /* End Login/Logout */
 
     /* Punch Clock */
     function updateClockTime() {

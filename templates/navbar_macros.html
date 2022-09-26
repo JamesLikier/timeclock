@@ -1,9 +1,9 @@
 {% macro displayNavbar(user=None) %}
     {% if user == None %}
-        <a class="nav-item" href="/login/1">Login</a>
+        <div class="nav-item" id="login">Login</div>
     {% else %}
         <a class="nav-item" href="/employee/new">New Employee</a>
         <a class="nav-item" href="/employee/list">List Employees</a>
-        <a class="nav-item" href="/logout">Logout</a>
+        <a class="nav-item" href="/logout" id="logout">Logout</a>
     {% endif %}
 {% endmacro %}
