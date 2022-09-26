@@ -1,4 +1,7 @@
 {% import "navbar_macros.html" as navbarMacros %}
+{% if user is undefined %}
+  {% set user = None %}
+{% endif %}
 <!DOCTYPE html>
 <html>
 
@@ -17,9 +20,6 @@
         <a class="nav-brand" href="/">TimeClock</a>
         <div class="collapse" transition="t-fade-resize">
           {% block navbar scoped %}
-            {% if user is undefined %}
-              {% set user = None %}
-            {% endif %}
             {{ navbarMacros.displayNavbar(user) }}
           {% endblock %}
         </div>
