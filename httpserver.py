@@ -5,13 +5,13 @@ import threading
 from httphelper import Request
 
 class Server():
-    def __init__(self,addr: str, port: int, rh: RouteHandler):
+    def __init__(self,addr: str, port: int, rh: RouteHandler = None):
         self.addr = addr
         self.port = port
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.listenthread = None
         self.listening = False
-        self.rh = rh
+        self.rh = rh or RouteHandler()
     
     def accept(self,conn):
         sock = conn[0]
