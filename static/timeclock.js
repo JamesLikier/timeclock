@@ -1,5 +1,43 @@
 (function () {
+    /* Form Handler */
+    const formResponseHandlers = Map()
+    formResponseHandlers.set("login",o => {
+        if (o["result"] == "success") {
+            document.location = "/";
+        }
+    });
+    formResponseHandlers.set("logout",o => {
+        if (o["result"] == "success") {
+            document.location = "/";
+        }
+    });
+    document.addEventListener("submit",e=>{
+        e.preventDefault();
+        fd = new FormData(e.target);
+        fd.append("formName",e.target.id)
+        fetch("/api/login", {
+            "method": "POST",
+            "body": fd
+        }).then(r => {
+            if (r.ok) {
+                r.json().then(o => {
+                    formResponseHandlers[o["formName"]](o);
+                });
+            }
+        });
+    });
+    /* End Form Handler */
+
     let loginFloat = undefined;
+    /* Employee Functions */
+    function employeeNew(formdata) {
+    }
+    document.addEventListener("submit",e=> {
+        if(e.target.id == "employeeNew"){
+        }
+    });
+    /* End Employee Functions */
+
     /* Login/Logout */
     function showLogin(p) {
         if (loginFloat == undefined){
@@ -18,20 +56,6 @@
             });
         }
     }
-    document.addEventListener("submit",e=>{
-        if(e.target.id == "login") {
-            e.preventDefault();
-            fd = new FormData(e.target);
-            fetch("/api/login", {
-                "method": "POST",
-                "body": fd
-            }).then(r => {
-                if (r.ok) {
-                    r.json().then(o => { if(o["result"] == "success") document.location = "/"; });
-                }
-            });
-        }
-    });
     document.addEventListener("click",e=>{
         if (loginFloat != undefined && !loginFloat.contains(e.target)) {
             loginFloat.remove();

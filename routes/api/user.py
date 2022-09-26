@@ -24,6 +24,7 @@ def login(req: Request, match: Match, sock: socket):
     session.createSession(userid=userid,resp=resp)
     data = {
         "result": "success",
+        "formName": req.form["formName"]
     }
     resp.body = json.dumps(data)
     resp.send(sock)
@@ -33,7 +34,8 @@ def logout(req: Request, match: Match, sock: socket):
     resp = Response()
     session.invalidateSession(req=req,resp=resp)
     data = {
-        "result": "success"
+        "result": "success",
+        "formName": req.form["formName"]
     }
     resp.body = json.dumps(data)
     resp.send(sock)

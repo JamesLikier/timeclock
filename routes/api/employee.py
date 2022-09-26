@@ -15,6 +15,7 @@ def employeeNew(req: Request, match: Match, sock: socket):
     valid, userid = session.validateSession(req)
     resp = Response()
     data = dict()
+    data["formName"] = req.form["formName"]
     if valid:
         try:
             args = {

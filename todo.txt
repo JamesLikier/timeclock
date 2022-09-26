@@ -1,1 +1,2 @@
 Working on routes/api/employee.py
+Changing javascript handlers for a general form handler and assigned response handlers.
