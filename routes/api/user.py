@@ -1,5 +1,4 @@
 import re
-from urllib import response
 import settings
 from httphelper import Request, Response, STATUS_CODES
 from re import Match
