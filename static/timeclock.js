@@ -88,7 +88,9 @@
     }
     updateClockTime()
     setInterval(updateClockTime,1000);
+    /* End Punch Clock */
 
+    /* Num Pad */
     document.addEventListener("click",e => {
         let numpadDisplay = document.querySelector(".numpad-display");
         let numpadValue = document.querySelector("#numpad-value");
@@ -107,7 +109,7 @@
         } else if (e.target.classList.contains("numpad-enter")){
         }
     });
-    /* End Punch Clock */
+    /* End Num Pad */
 
     /* Collapse */
     function collapsed(e) {
