@@ -1,16 +1,6 @@
 (function () {
     /* Form Handler */
     const formResponseHandlers = Map()
-    formResponseHandlers.set("login",o => {
-        if (o["result"] == "success") {
-            document.location = "/";
-        }
-    });
-    formResponseHandlers.set("logout",o => {
-        if (o["result"] == "success") {
-            document.location = "/";
-        }
-    });
     document.addEventListener("submit",e=>{
         e.preventDefault();
         fd = new FormData(e.target);
@@ -28,17 +18,24 @@
     });
     /* End Form Handler */
 
-    let loginFloat = undefined;
-    /* Employee Functions */
-    function employeeNew(formdata) {
-    }
-    document.addEventListener("submit",e=> {
-        if(e.target.id == "employeeNew"){
+    /* Form Handler Registration */
+    formResponseHandlers.set("login",o => {
+        if (o["result"] == "success") {
+            document.location = "/";
         }
     });
+    formResponseHandlers.set("logout",o => {
+        if (o["result"] == "success") {
+            document.location = "/";
+        }
+    });
+    /* End Form Handler Registration */
+
+    /* Employee Functions */
     /* End Employee Functions */
 
     /* Login/Logout */
+    let loginFloat = undefined;
     function showLogin(p) {
         if (loginFloat == undefined){
             e = document.createElement("div");
