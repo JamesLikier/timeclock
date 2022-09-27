@@ -21,7 +21,7 @@
 {% endmacro %}
 {% macro displayNewEmployee() %}
     <h2>New Employee</h2>
-    <form id="employeeNew" method="POST" action="/employee/new">
+    <form id="employeeNew" method="POST" action="/api/employee/new">
         <table>
             {{ formMacros.input("fname",label="First Name:",table=True)}}
             {{ formMacros.input("lname",label="Last Name:",table=True)}}
