@@ -1,4 +1,5 @@
 (function () {
+    const content = document.querySelector("#content");
     const responseHandlers = new Map()
 
     /* API Hooks */
@@ -35,6 +36,9 @@
     /* End API Hooks */
 
     /* Employee Functions */
+    responseHandlers.set("employeeNew",o => {
+        content.innerHTML = o["body"];
+    });
     /* End Employee Functions */
 
     /* Login/Logout */

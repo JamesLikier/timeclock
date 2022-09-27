@@ -15,7 +15,7 @@ def employeeNew(req: Request, match: Match, sock: socket):
     valid, userid = session.validateSession(req)
     resp = Response()
     data = dict()
-    data["formName"] = req.form["formName"]
+    data["action"] = req.form["employeeNew"]
     if valid:
         try:
             args = {
@@ -26,6 +26,10 @@ def employeeNew(req: Request, match: Match, sock: socket):
             e = ec.creatEmployee(**args)
             data["result"] = "success"
             data["employeeid"] = e.id
+            data["fname"] = e.fname
+            data["lname"] = e.lname
+            data["admin"] = e.admin
+            data["body"] = f'Successfully created employee: <a href="/employee/{e.id}">{e.lname}, {e.fname}</a>'
         except Exception:
             data["result"] = "fail"
     else:
