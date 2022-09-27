@@ -1,40 +1,53 @@
 (function () {
-    /* Form Handler */
-    const formResponseHandlers = Map()
-    document.addEventListener("submit",e=>{
-        e.preventDefault();
-        fd = new FormData(e.target);
-        fd.append("formName",e.target.id)
-        fetch("/api/login", {
-            "method": "POST",
-            "body": fd
-        }).then(r => {
-            if (r.ok) {
-                r.json().then(o => {
-                    formResponseHandlers[o["formName"]](o);
-                });
-            }
-        });
-    });
-    /* End Form Handler */
+    const responseHandlers = new Map()
 
-    /* Form Handler Registration */
-    formResponseHandlers.set("login",o => {
-        if (o["result"] == "success") {
-            document.location = "/";
+    /* API Hooks */
+    document.addEventListener("submit",e=>{
+        if(e.target.action.includes("/api/")) {
+            e.preventDefault();
+            fd = new FormData(e.target);
+            fetch(e.target.action, {
+                "method": e.target.method,
+                "body": fd
+            }).then(r => {
+                if (r.ok) {
+                    r.json().then(o => {
+                        responseHandlers.get(o["action"])(o);
+                    });
+                }
+            });
         }
     });
-    formResponseHandlers.set("logout",o => {
-        if (o["result"] == "success") {
-            document.location = "/";
+    document.addEventListener("click",e=>{
+        if ('href' in e.target && e.target.href.includes("/api/")) {
+            e.preventDefault();
+            fetch(e.target.href, {
+                "method": e.target.dataset.method || "GET"
+            }).then(r => {
+                if (r.ok) {
+                    r.json().then(o => {
+                        responseHandlers.get(o["action"])(o);
+                    });
+                }
+            });
         }
     });
-    /* End Form Handler Registration */
+    /* End API Hooks */
 
     /* Employee Functions */
     /* End Employee Functions */
 
     /* Login/Logout */
+    responseHandlers.set("login",o => {
+        if (o["result"] == "success") {
+            document.location = "/";
+        }
+    });
+    responseHandlers.set("logout",o => {
+        if (o["result"] == "success") {
+            document.location = "/";
+        }
+    });
     let loginFloat = undefined;
     function showLogin(p) {
         if (loginFloat == undefined){
@@ -58,16 +71,7 @@
             loginFloat.remove();
             loginFloat = undefined;
         }
-        if (e.target.id == "logout") {
-            e.preventDefault();
-            fetch("/api/logout",{
-                "method": "POST"
-            }).then(r => {
-                if (r.ok) {
-                    r.json().then(o => { if(o["result"] == "success") document.location = "/"; });
-                }
-            });
-        } else if (e.target.id == "login") {
+        if (e.target.id == "login") {
             e.preventDefault();
             showLogin(e.target);
         }
