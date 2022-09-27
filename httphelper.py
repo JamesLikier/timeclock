@@ -12,7 +12,11 @@ STATUS_CODES = {
 }
 CONTENT_TYPES = {
     "URLEnc": "application/x-www-form-urlencoded",
-    "MultiPart": "multipart/form-data"
+    "MultiPart": "multipart/form-data",
+    "html": "text/html",
+    "js": "text/javascript",
+    "css": "text/css",
+    "txt": "text/plain"
 }
 class IncompleteStartline(Exception):
     pass
@@ -66,6 +70,7 @@ class Response(HTTPBase):
                 body: str | bytes | None = None,
                 headers: dict | None = None,
                 cookies: dict | None = None,
+                contentType: str | None = None,
                 sock: socket.socket | None = None):
         super().__init__(httpvers=httpvers,
                         body=body,
@@ -73,6 +78,8 @@ class Response(HTTPBase):
                         cookies=cookies,
                         sock=sock)
         self.statuscode = statuscode
+        if "Content-Type" not in self.headers:
+            self.headers["Content-Type"] = contentType or CONTENT_TYPES["html"]
     
     def formatStartline(self):
         return f'{self.httpvers} {self.statuscode.code} {self.statuscode.text}\r\n'.encode()
