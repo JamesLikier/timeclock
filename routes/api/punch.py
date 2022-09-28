@@ -6,6 +6,7 @@ from re import Match
 from socket import socket
 from timeclock import PunchController, Punch, EmployeeController, Employee
 import json
+from api.apiresponse import APIResponse
 
 rh = settings.ROUTE_HANDLER
 jinja = settings.JINJA
@@ -15,23 +16,16 @@ pc = settings.PUNCH_CONTROLLER
 @rh.register(["POST"],"/api/punch/new")
 def punchNew(req: Request, match: Match, sock: socket):
     valid, userid = session.validateSession(req=req)
-    data = dict()
-    if valid:
-        data["result"] = "success"
+    apiResp = APIResponse()
+    apiResp.action = "punchNew"
+    if valid: 
+        apiResp.result = APIResponse.SUCCESS
     else:
-        data["result"] = "fail"
+        apiResp.result = APIResponse.FAIL
     resp = Response()
-    resp.body = json.dumps(data)
+    resp.body = apiResp.toJSON()
     resp.send(sock)
 
 @rh.register(["GET"],"/api/punch/new")
 def punchNew(req: Request, match: Match, sock: socket):
-    valid, userid = session.validateSession(req=req)
-    data = dict()
-    if valid:
-        data["result"] = "success"
-    else:
-        data["result"] = "fail"
-    resp = Response()
-    resp.body = json.dumps(data)
-    resp.send(sock)
+    pass

@@ -5,6 +5,7 @@ from re import Match
 from socket import socket
 import json
 import reloadable
+from api.apiresponse import APIResponse
 
 session = settings.SESSION_HANDLER
 rh = settings.ROUTE_HANDLER
@@ -15,8 +16,8 @@ ec = settings.EMPLOYEE_CONTROLLER
 def employeeNew(req: Request, match: Match, sock: socket):
     valid, userid = session.validateSession(req=req)
     resp = Response()
-    data = dict()
-    data["action"] = "employeeNew"
+    apiResp = APIResponse()
+    apiResp.action = "employeeNew"
     if valid:
         try:
             args = {
@@ -25,16 +26,15 @@ def employeeNew(req: Request, match: Match, sock: socket):
                 "admin": True if "admin" in req.form else False
             }
             e = ec.createEmployee(**args)
-            data["result"] = "success"
-            data["employeeid"] = e.id
-            data["body"] = f'Successfully created employee: <a href="/employee/{e.id}">{e.lname}, {e.fname}</a>'
+            apiResp.result = APIResponse.SUCCESS
+            apiResp.body = f'Successfully created employee: <a href="/employee/{e.id}">{e.lname}, {e.fname}</a>'
         except Exception:
-            data["result"] = "fail"
-            data["body"] = "Error"
+            apiResp.result = APIResponse.FAIL
+            apiResp.body = "Error Encountered"
     else:
-        data["result"] = "fail"
-        data["body"] = "Unauthorized User"
-    resp.body = json.dumps(data)
+        apiResp.result = APIResponse.FAIL
+        apiResp.body = "Unauthorized User"
+    resp.body = apiResp.toJSON()
     resp.send(sock)
 
 @rh.register(["POST"],"/api/employee/edit")
