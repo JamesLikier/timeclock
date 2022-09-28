@@ -18,9 +18,9 @@ def routeEmployee(req: Request, match: re.Match, sock: socket):
             "user": user,
             "employee": employee
         }
-        resp.body = jinja.get_template("employee.html").render(**args)
+        resp.body = jinja.get_template("employee/employee.html").render(**args)
     else:
-        resp.body = jinja.get_template("login_required.html").render()
+        resp.body = jinja.get_template("user/login_required.html").render()
     resp.send(sock)
 
 @rh.register(["POST"], "/employee/new$")
@@ -35,9 +35,9 @@ def routeEmployeeNewPOST(req: Request, match: re.Match, sock: socket):
             "user": user,
             "employee": e
         }
-        resp.body = jinja.get_template("employeeNewPOST.html").render(**args)
+        resp.body = jinja.get_template("employee/employeeNewPOST.html").render(**args)
     else:
-        resp.body = jinja.get_template("login_required.html").render()
+        resp.body = jinja.get_template("user/login_required.html").render()
     resp.send(sock)
 
 @rh.register(["GET"], "/employee/new$")
@@ -48,9 +48,9 @@ def routeEmployeeNewGET(req: Request, match: re.Match, sock: socket):
         args = {
             "user": user
         }
-        resp.body = jinja.get_template("employeeNewGET.html").render(**args)
+        resp.body = jinja.get_template("employee/employeeNewGET.html").render(**args)
     else:
-        resp.body = jinja.get_template("login_required.html").render()
+        resp.body = jinja.get_template("user/login_required.html").render()
     resp.send(sock)
 
 @rh.register(["GET"], "/employee/list$|/employee/list\?(\&?(pg|pgSize)=([0-9]+))(\&?(pg|pgSize)=([0-9]+))")
@@ -69,7 +69,7 @@ def routeEmployeeList(req: Request, match: re.Match, sock: socket):
             "displayCount": len(employees),
             "totalEmployees": len(ec.employeeDict)
         }
-        resp.body = jinja.get_template("employeeList.html").render(**args)
+        resp.body = jinja.get_template("employee/employeeList.html").render(**args)
     else:
-        resp.body = jinja.get_template("login_required.html").render()
+        resp.body = jinja.get_template("user/login_required.html").render()
     resp.send(sock)

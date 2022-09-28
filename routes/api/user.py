@@ -12,7 +12,7 @@ jinja = settings.JINJA
 @rh.register(["GET"], "/api/login")
 def loginForm(req: Request, match: Match, sock: socket):
     resp = Response()
-    resp.body = jinja.get_template("loginForm.html").render()
+    resp.body = jinja.get_template("user/loginForm.html").render()
     resp.send(sock)
 
 @rh.register(["POST"],"/api/login")
