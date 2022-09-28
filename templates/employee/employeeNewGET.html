@@ -1,7 +1,7 @@
 {% extends "base.html" %}
-{% import "employee_macros.html" as employeeMacros %}
+{% import "employee/employee_macros.html" as employeeMacros %}
 {% block title %}New Employee{% endblock %}
 {% block head %}{{ super() }}{% endblock %}
 {% block content %}
-    {{ employeeMacros.displayNewEmployeeSuccess(employee) }}
+    {{ employeeMacros.displayNewEmployee() }}
 {% endblock %}

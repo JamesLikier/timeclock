@@ -26,14 +26,12 @@ def employeeNew(req: Request, match: Match, sock: socket):
             e = ec.creatEmployee(**args)
             data["result"] = "success"
             data["employeeid"] = e.id
-            data["fname"] = e.fname
-            data["lname"] = e.lname
-            data["admin"] = e.admin
             data["body"] = f'Successfully created employee: <a href="/employee/{e.id}">{e.lname}, {e.fname}</a>'
         except Exception:
             data["result"] = "fail"
     else:
         data["result"] = "fail"
+        data["body"] = "Unauthorized User"
     resp.body = json.dumps(data)
     resp.send(sock)
 
