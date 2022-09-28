@@ -4,6 +4,7 @@ from httphelper import Request, Response, STATUS_CODES
 from re import Match
 from socket import socket
 import json
+import reloadable
 
 rh = settings.ROUTE_HANDLER
 session = settings.SESSION_HANDLER

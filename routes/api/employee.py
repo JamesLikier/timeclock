@@ -4,6 +4,7 @@ from httphelper import Request, Response, STATUS_CODES
 from re import Match
 from socket import socket
 import json
+import reloadable
 
 session = settings.SESSION_HANDLER
 rh = settings.ROUTE_HANDLER
@@ -12,23 +13,24 @@ ec = settings.EMPLOYEE_CONTROLLER
 
 @rh.register(["POST"],"/api/employee/new")
 def employeeNew(req: Request, match: Match, sock: socket):
-    valid, userid = session.validateSession(req)
+    valid, userid = session.validateSession(req=req)
     resp = Response()
     data = dict()
-    data["action"] = req.form["employeeNew"]
+    data["action"] = "employeeNew"
     if valid:
         try:
             args = {
                 "fname": req.form["fname"].asStr(),
                 "lname": req.form["lname"].asStr(),
-                "admin": req.form["admin"].asBool()
+                "admin": True if "admin" in req.form else False
             }
-            e = ec.creatEmployee(**args)
+            e = ec.createEmployee(**args)
             data["result"] = "success"
             data["employeeid"] = e.id
             data["body"] = f'Successfully created employee: <a href="/employee/{e.id}">{e.lname}, {e.fname}</a>'
         except Exception:
             data["result"] = "fail"
+            data["body"] = "Error"
     else:
         data["result"] = "fail"
         data["body"] = "Unauthorized User"
