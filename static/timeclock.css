@@ -187,8 +187,6 @@ body {
 form {
     width: max-content;
     padding: 1em;
-    border: 1px solid;
-    border-color: var(--border-color);
 }
 
 td.label {
@@ -228,17 +226,16 @@ form input[type="submit"] {
 .numpad-display {
     height: 1.5em;
 }
-#punch-clock-form {
-    border: none;
-    margin: 0px;
-    padding: 0px;
-}
-#login {
+.p-r {
     position: relative;
 }
 .login-float {
     position: absolute;
     background-color: white;
+}
+.border {
+    border: 1px solid;
+    border-color: var(--border-color);
 }
 .flex-row {
     display: flex;
