@@ -41,8 +41,24 @@
     });
     /* End Employee Functions */
 
+    /* Punch Functions */
+    responseHandlers.set("punch/new",o=> {
+        let e = document.querySelector("#punchresult");
+        if(e == null) {
+            e = document.createElement("div");
+            e.id = "punchresult";
+            document.querySelector("#content").append(e);
+        }
+        if(o["result"] == "success") {
+            e.textContent = "Success";
+        } else {
+            e.textContent = "Failure";
+        }
+    });
+    /* End Punch Functions */
+
     /* Login/Logout */
-    let loginFloat = undefined;
+    let loginFloat = null;
     responseHandlers.set("comp/login",o => {
         c = document.querySelector("#login");
         e = document.createElement("div");
@@ -62,9 +78,9 @@
         }
     });
     document.addEventListener("click",e=>{
-        if (loginFloat != undefined && !loginFloat.contains(e.target)) {
+        if (loginFloat != null && !loginFloat.contains(e.target)) {
             loginFloat.remove();
-            loginFloat = undefined;
+            loginFloat = null;
         }
     });
     /* End Login/Logout */
@@ -87,17 +103,31 @@
         let numpadValue = document.querySelector("#numpad-value");
         let value = e.target.textContent.trim();
         if(e.target.classList.contains("numpad-key")){
+            if(numpadValue.value == null) {
+                numpadValue.value == "";
+            }
+            numpadValue.value += value;
             if (numpadDisplay.classList.contains("private")) {
                 numpadDisplay.textContent += "*";
-                numpadValue.value += value;
             } else {
                 numpadDisplay.textContent += value;
-                numpadValue.value += value;
             }
         } else if (e.target.classList.contains("numpad-clear")){
             numpadDisplay.textContent = "";
             numpadValue.value = "";
         } else if (e.target.classList.contains("numpad-enter")){
+            const forms = document.querySelectorAll("form");
+            let form = null
+            for (f of forms) {
+                if (f.contains(e.target)) {
+                    form = f;
+                }
+            }
+            if (form != null) {
+                form.requestSubmit();
+                numpadDisplay.textContent = "";
+                numpadValue.value = "";
+            }
         }
     });
     /* End Num Pad */

@@ -12,15 +12,17 @@ rh = settings.ROUTE_HANDLER
 jinja = settings.JINJA
 session = settings.SESSION_HANDLER
 pc = settings.PUNCH_CONTROLLER
+ec = settings.EMPLOYEE_CONTROLLER
 
 @rh.register(["POST"],"/api/punch/new")
 def punchNew(req: Request, match: Match, sock: socket):
-    valid, userid = session.validateSession(req=req)
     msg = Message()
-    msg.action = "punchNew"
-    if valid: 
+    msg.action = "punch/new"
+    try:
+        e = ec.getEmployeeById(req.form["employeeid"].asInt())
+        pc.createPunch(e.id)
         msg.result = Message.SUCCESS
-    else:
+    except Exception:
         msg.result = Message.FAIL
     resp = Response()
     resp.body = msg.toJSON()

@@ -1,4 +1,4 @@
-{% macro displayNumPad() %}
+{% macro displayNumPad(inputName="numpad-value") %}
     <div class="numpad">
         <table><tr><td class="numpad-display"></td></tr></table>
         <table>
@@ -23,14 +23,14 @@
                 <td class="numpad-enter">Enter</td>
             </tr>
         </table>
-        <input id="numpad-value" name="numpad-value" type="hidden">
+        <input id="numpad-value" name="{{ inputName }}" type="hidden">
     </div>
 {% endmacro %}
 {% macro displayPunchClock() %}
     <div class="punch-clock">
         <div class="clock big-clock">00:00:00</div>
-        <form id="punch-clock-form" class="mx">
-            {{ displayNumPad() }}
+        <form id="punch-clock-form" class="mx" action="/api/punch/new" method="POST">
+            {{ displayNumPad(inputName="employeeid") }}
         </form>
     </div>
 {% endmacro %}
