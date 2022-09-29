@@ -56,6 +56,7 @@
             e.id = "punchresult";
             document.querySelector("#content").append(e);
         }
+        e.classList.remove("hide");
         if(o["result"] == "success") {
             e.textContent = "Success";
         } else {
@@ -63,6 +64,7 @@
         }
         setTimeout(() => {
             e.textContent = "";
+            e.classList.add("hide");
         }, 2000);
     });
     /* End Punch Functions */
