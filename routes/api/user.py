@@ -1,9 +1,7 @@
-import re
 import settings
 from httphelper import Request, Response, STATUS_CODES
 from re import Match
 from socket import socket
-import json
 import reloadable
 from routes.api.util import Message
 
