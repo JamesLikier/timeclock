@@ -242,6 +242,7 @@ div #login * {
 .login-float {
     position: absolute;
     background-color: white;
+    font-size: .7em;
 }
 .flex-row {
     display: flex;
