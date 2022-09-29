@@ -42,6 +42,15 @@
     /* End Employee Functions */
 
     /* Login/Logout */
+    let loginFloat = undefined;
+    responseHandlers.set("comp/login",o => {
+        c = document.querySelector("#login");
+        e = document.createElement("div");
+        e.classList.add("login-float");
+        e.innerHTML = o["body"];
+        c.append(e);
+        loginFloat = e;
+    });
     responseHandlers.set("login",o => {
         if (o["result"] == "success") {
             document.location = "/";
@@ -52,32 +61,10 @@
             document.location = "/";
         }
     });
-    let loginFloat = undefined;
-    function showLogin(p) {
-        if (loginFloat == undefined){
-            e = document.createElement("div");
-            e.classList.add("login-float");
-            fetch("/api/login", {
-                "method": "GET"
-            }).then(r => {
-                if (r.ok) {
-                    r.json().then(o => {
-                        loginFloat = e;
-                        e.innerHTML = o["body"];
-                        p.append(e);
-                    });
-                }
-            });
-        }
-    }
     document.addEventListener("click",e=>{
         if (loginFloat != undefined && !loginFloat.contains(e.target)) {
             loginFloat.remove();
             loginFloat = undefined;
-        }
-        if (e.target.id == "login") {
-            e.preventDefault();
-            showLogin(e.target);
         }
     });
     /* End Login/Logout */
@@ -120,7 +107,7 @@
         if (e.target.getAttribute("collapse") === "hide") {
             e.target.classList.add("d-none");
         } else {
-            e.target.style.height = null;
+            //e.target.style.height = null;
         }
         e.target.classList.remove("collapsing");
         e.target.removeEventListener("transitionend", collapsed);

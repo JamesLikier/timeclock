@@ -9,10 +9,13 @@ rh = settings.ROUTE_HANDLER
 session = settings.SESSION_HANDLER
 jinja = settings.JINJA
 
-@rh.register(["GET"], "/api/login")
+@rh.register(["GET"], "/api/comp/login")
 def loginForm(req: Request, match: Match, sock: socket):
     resp = Response()
-    msg = Message(result=Message.SUCCESS, body=jinja.get_template("user/loginForm.html").render())
+    msg = Message()
+    msg.action = "comp/login"
+    msg.result = Message.SUCCESS
+    msg.body = jinja.get_template("user/loginForm.html").render()
     resp.body = msg.toJSON()
     resp.send(sock)
 
