@@ -17,7 +17,7 @@ def employeeNew(req: Request, match: Match, sock: socket):
     valid, userid = session.validateSession(req=req)
     resp = Response()
     msg = Message()
-    msg.action = "employeeNew"
+    msg.action = "employee/new"
     if valid:
         try:
             args = {

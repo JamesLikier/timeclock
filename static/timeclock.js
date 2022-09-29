@@ -36,7 +36,7 @@
     /* End API Hooks */
 
     /* Employee Functions */
-    responseHandlers.set("employeeNew",o => {
+    responseHandlers.set("employee/new",o => {
         content.innerHTML = o["body"];
     });
     /* End Employee Functions */
