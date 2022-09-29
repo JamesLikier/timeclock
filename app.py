@@ -5,9 +5,8 @@ from httphelper import Request, Response
 from re import Match
 from socket import socket
 import importlib
-import json
 import sys
-import html
+from routes.api.util import Message
 
 server = httpserver.Server(settings.SERVER_ADDR, settings.SERVER_PORT, settings.ROUTE_HANDLER)
 rh = settings.ROUTE_HANDLER
@@ -19,12 +18,8 @@ def reloadRoutes(req: Request, match: Match, sock: socket):
         if "reloadable" in dir(v):
             importlib.reload(v)
     resp = Response()
-    data = {
-        "action": "reload",
-        "result": "success",
-        "body": body
-    }
-    resp.body = json.dumps(data)
+    msg = Message(action="reload",result=Message.SUCCESS,body=body)
+    resp.body = msg.toJSON()
     resp.send(sock)
 
 server.start()

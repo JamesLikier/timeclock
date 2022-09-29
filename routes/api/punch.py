@@ -6,7 +6,7 @@ from re import Match
 from socket import socket
 from timeclock import PunchController, Punch, EmployeeController, Employee
 import json
-from routes.api import Message
+from routes.api.util import Message
 
 rh = settings.ROUTE_HANDLER
 jinja = settings.JINJA

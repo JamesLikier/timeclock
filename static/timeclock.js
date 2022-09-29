@@ -61,9 +61,9 @@
                 "method": "GET"
             }).then(r => {
                 if (r.ok) {
-                    r.text().then(s => {
+                    r.json().then(o => {
                         loginFloat = e;
-                        e.innerHTML = s;
+                        e.innerHTML = o["body"];
                         p.append(e);
                     });
                 }

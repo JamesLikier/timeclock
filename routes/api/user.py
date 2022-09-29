@@ -5,7 +5,7 @@ from re import Match
 from socket import socket
 import json
 import reloadable
-from routes.api import Message
+from routes.api.util import Message
 
 rh = settings.ROUTE_HANDLER
 session = settings.SESSION_HANDLER

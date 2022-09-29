@@ -1,11 +1,22 @@
-import settings
-from re import Match
-from httphelper import Request, Response, STATUS_CODES, CONTENT_TYPES
-from socket import socket
-import importlib
-import json
 import reloadable
+import json
+from dataclasses import dataclass, field
 
-session = settings.SESSION_HANDLER
-jinja = settings.JINJA
-rh = settings.ROUTE_HANDLER
+@dataclass
+class Message():
+    action: str = ""
+    result: str = ""
+    body: str = ""
+    data: dict = field(default_factory=(lambda : dict()))
+    SUCCESS: str = "success"
+    FAIL: str = "fail"
+
+    def toDict(self):
+        return {
+            "action": self.action,
+            "result": self.result,
+            "body": self.body,
+            "data": self.data
+        }
+    def toJSON(self):
+        return json.dumps(self.toDict())
