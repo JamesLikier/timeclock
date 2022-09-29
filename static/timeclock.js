@@ -50,7 +50,7 @@
 
     /* Punch Functions */
     responseHandlers.set("punch/new",o=> {
-        let e = document.querySelector("#punchresult");
+        let e = document.querySelector(".punch-result");
         if(e == null) {
             e = document.createElement("div");
             e.id = "punchresult";
@@ -61,6 +61,9 @@
         } else {
             e.textContent = "Failure";
         }
+        setTimeout(() => {
+            e.textContent = "";
+        }, 2000);
     });
     /* End Punch Functions */
 
