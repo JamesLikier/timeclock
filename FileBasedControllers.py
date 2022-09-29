@@ -116,8 +116,10 @@ class FileBasedPunchController(timeclock.PunchController):
 
     def createPunch(self,
                     employeeId: int,
-                    datetime: time.struct_time,
-                    createdByEmployeeId: int) -> Punch:
+                    datetime: time.struct_time = None,
+                    createdByEmployeeId: int = None) -> Punch:
+        datetime = datetime or time.localtime()
+        createdByEmployeeId = createdByEmployeeId or employeeId
         p = Punch(self.nextPunchId,employeeId=employeeId,datetime=datetime,createdByEmployeeId=createdByEmployeeId)
         self.punchDict[p.id] = p
         self.nextPunchId += 1
