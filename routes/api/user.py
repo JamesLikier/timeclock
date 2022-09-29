@@ -38,8 +38,8 @@ def login(req: Request, match: Match, sock: socket):
 
 @rh.register(["POST"], "/api/logout")
 def logout(req: Request, match: Match, sock: socket):
-    session.invalidateSession(req=req,resp=resp)
     resp = Response()
+    session.invalidateSession(req=req,resp=resp)
     msg = Message(result=Message.SUCCESS, action="logout")
     resp.body = msg.toJSON()
     resp.send(sock)
