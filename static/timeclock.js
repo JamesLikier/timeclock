@@ -4,11 +4,18 @@
 
     /* API Hooks */
     document.addEventListener("submit",e=>{
-        if(e.target.action.includes("/api/")) {
+        let form = null
+        for(f of document.querySelectorAll("form")){
+            if(f.contains(e.submitter)){
+                form = f;
+                break;
+            }
+        }
+        if(form.action.includes("/api/")) {
             e.preventDefault();
-            fd = new FormData(e.target);
-            fetch(e.target.action, {
-                "method": e.target.method,
+            fd = new FormData(form);
+            fetch(form.action, {
+                "method": form.method,
                 "body": fd
             }).then(r => {
                 if (r.ok) {
@@ -99,10 +106,19 @@
 
     /* Num Pad */
     document.addEventListener("click",e => {
-        let numpadDisplay = document.querySelector(".numpad-display");
-        let numpadValue = document.querySelector("#numpad-value");
-        let value = e.target.textContent.trim();
+        let numpad = null;
+        for (n of document.querySelectorAll("#numpad")) {
+            if (n.contains(e.target)) {
+                numpad = n;
+                break;
+            }
+        }
+        if (numpad == null) return;
+
+        let numpadDisplay = numpad.querySelector("#numpad-display");
+        let numpadValue = numpad.querySelector("#numpad-value");
         if(e.target.classList.contains("numpad-key")){
+            let value = e.target.textContent.trim();
             if(numpadValue.value == null) {
                 numpadValue.value == "";
             }
@@ -124,7 +140,7 @@
                 }
             }
             if (form != null) {
-                form.requestSubmit();
+                document.dispatchEvent(new SubmitEvent('submit',{'submitter': e.target}));
                 numpadDisplay.textContent = "";
                 numpadValue.value = "";
             }

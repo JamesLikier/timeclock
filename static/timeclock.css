@@ -223,7 +223,7 @@ form input[type="submit"] {
     border-style: outset;
     width: 2em;
 }
-.numpad-display {
+#numpad-display {
     height: 1.5em;
 }
 .p-r {
