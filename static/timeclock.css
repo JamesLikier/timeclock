@@ -55,11 +55,8 @@ body {
     .punch-clock td {
         font-size: 2em;
     }
-    .numpad-clear {
-        font-size: 1em;
-    }
-    .numpad-enter {
-        font-size: 1em;
+    td.numpad-clear, td.numpad-enter {
+        font-size: 1.2em;
     }
 }
 
@@ -89,6 +86,9 @@ body {
     }
     .punch-clock td {
         font-size: 4em;
+    }
+    td.numpad-clear, td.numpad-enter {
+        font-size: 3em;
     }
 }
 .t-fade {
