@@ -288,7 +288,6 @@ form input[type="submit"] {
 }
 /* MODAL */
 .modal-bg {
-    opacity: 80%;
     display: flex;
     position: fixed;
     justify-content: center;
@@ -297,16 +296,15 @@ form input[type="submit"] {
     left: 0;
     top: 0;
     bottom: 0;
-    background-color: #e0e0e0;
+    background-color: rgba(0,0,0,0.3);
     z-index: 9999;
 }
 .modal {
-    opacity: 100%;
     min-width: 300px;
     border: 1px solid #777777;
     border-radius: 0.5em;
     background-color: #eeeeee;
-    box-shadow: 0 8px 50px 0 rgba(0, 0, 0, 0.5)
+    box-shadow: 0 8px 50px 0 rgba(0, 0, 0, 0.5);
 }
 .modal-title {
     border-bottom: 1px solid #777777;

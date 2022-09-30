@@ -50,22 +50,7 @@
 
     /* Punch Functions */
     responseHandlers.set("punch/new",o=> {
-        let e = document.querySelector(".punch-result");
-        if(e == null) {
-            e = document.createElement("div");
-            e.id = "punchresult";
-            document.querySelector("#content").append(e);
-        }
-        e.classList.remove("hide");
-        if(o["result"] == "success") {
-            e.textContent = "Success";
-        } else {
-            e.textContent = "Failure";
-        }
-        setTimeout(() => {
-            e.textContent = "";
-            e.classList.add("hide");
-        }, 2000);
+        displayModal("Punch Result", o["result"], null, 3);
     });
     /* End Punch Functions */
 
