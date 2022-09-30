@@ -43,7 +43,3 @@ def punchclock(req: Request, match: Match, sock: socket):
     resp = Response()
     resp.body = msg.toJSON()
     resp.send(sock)
-
-@rh.register(["GET"],"/api/punch/new")
-def punchNew(req: Request, match: Match, sock: socket):
-    pass
