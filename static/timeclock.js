@@ -92,10 +92,12 @@
     document.addEventListener('numpad-enter', e => {
         if (punchClock.state == "employeeid"){
             numpadDisplay.textContent = "Enter PIN";
+            numpadDisplay.classList.add("private");
             punchClock.employeeid = e.detail;
             punchClock.state = "pin";
         } else if (punchClock.state == "pin"){
             numpadDisplay.textContent = "Enter ID";
+            numpadDisplay.classList.remove("private");
             punchClock.pin = e.detail;
             punchClock.state = "employeeid";
             for(f of document.querySelectorAll("form")){
