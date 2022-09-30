@@ -20,3 +20,11 @@ class Message():
         }
     def toJSON(self):
         return json.dumps(self.toDict())
+
+    def fromJSON(data: str):
+        m = Message()
+        jd = json.loads(data)
+        m.action = jd.get("action","")
+        m.body = jd.get("body","")
+        m.data = jd.get("data",dict())
+        return m
