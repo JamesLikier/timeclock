@@ -268,7 +268,7 @@ form input[type="submit"] {
 }
 
 .d-none {
-    display: none;
+    display: none !important;
 }
 
 .d-flex {
@@ -286,3 +286,42 @@ form input[type="submit"] {
 .d-inline {
     display: inline;
 }
+/* MODAL */
+.modal-bg {
+    opacity: 80%;
+    display: flex;
+    position: fixed;
+    justify-content: center;
+    align-items: center;
+    right: 0;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    background-color: #e0e0e0;
+    z-index: 9999;
+}
+.modal {
+    opacity: 100%;
+    min-width: 300px;
+    border: 1px solid #777777;
+    border-radius: 0.5em;
+}
+.modal-title {
+    border-bottom: 1px solid #777777;
+    background-color: #009dff;
+    border-radius: 0.5em 0.5em 0 0;
+}
+.modal-body {
+    min-height: 100px;
+    background-color: #eeeeee;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 0 0 0.5em 0.5em;
+}
+.modal-title, .modal-body {
+    padding: 0.2em;
+    padding-left: 1em;
+    padding-right: 1em;
+}
+/* END MODAL */

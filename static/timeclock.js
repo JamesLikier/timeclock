@@ -153,6 +153,37 @@
     });
     /* End Num Pad */
 
+    /* Modal */
+    let currentModal = null;
+    function displayModal(title="",body="", target=null, time=0) {
+        let modal_bg = document.createElement("div");
+        modal_bg.classList.add("modal-bg");
+        let modal = document.createElement("div");
+        modal.classList.add("modal");
+        let modal_title = document.createElement("div");
+        modal_title.classList.add("modal-title");
+        modal_title.textContent = title;
+        let modal_body = document.createElement("div");
+        modal_body.classList.add("modal-body");
+        modal_body.textContent = body;
+        modal.append(modal_title);
+        modal.append(modal_body);
+        modal_bg.append(modal);
+        if (target == null) {
+            document.querySelector("body").append(modal_bg);
+        } else {
+            target.append(modal_bg);
+        }
+        currentModal = modal_bg;
+        if (time > 0) {
+            setTimeout(() => {
+                currentModal.remove();
+                currentModal = null;
+            },time*1000);
+        }
+    }
+    /* End Modal */
+
     /* Collapse */
     function collapsed(e) {
         if (e.target.getAttribute("collapse") === "hide") {
