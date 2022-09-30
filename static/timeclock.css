@@ -288,10 +288,7 @@ form input[type="submit"] {
 }
 /* MODAL */
 .modal-bg {
-    display: flex;
     position: fixed;
-    justify-content: center;
-    align-items: center;
     right: 0;
     left: 0;
     top: 0;
@@ -300,6 +297,10 @@ form input[type="submit"] {
     z-index: 9999;
 }
 .modal {
+    position: fixed;
+    top: 25%;
+    left:50%;
+    transform: translateX(-50%);
     min-width: 300px;
     border: 1px solid #777777;
     border-radius: 0.5em;
@@ -308,7 +309,7 @@ form input[type="submit"] {
 }
 .modal-title {
     border-bottom: 1px solid #777777;
-    background-color: #009dff;
+    background-color: #91baff;
     border-radius: 0.5em 0.5em 0 0;
 }
 .modal-body {
@@ -323,7 +324,7 @@ form input[type="submit"] {
     justify-content: right;
 }
 .modal-title, .modal-body, .modal-footer {
-    padding: 0.2em;
+    padding: 0.5em;
     padding-left: 1em;
     padding-right: 1em;
 }
