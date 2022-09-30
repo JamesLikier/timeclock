@@ -16,7 +16,8 @@ CONTENT_TYPES = {
     "html": "text/html",
     "js": "text/javascript",
     "css": "text/css",
-    "txt": "text/plain"
+    "txt": "text/plain",
+    "svg": "image/svg+xml"
 }
 class IncompleteStartline(Exception):
     pass
