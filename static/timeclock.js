@@ -139,7 +139,6 @@
     /* End Num Pad */
 
     /* Modal */
-    let currentModal = null;
     function displayModal(title="",body="", target=null, time=0) {
         let modal_bg = document.createElement("div");
         modal_bg.classList.add("modal-bg");
@@ -155,6 +154,7 @@
         modal_footer.classList.add("modal-footer");
         let close_button = document.createElement("button");
         close_button.textContent = "Close";
+        close_button.addEventListener("click", e => modal_bg.remove());
         modal_footer.append(close_button);
         modal.append(modal_title);
         modal.append(modal_body);
@@ -165,11 +165,9 @@
         } else {
             target.append(modal_bg);
         }
-        currentModal = modal_bg;
         if (time > 0) {
             setTimeout(() => {
-                currentModal.remove();
-                currentModal = null;
+                modal_bg.remove();
             },time*1000);
         }
     } 
