@@ -48,12 +48,6 @@
     });
     /* End Employee Functions */
 
-    /* Punch Functions */
-    responseHandlers.set("punch/new",o=> {
-        displayModal("Punch Result", o["result"], null, 3);
-    });
-    /* End Punch Functions */
-
     /* Login/Logout */
     let loginFloat = null;
     responseHandlers.set("comp/login",o => {
@@ -83,11 +77,42 @@
     /* End Login/Logout */
 
     /* Punch Clock */
+    let numpadDisplay = document.querySelector("#numpad-display");
+    let numpadValue = document.querySelector("#numpad-value");
+    if(numpadDisplay != null) {
+        numpadDisplay.textContent = "Enter ID";
+        numpadValue.value == "";
+    }
+    responseHandlers.set("punchclock",o => {
+        const title = "PunchClock Result";
+        displayModal(title,o["body"],null,3);
+    });
+    const punchClock = {}
+    punchClock.state = "employeeid";
+    document.addEventListener('numpad-enter', e => {
+        if (punchClock.state == "employeeid"){
+            numpadDisplay.textContent = "Enter PIN";
+            punchClock.employeeid = e.detail;
+            punchClock.state = "pin";
+        } else if (punchClock.state == "pin"){
+            numpadDisplay.textContent = "Enter ID";
+            punchClock.pin = e.detail;
+            punchClock.state = "employeeid";
+            for(f of document.querySelectorAll("form")){
+                if (f.contains(e.target)){
+                    f.querySelector("#pc-employeeid").value = punchClock.employeeid;
+                    f.querySelector("#pc-pin").value = punchClock.pin;
+                    f.dispatchEvent(new SubmitEvent("submit",{ "bubbles": true, "cancelable": true, submitter: e.target}))
+                    break;
+                }
+            }
+        }
+    });
     function updateClockTime() {
         let e = document.querySelector(".clock");
         let d = new Date()
         if (e) {
-            e.textContent = d.toLocaleTimeString()
+            e.textContent = d.toLocaleTimeString();
         }
     }
     updateClockTime()
@@ -112,7 +137,11 @@
             if(numpadValue.value == null) {
                 numpadValue.value == "";
             }
+            if(numpadValue.value == "") {
+                numpadDisplay.textContent = "";
+            }
             numpadValue.value += value;
+
             if (numpadDisplay.classList.contains("private")) {
                 numpadDisplay.textContent += "*";
             } else {
@@ -122,21 +151,11 @@
             numpadDisplay.textContent = "";
             numpadValue.value = "";
         } else if (e.target.classList.contains("numpad-enter")){
-            const forms = document.querySelectorAll("form");
-            let form = null
-            for (f of forms) {
-                if (f.contains(e.target)) {
-                    form = f;
-                }
-            }
-            if (form != null) {
-                document.dispatchEvent(new SubmitEvent('submit',{'submitter': e.target}));
-                numpadDisplay.textContent = "";
-                numpadValue.value = "";
-            }
+            numpadDisplay.textContent = "";
+            numpad.dispatchEvent(new CustomEvent('numpad-enter', {"bubbles": true, "detail": numpadValue.value}));
+            numpadValue.value = "";
         }
     });
-    /* End Num Pad */
 
     /* Modal */
     function displayModal(title="",body="", target=null, time=0) {

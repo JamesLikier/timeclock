@@ -28,6 +28,22 @@ def punchNew(req: Request, match: Match, sock: socket):
     resp.body = msg.toJSON()
     resp.send(sock)
 
+@rh.register(["POST"],"/api/punchclock")
+def punchclock(req: Request, match: Match, sock: socket):
+    msg = Message()
+    msg.action = "punchclock"
+    try:
+        e = ec.getEmployeeById(req.form["employeeid"].asInt())
+        pc.createPunch(e.id)
+        msg.result = Message.SUCCESS
+        msg.body = f"Punch Accepted: {e.lname}, {e.fname}"
+    except Exception:
+        msg.result = Message.FAIL
+        msg.body = "Invalid Employee ID or PIN"
+    resp = Response()
+    resp.body = msg.toJSON()
+    resp.send(sock)
+
 @rh.register(["GET"],"/api/punch/new")
 def punchNew(req: Request, match: Match, sock: socket):
     pass

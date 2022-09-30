@@ -28,10 +28,11 @@
 {% endmacro %}
 {% macro displayPunchClock() %}
     <div class="punch-clock">
-        <div class="punch-result hide border"></div>
         <div class="clock big-clock">00:00:00</div>
-        <form id="punch-clock-form" class="mx" action="/api/punch/new" method="POST">
+        <form id="punch-clock-form" class="mx" action="/api/punchclock" method="POST">
             {{ displayNumPad(inputName="employeeid") }}
+            <input id="pc-employeeid" type="hidden" name="employeeid">
+            <input id="pc-pin" type="hidden" name="pin">
         </form>
     </div>
 {% endmacro %}
