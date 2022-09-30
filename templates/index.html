@@ -6,5 +6,7 @@
 {% block content %}
     {% if user == None %}
         {{ punchMacros.displayPunchClock() }}
+    {% else %}
+        {{ punchMacros.displayEmployeePunches(punchList) }}
     {% endif %}
 {% endblock %}
