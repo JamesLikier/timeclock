@@ -305,6 +305,7 @@ form input[type="submit"] {
     min-width: 300px;
     border: 1px solid #777777;
     border-radius: 0.5em;
+    background-color: #eeeeee;
 }
 .modal-title {
     border-bottom: 1px solid #777777;
@@ -313,13 +314,16 @@ form input[type="submit"] {
 }
 .modal-body {
     min-height: 100px;
-    background-color: #eeeeee;
     display: flex;
     justify-content: center;
     align-items: center;
-    border-radius: 0 0 0.5em 0.5em;
 }
-.modal-title, .modal-body {
+.modal-footer {
+    border-radius: 0 0 0.5em 0.5em;
+    display: flex;
+    justify-content: right;
+}
+.modal-title, .modal-body, .modal-footer {
     padding: 0.2em;
     padding-left: 1em;
     padding-right: 1em;

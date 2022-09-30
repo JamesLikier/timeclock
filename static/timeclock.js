@@ -166,8 +166,14 @@
         let modal_body = document.createElement("div");
         modal_body.classList.add("modal-body");
         modal_body.textContent = body;
+        let modal_footer = document.createElement("div");
+        modal_footer.classList.add("modal-footer");
+        let close_button = document.createElement("button");
+        close_button.textContent = "Close";
+        modal_footer.append(close_button);
         modal.append(modal_title);
         modal.append(modal_body);
+        modal.append(modal_footer);
         modal_bg.append(modal);
         if (target == null) {
             document.querySelector("body").append(modal_bg);
@@ -181,7 +187,7 @@
                 currentModal = null;
             },time*1000);
         }
-    }
+    } 
     /* End Modal */
 
     /* Collapse */
