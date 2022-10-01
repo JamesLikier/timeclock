@@ -36,5 +36,17 @@
         </form>
     </div>
 {% endmacro %}
-{% macro displayEmployeePunches(punchList) %}
+{% macro displayEmployeePunches(punchList,startInOrOut) %}
+    {% if startInOrOut == "in" %}
+        {{ set cycle1 = 'In' }}
+        {{ set cycle2 = 'Out' }}
+    {% endif %}
+    <table>
+    {% for p in punchList %}
+        <tr>
+            <td></td>
+            <td>{{ p.datetime }}</td>
+        </tr>
+    {% endfor %}
+    </table>
 {% endmacro %}
