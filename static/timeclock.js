@@ -85,7 +85,8 @@
     }
     responseHandlers.set("punchclock",o => {
         const title = "PunchClock Result";
-        displayModal(title,o["body"],null,3);
+        let func = (o["result"] == "success") ? displaySuccessModal : displayErrorModal;
+        func(title,o["body"],3);
     });
     const punchClock = {}
     punchClock.state = "employeeid";
@@ -160,13 +161,23 @@
     });
 
     /* Modal */
-    function displayModal(title="",body="", target=null, time=0) {
+    function displayErrorModal(title="",body="",time=0,target=null) {
+        displayModal(title,body,time,target,"error");
+    }
+    function displaySuccessModal(title="",body="",time=0,target=null) {
+        displayModal(title,body,time,target,"success");
+    }
+    function displayWarningModal(title="",body="",time=0,target=null) {
+        displayModal(title,body,time,target,"warning");
+    }
+    function displayModal(title="",body="",time=0,target=null,mode="normal") {
         let modal_bg = document.createElement("div");
         modal_bg.classList.add("modal-bg");
         let modal = document.createElement("div");
         modal.classList.add("modal");
         let modal_title = document.createElement("div");
         modal_title.classList.add("modal-title");
+        modal_title.classList.add(mode);
         modal_title.textContent = title;
         let modal_body = document.createElement("div");
         modal_body.classList.add("modal-body");

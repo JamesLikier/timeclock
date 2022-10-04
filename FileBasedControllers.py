@@ -91,8 +91,9 @@ class FileBasedPunchController(timeclock.PunchController):
             with open(str(filename), "r") as f:
                 self.nextPunchId = int(f.readline())
                 for punchString in f.readlines():
+                    print(punchString)
                     fields = punchString.strip("\n").split(",")
-                    p = Punch(int(fields[0]),int(fields[1]),time.localtime(float(fields[2])),int(fields[3]),int(fields[4]))
+                    p = Punch(int(fields[0]),int(fields[1]),float(fields[2]),int(fields[3]),int(fields[4]))
                     self.punchDict[p.id] = p
         except Exception:
             pass
@@ -106,7 +107,7 @@ class FileBasedPunchController(timeclock.PunchController):
                     fields = []
                     fields.append(str(punch.id))
                     fields.append(str(punch.employeeId))
-                    fields.append(str(time.mktime(punch.datetime)))
+                    fields.append(str(punch.ftime))
                     fields.append(str(punch.createdByEmployeeId))
                     fields.append(str(punch.modifiedByEmployeeId))
                     line = ",".join(fields) + "\n"
@@ -116,11 +117,11 @@ class FileBasedPunchController(timeclock.PunchController):
 
     def createPunch(self,
                     employeeId: int,
-                    datetime: time.struct_time = None,
+                    ftime: float = None,
                     createdByEmployeeId: int = None) -> Punch:
-        datetime = datetime or time.localtime()
         createdByEmployeeId = createdByEmployeeId or employeeId
-        p = Punch(self.nextPunchId,employeeId=employeeId,datetime=datetime,createdByEmployeeId=createdByEmployeeId)
+        ftime = ftime or time.time()
+        p = Punch(self.nextPunchId,employeeId=employeeId,ftime=ftime,createdByEmployeeId=createdByEmployeeId)
         self.punchDict[p.id] = p
         self.nextPunchId += 1
         self.exportFile()
@@ -134,9 +135,12 @@ class FileBasedPunchController(timeclock.PunchController):
 
     def getPunchesByEmployeeId(self,
                             employeeId: int,
-                            startDatetime: time.struct_time,
-                            endDatetime: time.struct_time) -> list[Punch]:
-        return [copy.deepcopy(p) for p in self.punchDict.values() if p.employeeId == employeeId and time.mktime(p.datetime) > time.mktime(startDatetime) and time.mktime(p.datetime) <= time.mktime(endDatetime)]
+                            startFtime: float = None,
+                            endFtime: float = None) -> list[Punch]:
+        twoWeeks = 60 * 60 * 24 * 7 * 2
+        startFtime = startFtime or (time.time() - twoWeeks)
+        endFtime = endFtime or time.time()
+        return [copy.deepcopy(p) for p in self.punchDict.values() if p.employeeId == employeeId and p.ftime > startFtime and p.ftime <= endFtime]
         
     def modifyPunch(self, punch: Punch, modifiedByEmployeeId: int) -> Punch:
         self.punchDict[punch.id] = copy.deepcopy(punch)
@@ -148,7 +152,7 @@ class FileBasedPunchController(timeclock.PunchController):
         count = 0
         for p in self.punchDict.values():
             p: Punch
-            if p.employeeId == punch.employeeId and time.mktime(p.datetime) < time.mktime(punch.datetime):
+            if p.employeeId == punch.employeeId and p.ftime < punch.ftime:
                 count += 1
         return count
 

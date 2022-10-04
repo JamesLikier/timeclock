@@ -5,9 +5,13 @@
     --row1-bg-color: #c4e2ff;
     --row2-bg-color: #ddf0ff;
     --border-color: #aaaaaa;
+    --success-color: #99ffb1;
+    --error-color: #ffb8b8;
+    --warning-color: #f3ffb8;
 }
 
 html {
+    height: 100%;
     box-sizing: border-box;
 }
 
@@ -16,6 +20,7 @@ html {
 }
 
 body {
+    height: 100%;
     background-color: var(--body-bg-color);
     position: relative;
     margin: 0px;
@@ -207,16 +212,17 @@ form input[type="submit"] {
 }
 
 .punch-clock {
+    margin: 1em;
+    margin-left: auto;
+    margin-right: auto;
     width: min-content;
     text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-left: auto;
-    margin-right: auto;
-    border: 0.6em solid #444444;
+    border: 0.3em solid #444444;
     border-radius: 1em;
-    box-shadow: 0 0.2em 1em 0;
+    box-shadow: 0 0.3em 1em 0;
 }
 .punch-clock table {
     width: 100%;
@@ -240,6 +246,9 @@ form input[type="submit"] {
     width: 300px;
     height: 150px;
     background-color: #eeeeee;
+}
+.punch-list {
+    text-align: center;
 }
 #numpad-display {
     height: 1.5em;
@@ -293,6 +302,20 @@ form input[type="submit"] {
 .d-inline {
     display: inline;
 }
+/* Message Colors */
+.success {
+    background-color: var(--success-color) !important;
+}
+.warning {
+    background-color: var(--warning-color) !important;
+}
+.error {
+    background-color: var(--error-color) !important;
+}
+.normal {
+    background-color: #c4e2ff;
+}
+/* End Message Colors */
 /* MODAL */
 .modal-bg {
     position: fixed;
@@ -316,7 +339,6 @@ form input[type="submit"] {
 }
 .modal-title {
     border-bottom: 1px solid #777777;
-    background-color: #91baff;
     border-radius: 0.5em 0.5em 0 0;
 }
 .modal-body {

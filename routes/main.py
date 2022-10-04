@@ -5,11 +5,14 @@ from user import User
 import re
 from socket import socket
 import reloadable
+import time
+import timeclock as tc
 
 rh = settings.ROUTE_HANDLER
 jinja = settings.JINJA
 session = settings.SESSION_HANDLER
 ec = settings.EMPLOYEE_CONTROLLER
+pc = settings.PUNCH_CONTROLLER
 
 @rh.register(["GET"],"/$")
 def routeRoot(req: Request, match: re.Match, sock: socket):
@@ -17,8 +20,14 @@ def routeRoot(req: Request, match: re.Match, sock: socket):
     user = User.fromSession(req)
     template = jinja.get_template("index.html")
     args = {
-        "user": user
+        "user": user,
     }
+    if user is not None:
+        punchList = pc.getPunchesByEmployeeId(user.userid)
+        if len(punchList) > 0:
+            startState = pc.getPunchState(punchList[0])
+            pairList = tc.pairPunches(punchList, startState)
+            args["pairList"] = pairList
     resp.body = template.render(**args)
     resp.send(sock)
 
