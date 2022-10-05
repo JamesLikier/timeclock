@@ -27,3 +27,7 @@ JINJA = Environment(
 )
 JINJA.filters["floor"] = lambda val, floor: val if val > floor else floor
 JINJA.filters["ceil"] = lambda val, ceil: val if val < ceil else ceil
+
+#create default admin employee for testing
+if len(EMPLOYEE_CONTROLLER.employeeDict) == 0:
+    EMPLOYEE_CONTROLLER.createEmployee("ADMIN","ADMIN",True)
