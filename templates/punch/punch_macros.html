@@ -36,25 +36,18 @@
         </form>
     </div>
 {% endmacro %}
-{% macro displayEmployeePunches(startDate,endDate,pairList,startState) %}
-    {% if startState == "in" %}
-        {% set cycle1 = 'In' %}
-        {% set cycle2 = 'Out' %}
-    {% else %}
-        {% set cycle1 = 'Out' %}
-        {% set cycle2 = 'In' %}
-    {% endif %}
+{% macro displayEmployeePunches(startDate,endDate,pairList) %}
     <table class="punch-list">
     {% for p in pairList %}
         <tr>
             <td>{{ p.date }}</td>
             {% if p.p1 != None %}
-                <td>{{ p.p1.state }}</td><td>{{ p.p1.time }}</td>
+                <td>{{ p.p1.state|upper }}</td><td>{{ p.p1.punch.datetime.strftime('%H:%M') }}</td>
             {% else %}
                 <td></td><td></td>
             {% endif %}
             {% if p.p2 != None %}
-                <td>{{ p.p2.state }}</td><td>{{ p.p2.time }}</td>
+                <td>{{ p.p2.state|upper }}</td><td>{{ p.p2.punch.datetime.strftime('%H:%M') }}</td>
             {% else %}
                 <td></td><td></td>
             {% endif %}
