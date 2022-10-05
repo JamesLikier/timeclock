@@ -101,10 +101,13 @@ def pairPunches(punches: list[Punch],startState):
     for p in punches:
         pair.date = pair.date or p.datetime.date()
         ps = PunchState(p,state)
-        if pair.date != p.dateString():
+
+        #new date, so start a fresh pair
+        if pair.date != p.datetime.date():
             pairs.append(pair)
             pair = PunchPair()
             pair.date = p.datetime.date()
+
         if pair.p1 is None:
             pair.p1 = ps
         else:
@@ -112,6 +115,7 @@ def pairPunches(punches: list[Punch],startState):
             pairs.append(pair)
             pair = PunchPair()
         state = 'in' if state == 'out' else 'out'
+
     if pair.p1 is not None:
         pairs.append(pair)
     return pairs

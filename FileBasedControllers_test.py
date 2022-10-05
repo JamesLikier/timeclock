@@ -314,11 +314,11 @@ class TestPunchPair(unittest.TestCase):
             pass
     def test_pairPunchesSameDay(self):
         for x in range(3):
-            punchin = time.mktime(time.strptime(f"9 {x+26} 2022 15 0",r"%m %d %Y %H %M"))
-            punchout = time.mktime(time.strptime(f"9 {x+26} 2022 23 0",r"%m %d %Y %H %M"))
+            punchin = datetime.datetime(2022,9,1,15,0) + datetime.timedelta(days=0)
+            punchout = punchin + datetime.timedelta(hours=8) + datetime.timedelta(days=0)
             self.pc.createPunch(1,punchin)
             self.pc.createPunch(1,punchout)
-        punchList = self.pc.getPunchesByEmployeeId(1)
+        punchList = self.pc.getPunchesByEmployeeId(1,datetime.datetime(2022,1,1))
         self.assertEqual(len(punchList),6)
         startState = 'in' if self.pc.getPunchCountUpToPunch(punchList[0]) % 2 == 0 else 'out'
         self.assertEqual(startState,'in')
@@ -326,11 +326,11 @@ class TestPunchPair(unittest.TestCase):
         self.assertEqual(len(pairList),3)
     def test_pairPunchesOffsetDay(self):
         for x in range(3):
-            punchin = time.strptime(f"9 {x+26} 2022 22 0",r"%m %d %Y %H %M")
-            punchout = time.strptime(f"9 {x+27} 2022 6 0",r"%m %d %Y %H %M")
+            punchin = datetime.datetime(2022,9,1,22,0) + datetime.timedelta(days=x)
+            punchout = punchin + datetime.timedelta(hours=8)
             self.pc.createPunch(1,punchin)
             self.pc.createPunch(1,punchout)
-        punchList = self.pc.getPunchesByEmployeeId(1)
+        punchList = self.pc.getPunchesByEmployeeId(1,datetime.datetime(2022,1,1))
         self.assertEqual(len(punchList),6)
         startState = 'in' if self.pc.getPunchCountUpToPunch(punchList[0]) % 2 == 0 else 'out'
         self.assertEqual(startState,'in')

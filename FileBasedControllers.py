@@ -141,7 +141,7 @@ class FileBasedPunchController(timeclock.PunchController):
         normDatetime = dt.datetime(curDatetime.year, curDatetime.month, curDatetime.day)
 
         startDatetime = startDatetime or (normDatetime - dt.timedelta(weeks=2))
-        endDatetime = endDatetime or normDatetime + (normDatetime + dt.timedelta(days=1))
+        endDatetime = endDatetime or (normDatetime + dt.timedelta(days=1))
 
         startDatetime = dt.datetime.fromisoformat(startDatetime.date().isoformat())
         endDatetime = dt.datetime.fromisoformat(endDatetime.date().isoformat()) + dt.timedelta(days=1)
