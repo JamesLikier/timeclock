@@ -299,6 +299,20 @@ class TestFileBasedPunchController(unittest.TestCase):
         count = self.pc.getPunchCountUpToPunch(p3)
         self.assertEqual(count,4)
 
+    def test_getPunchState(self):
+        p1 = self.pc.createPunch(1)
+        self.assertEqual(self.pc.getPunchState(p1),'in')
+        p2 = self.pc.createPunch(1)
+        self.assertEqual(self.pc.getPunchState(p1),'in')
+        self.assertEqual(self.pc.getPunchState(p2),'out')
+
+        p3 = self.createPunch(2)
+        p4 = self.createPunch(3)
+        self.assertEqual(self.pc.getPunchState(p1),'in')
+        self.assertEqual(self.pc.getPunchState(p2),'out')
+        self.assertEqual(self.pc.getPunchState(p3),'in')
+        self.assertEqual(self.pc.getPunchState(p4),'in')
+
 class TestPunchPair(unittest.TestCase):
     def setUp(self) -> None:
         try:
