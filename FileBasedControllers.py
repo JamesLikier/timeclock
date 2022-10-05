@@ -94,7 +94,7 @@ class FileBasedPunchController(timeclock.PunchController):
                 for punchString in f.readlines():
                     print(punchString)
                     fields = punchString.strip("\n").split(",")
-                    p = Punch(int(fields[0]),int(fields[1]),float(fields[2]),int(fields[3]),int(fields[4]))
+                    p = Punch(int(fields[0]),int(fields[1]),dt.datetime.fromisoformat(fields[2]),int(fields[3]),int(fields[4]))
                     self.punchDict[p.id] = p
         except Exception:
             pass
@@ -108,7 +108,7 @@ class FileBasedPunchController(timeclock.PunchController):
                     fields = []
                     fields.append(str(punch.id))
                     fields.append(str(punch.employeeId))
-                    fields.append(str(punch.ftime))
+                    fields.append(punch.datetime.isoformat())
                     fields.append(str(punch.createdByEmployeeId))
                     fields.append(str(punch.modifiedByEmployeeId))
                     line = ",".join(fields) + "\n"
@@ -118,11 +118,11 @@ class FileBasedPunchController(timeclock.PunchController):
 
     def createPunch(self,
                     employeeId: int,
-                    ftime: float = None,
+                    datetime: float = None,
                     createdByEmployeeId: int = None) -> Punch:
         createdByEmployeeId = createdByEmployeeId or employeeId
-        ftime = ftime or time.time()
-        p = Punch(self.nextPunchId,employeeId=employeeId,ftime=ftime,createdByEmployeeId=createdByEmployeeId)
+        datetime = datetime or dt.datetime.now()
+        p = Punch(self.nextPunchId,employeeId=employeeId,datetime=datetime,createdByEmployeeId=createdByEmployeeId)
         self.punchDict[p.id] = p
         self.nextPunchId += 1
         self.exportFile()
@@ -136,12 +136,13 @@ class FileBasedPunchController(timeclock.PunchController):
 
     def getPunchesByEmployeeId(self,
                             employeeId: int,
-                            startFtime: float = None,
-                            endFtime: float = None) -> list[Punch]:
-        twoWeeks = 60 * 60 * 24 * 7 * 2
-        startFtime = startFtime or (time.time() - twoWeeks)
-        endFtime = endFtime or time.time()
-        return [copy.deepcopy(p) for p in self.punchDict.values() if p.employeeId == employeeId and p.ftime > startFtime and p.ftime <= endFtime]
+                            startDatetime: dt.datetime = None,
+                            endDatetime: dt.datetime = None) -> list[Punch]:
+        curDatetime = dt.datetime.now()
+        normDatetime = dt.datetime(curDatetime.year, curDatetime.month, curDatetime.day)
+        startDatetime = startDatetime or (normDatetime - dt.timedelta(weeks=2))
+        endDatetime = endDatetime or normDatetime + (normDatetime + dt.timedelta(days=1))
+        return [copy.deepcopy(p) for p in self.punchDict.values() if p.employeeId == employeeId and p.datetime > startDatetime and p.datetime < endDatetime]
         
     def modifyPunch(self, punch: Punch, modifiedByEmployeeId: int) -> Punch:
         self.punchDict[punch.id] = copy.deepcopy(punch)
