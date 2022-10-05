@@ -27,16 +27,3 @@ JINJA = Environment(
 )
 JINJA.filters["floor"] = lambda val, floor: val if val > floor else floor
 JINJA.filters["ceil"] = lambda val, ceil: val if val < ceil else ceil
-def dateString(ftime: float):
-    ts = time.localtime(ftime)
-    return f'{ts.tm_mon}/{ts.tm_mday}/{ts.tm_year}'
-JINJA.filters["dateString"] = dateString
-def timeString(ftime: float):
-    ts = time.localtime(ftime)
-    return f'{str(ts.tm_hour).zfill(2)}:{str(ts.tm_min).zfill(2)}'
-JINJA.filters["timeString"] = timeString
-daysofweek = ["Mon","Tue","Wed","Thur","Fri","Sat","Sun"]
-def dayString(ftime: float):
-    ts = time.localtime(ftime)
-    return f'{daysofweek[ts.tm_wday]}'
-JINJA.filters["dayString"] = dayString
