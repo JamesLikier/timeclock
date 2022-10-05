@@ -3,6 +3,7 @@ import FileBasedControllers as fbc
 import os
 import timeclock as tc
 import time
+import datetime
 
 class TestFileBasedEmployeeController(unittest.TestCase):
 
@@ -180,25 +181,24 @@ class TestFileBasedPunchController(unittest.TestCase):
             p = self.pc.getPunchById(punch.id)
             self.assertEqual(p.id,punch.id)
             self.assertEqual(p.employeeId,punch.employeeId)
-            self.assertEqual(p.ftime,punch.ftime)
+            self.assertEqual(p.datetime,punch.datetime)
             self.assertEqual(p.createdByEmployeeId,punch.createdByEmployeeId)
             self.assertEqual(p.modifiedByEmployeeId,punch.modifiedByEmployeeId)
             self.assertEqual(p,punch)
 
     def test_createPunch(self):
-        createdTime = time.time()
+        createdTime = datetime.datetime.now()
         p = self.pc.createPunch(1,createdTime)
         self.assertEqual(p.id,1)
         self.assertEqual(p.employeeId,1)
-        self.assertEqual(p.ftime,createdTime)
+        self.assertEqual(p.datetime,createdTime)
         self.assertEqual(p.createdByEmployeeId,1)
 
-        time.sleep(1)
-        createdTime = time.time()
+        createdTime = datetime.datetime.now()
         p = self.pc.createPunch(1,createdTime)
         self.assertEqual(p.id,2)
         self.assertEqual(p.employeeId,1)
-        self.assertEqual(p.ftime,createdTime)
+        self.assertEqual(p.datetime,createdTime)
         self.assertEqual(p.createdByEmployeeId,1)
 
     def test_getPunchById(self):
@@ -206,53 +206,54 @@ class TestFileBasedPunchController(unittest.TestCase):
         self.assertRaises(tc.PunchNotFound,self.pc.getPunchById,0)
         self.assertRaises(tc.PunchNotFound,self.pc.getPunchById,1)
 
-        createdTime = time.localtime()
+        createdTime = datetime.datetime.now()
         p = self.pc.createPunch(1,createdTime,1)
         p2 = self.pc.getPunchById(1)
         self.assertEqual(p.id,p2.id)
         self.assertEqual(p.employeeId,p2.employeeId)
-        self.assertEqual(p.ftime,p2.ftime)
+        self.assertEqual(p.datetime,p2.datetime)
         self.assertEqual(p.createdByEmployeeId,p2.createdByEmployeeId)
         self.assertEqual(p,p2)
 
-        time.sleep(1)
-        createdTime = time.localtime()
+        createdTime = datetime.datetime.now()
         p = self.pc.createPunch(2,createdTime,2)
         p2 = self.pc.getPunchById(2)
         self.assertEqual(p.id,p2.id)
         self.assertEqual(p.employeeId,p2.employeeId)
-        self.assertEqual(p.ftime,p2.ftime)
+        self.assertEqual(p.datetime,p2.datetime)
         self.assertEqual(p.createdByEmployeeId,p2.createdByEmployeeId)
         self.assertEqual(p,p2)
 
     
     def test_getPunchesByEmployeeId(self):
-        currentFtime = time.time()
-        fourWeeksAgo = currentFtime - (4 * 60 * 60 * 24 * 7)
-        threeWeeksAgo = currentFtime - (3 * 60 * 60 * 24 * 7)
-        twoWeeksAgo = currentFtime - (2 * 60 * 60 * 24 * 7)
+        currentDatetime = datetime.datetime.now()
+        delta4Weeks = datetime.timedelta(weeks=4)
+        delta3Weeks = datetime.timedelta(weeks=3)
+        delta2Weeks = datetime.timedelta(weeks=2)
         e1_cp = []
         e1_3wp = []
         e2_cp = []
         e2_3wp = []
-        e1_cp.append(self.pc.createPunch(1,currentFtime,1))
-        e1_cp.append(self.pc.createPunch(1,currentFtime,1))
-        e1_cp.append(self.pc.createPunch(1,currentFtime,1))
-        e1_3wp.append(self.pc.createPunch(1,threeWeeksAgo,1))
-        e1_3wp.append(self.pc.createPunch(1,threeWeeksAgo,1))
-        e2_cp.append(self.pc.createPunch(2,currentFtime,2))
-        e2_cp.append(self.pc.createPunch(2,currentFtime,2))
-        e2_cp.append(self.pc.createPunch(2,currentFtime,2))
-        e2_3wp.append(self.pc.createPunch(2,threeWeeksAgo,2))
-        e2_3wp.append(self.pc.createPunch(2,threeWeeksAgo,2))
 
-        results = self.pc.getPunchesByEmployeeId(1,fourWeeksAgo,currentFtime)
+        e1_cp.append(self.pc.createPunch(1,currentDatetime,1))
+        e1_cp.append(self.pc.createPunch(1,currentDatetime,1))
+        e1_cp.append(self.pc.createPunch(1,currentDatetime,1))
+        e1_3wp.append(self.pc.createPunch(1,currentDatetime - delta3Weeks,1))
+        e1_3wp.append(self.pc.createPunch(1,currentDatetime - delta3Weeks,1))
+
+        e2_cp.append(self.pc.createPunch(2,currentDatetime,2))
+        e2_cp.append(self.pc.createPunch(2,currentDatetime,2))
+        e2_cp.append(self.pc.createPunch(2,currentDatetime,2))
+        e2_3wp.append(self.pc.createPunch(2,currentDatetime - delta3Weeks,2))
+        e2_3wp.append(self.pc.createPunch(2,currentDatetime - delta3Weeks,2))
+
+        results = self.pc.getPunchesByEmployeeId(1,currentDatetime - delta4Weeks,currentDatetime)
         self.assertEqual(len(results),5)
         for punch in results:
             punch: tc.Punch
             self.assertEqual(punch.employeeId,1)
             self.assertEqual((punch in e1_cp) or (punch in e1_3wp),True)
-        results = self.pc.getPunchesByEmployeeId(2,twoWeeksAgo,currentFtime)
+        results = self.pc.getPunchesByEmployeeId(2,currentDatetime - delta2Weeks,currentDatetime)
         self.assertEqual(len(results),3)
         for punch in results:
             punch: tc.Punch
@@ -264,33 +265,32 @@ class TestFileBasedPunchController(unittest.TestCase):
         p = self.pc.createPunch(1,t,1)
         self.assertEqual(p.id,1)
         self.assertEqual(p.employeeId,1)
-        self.assertEqual(p.ftime,t)
+        self.assertEqual(p.datetime,t)
         self.assertEqual(p.createdByEmployeeId,1)
         self.assertEqual(p.modifiedByEmployeeId,-1)
 
         t2 = time.time() - 60*60*24
-        p.ftime = t2
+        p.datetime = t2
         p2 = self.pc.modifyPunch(p,2)
         self.assertNotEqual(p,p2)
         self.assertEqual(p2.id,1)
-        self.assertEqual(p2.ftime,t2)
+        self.assertEqual(p2.datetime,t2)
         self.assertEqual(p2.employeeId,1)
         self.assertEqual(p2.modifiedByEmployeeId,2)
 
 
     def test_getPunchCountUpToPunch(self):
-        timeInSec = time.time()
-        dayInSec = 60 * 60 * 24
-        p1 = self.pc.createPunch(1,timeInSec-(5*dayInSec),1)
-        self.pc.createPunch(1,timeInSec-(4*dayInSec),1)
-        p2 = self.pc.createPunch(1,timeInSec-(3*dayInSec),1)
-        self.pc.createPunch(1,timeInSec-(2*dayInSec),1)
-        p3 = self.pc.createPunch(1,timeInSec-(1*dayInSec),1)
-        self.pc.createPunch(2,timeInSec-(5*dayInSec),2)
-        self.pc.createPunch(2,timeInSec-(4*dayInSec),2)
-        self.pc.createPunch(2,timeInSec-(3*dayInSec),2)
-        self.pc.createPunch(2,timeInSec-(2*dayInSec),2)
-        self.pc.createPunch(2,timeInSec-(1*dayInSec),2)
+        curDatetime = datetime.datetime.now()
+        p1 = self.pc.createPunch(1,curDatetime-datetime.timedelta(days=5),1)
+        self.pc.createPunch(1,curDatetime-datetime.timedelta(days=4),1)
+        p2 = self.pc.createPunch(1,curDatetime-datetime.timedelta(days=3),1)
+        self.pc.createPunch(1,curDatetime-datetime.timedelta(days=2),1)
+        p3 = self.pc.createPunch(1,curDatetime-datetime.timedelta(days=1),1)
+        self.pc.createPunch(2,curDatetime-datetime.timedelta(days=5),2)
+        self.pc.createPunch(2,curDatetime-datetime.timedelta(days=4),2)
+        self.pc.createPunch(2,curDatetime-datetime.timedelta(days=3),2)
+        self.pc.createPunch(2,curDatetime-datetime.timedelta(days=2),2)
+        self.pc.createPunch(2,curDatetime-datetime.timedelta(days=1),2)
 
         count = self.pc.getPunchCountUpToPunch(p1)
         self.assertEqual(count,0)
@@ -335,7 +335,6 @@ class TestPunchPair(unittest.TestCase):
         startState = 'in' if self.pc.getPunchCountUpToPunch(punchList[0]) % 2 == 0 else 'out'
         self.assertEqual(startState,'in')
         pairList = tc.pairPunches(punchList,startState)
-        print(f'{pairList=}')
         self.assertEqual(len(pairList),4)
 
 

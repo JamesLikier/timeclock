@@ -92,7 +92,6 @@ class FileBasedPunchController(timeclock.PunchController):
             with open(str(filename), "r") as f:
                 self.nextPunchId = int(f.readline())
                 for punchString in f.readlines():
-                    print(punchString)
                     fields = punchString.strip("\n").split(",")
                     p = Punch(int(fields[0]),int(fields[1]),dt.datetime.fromisoformat(fields[2]),int(fields[3]),int(fields[4]))
                     self.punchDict[p.id] = p
@@ -140,8 +139,13 @@ class FileBasedPunchController(timeclock.PunchController):
                             endDatetime: dt.datetime = None) -> list[Punch]:
         curDatetime = dt.datetime.now()
         normDatetime = dt.datetime(curDatetime.year, curDatetime.month, curDatetime.day)
+
         startDatetime = startDatetime or (normDatetime - dt.timedelta(weeks=2))
         endDatetime = endDatetime or normDatetime + (normDatetime + dt.timedelta(days=1))
+
+        startDatetime = dt.datetime.fromisoformat(startDatetime.date().isoformat())
+        endDatetime = dt.datetime.fromisoformat(endDatetime.date().isoformat()) + dt.timedelta(days=1)
+
         return [copy.deepcopy(p) for p in self.punchDict.values() if p.employeeId == employeeId and p.datetime > startDatetime and p.datetime < endDatetime]
         
     def modifyPunch(self, punch: Punch, modifiedByEmployeeId: int) -> Punch:
@@ -154,7 +158,7 @@ class FileBasedPunchController(timeclock.PunchController):
         count = 0
         for p in self.punchDict.values():
             p: Punch
-            if p.employeeId == punch.employeeId and p.ftime < punch.ftime:
+            if p.employeeId == punch.employeeId and p.datetime < punch.datetime:
                 count += 1
         return count
 
