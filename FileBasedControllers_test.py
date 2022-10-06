@@ -306,8 +306,8 @@ class TestFileBasedPunchController(unittest.TestCase):
         self.assertEqual(self.pc.getPunchState(p1),'in')
         self.assertEqual(self.pc.getPunchState(p2),'out')
 
-        p3 = self.createPunch(2)
-        p4 = self.createPunch(3)
+        p3 = self.pc.createPunch(2)
+        p4 = self.pc.createPunch(3)
         self.assertEqual(self.pc.getPunchState(p1),'in')
         self.assertEqual(self.pc.getPunchState(p2),'out')
         self.assertEqual(self.pc.getPunchState(p3),'in')

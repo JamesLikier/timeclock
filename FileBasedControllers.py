@@ -117,7 +117,7 @@ class FileBasedPunchController(timeclock.PunchController):
 
     def createPunch(self,
                     employeeId: int,
-                    datetime: float = None,
+                    datetime: dt.datetime = None,
                     createdByEmployeeId: int = None) -> Punch:
         createdByEmployeeId = createdByEmployeeId or employeeId
         datetime = datetime or dt.datetime.now()
@@ -149,7 +149,7 @@ class FileBasedPunchController(timeclock.PunchController):
         return [copy.deepcopy(p) for p in self.punchDict.values()
             if p.employeeId == employeeId
             and p.datetime > startDatetime
-            and p.datetime < endDatetime].sort(key=lambda p: p.datetime)
+            and p.datetime < endDatetime]
         
     def modifyPunch(self, punch: Punch, modifiedByEmployeeId: int) -> Punch:
         self.punchDict[punch.id] = copy.deepcopy(punch)
