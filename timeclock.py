@@ -119,3 +119,49 @@ def pairPunches(punches: list[Punch],startState):
     if pair.p1 is not None:
         pairs.append(pair)
     return pairs
+
+def genDates(startDate, endDate):
+    c = cal.Calendar()
+    startYear = startDate.year
+    startMonth = startDate.month
+    endYear = endDate.year
+    endMonth = endDate.month
+    result = []
+    for y in range(startYear,endYear+1):
+        if startYear == endYear:
+            for m in range(startMonth, endMonth+1):
+                if startMonth == endMonth:
+                    result += [d for d in c.itermonthdates(y,m) if d.month == m and d.day <= endDate.day and d.day >= startDate.day]
+                elif m == endMonth:
+                    result += [d for d in c.itermonthdates(y,m) if d.month == m and d.day <= endDate.day]
+                elif m == startMonth:
+                    result += [d for d in c.itermonthdates(y,m) if d.month == m and d.day >= startDate.day]
+                else:
+                    result += [d for d in c.itermonthdates(y,m) if d.month == m]
+        elif y == endYear and startYear != endYear:
+            for m in range(1,endMonth+1):
+                if m == endMonth:
+                    result += [d for d in c.itermonthdates(y,m) if d.month == m and d.day <= endDate.day]
+                else:
+                    result += [d for d in c.itermonthdates(y,m) if d.month == m]
+        elif y != endYear and y != startYear:
+            for m in range(1,13):
+                result += [d for d in c.itermonthdates(y,m) if d.month == m]
+        elif y != endYear and y == startYear:
+            for m in range(startMonth, 13):
+                if m == startMonth:
+                    result += [d for d in c.itermonthdates(y,m) if d.month == m and d.day >= startDate.day]
+                else:
+                    result += [d for d in c.itermonthdates(y,m) if d.month == m]
+    return result
+def paddedPairPunches(punches: list[Punch], startState, startDate, endDate):
+    pairs = pairPunches(punches, startState)
+    dates = genDates(startDate, endDate)
+    result = []
+    for d in dates:
+        if len(pairs) > 0 and pairs[0].date == d:
+            while len(pairs) > 0 and pairs[0].date == d:
+                result.append(pairs.pop(0))
+        else:
+            result.append(PunchPair(d))
+    return result

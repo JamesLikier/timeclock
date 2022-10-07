@@ -247,13 +247,13 @@ class TestFileBasedPunchController(unittest.TestCase):
         e2_3wp.append(self.pc.createPunch(2,currentDatetime - delta3Weeks,2))
         e2_3wp.append(self.pc.createPunch(2,currentDatetime - delta3Weeks,2))
 
-        results = self.pc.getPunchesByEmployeeId(1,currentDatetime - delta4Weeks,currentDatetime)
+        results = self.pc.getPunchesByEmployeeId(1,(currentDatetime - delta4Weeks).date(),currentDatetime.date())
         self.assertEqual(len(results),5)
         for punch in results:
             punch: tc.Punch
             self.assertEqual(punch.employeeId,1)
             self.assertEqual((punch in e1_cp) or (punch in e1_3wp),True)
-        results = self.pc.getPunchesByEmployeeId(2,currentDatetime - delta2Weeks,currentDatetime)
+        results = self.pc.getPunchesByEmployeeId(2,(currentDatetime - delta2Weeks).date(),currentDatetime.date())
         self.assertEqual(len(results),3)
         for punch in results:
             punch: tc.Punch
@@ -332,7 +332,7 @@ class TestPunchPair(unittest.TestCase):
             punchout = punchin + datetime.timedelta(hours=8) + datetime.timedelta(days=0)
             self.pc.createPunch(1,punchin)
             self.pc.createPunch(1,punchout)
-        punchList = self.pc.getPunchesByEmployeeId(1,datetime.datetime(2022,1,1))
+        punchList = self.pc.getPunchesByEmployeeId(1,datetime.date(2022,1,1))
         self.assertEqual(len(punchList),6)
         startState = 'in' if self.pc.getPunchCountUpToPunch(punchList[0]) % 2 == 0 else 'out'
         self.assertEqual(startState,'in')
@@ -344,7 +344,7 @@ class TestPunchPair(unittest.TestCase):
             punchout = punchin + datetime.timedelta(hours=8)
             self.pc.createPunch(1,punchin)
             self.pc.createPunch(1,punchout)
-        punchList = self.pc.getPunchesByEmployeeId(1,datetime.datetime(2022,1,1))
+        punchList = self.pc.getPunchesByEmployeeId(1,datetime.date(2022,1,1))
         self.assertEqual(len(punchList),6)
         startState = 'in' if self.pc.getPunchCountUpToPunch(punchList[0]) % 2 == 0 else 'out'
         self.assertEqual(startState,'in')

@@ -135,21 +135,15 @@ class FileBasedPunchController(timeclock.PunchController):
 
     def getPunchesByEmployeeId(self,
                             employeeId: int,
-                            startDatetime: dt.datetime = None,
-                            endDatetime: dt.datetime = None) -> list[Punch]:
-        curDatetime = dt.datetime.now()
-        normDatetime = dt.datetime(curDatetime.year, curDatetime.month, curDatetime.day)
-
-        startDatetime = startDatetime or (normDatetime - dt.timedelta(weeks=2))
-        endDatetime = endDatetime or (normDatetime + dt.timedelta(days=1))
-
-        startDatetime = dt.datetime.fromisoformat(startDatetime.date().isoformat())
-        endDatetime = dt.datetime.fromisoformat(endDatetime.date().isoformat()) + dt.timedelta(days=1)
+                            startDate: dt.date = None,
+                            endDate: dt.date = None) -> list[Punch]:
+        startDate = startDate or (dt.date.today() - dt.timedelta(weeks=2))
+        endDate = endDate or (dt.date.today() + dt.timedelta(days=1))
 
         return sorted([copy.deepcopy(p) for p in self.punchDict.values()
             if p.employeeId == employeeId
-            and p.datetime > startDatetime
-            and p.datetime < endDatetime], key=lambda p: p.datetime)
+            and p.datetime.date() >= startDate
+            and p.datetime.date() <= endDate], key=lambda p: p.datetime)
         
     def modifyPunch(self, punch: Punch, modifiedByEmployeeId: int) -> Punch:
         self.punchDict[punch.id] = copy.deepcopy(punch)

@@ -5,8 +5,8 @@ from user import User
 import re
 from socket import socket
 import reloadable
-import time
 import timeclock as tc
+import datetime as dt
 
 rh = settings.ROUTE_HANDLER
 jinja = settings.JINJA
@@ -22,11 +22,13 @@ def routeRoot(req: Request, match: re.Match, sock: socket):
     args = {
         "user": user,
     }
+    startDate = dt.date.today() - dt.timedelta(weeks=2)
+    endDate = dt.date.today()
     if user is not None:
-        punchList = pc.getPunchesByEmployeeId(user.userid)
+        punchList = pc.getPunchesByEmployeeId(user.userid,startDate,endDate)
         if len(punchList) > 0:
             startState = pc.getPunchState(punchList[0])
-            pairList = tc.pairPunches(punchList, startState)
+            pairList = tc.paddedPairPunches(punchList, startState, startDate, endDate)
             args["pairList"] = pairList
     resp.body = template.render(**args)
     resp.send(sock)
