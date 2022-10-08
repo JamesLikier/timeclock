@@ -26,10 +26,11 @@ def routeRoot(req: Request, match: re.Match, sock: socket):
     endDate = dt.date.today()
     if user is not None:
         punchList = pc.getPunchesByEmployeeId(user.userid,startDate,endDate)
+        startState = 'in'
         if len(punchList) > 0:
             startState = pc.getPunchState(punchList[0])
-            pairList = tc.paddedPairPunches(punchList, startState, startDate, endDate)
-            args["pairList"] = pairList
+        pairList = tc.paddedPairPunches(punchList, startState, startDate, endDate)
+        args["pairList"] = pairList
     resp.body = template.render(**args)
     resp.send(sock)
 

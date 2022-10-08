@@ -37,20 +37,22 @@
     </div>
 {% endmacro %}
 {% macro displayEmployeePunches(startDate,endDate,pairList) %}
+    <h2>Punches</h2>
     <table class="punch-list">
-    {% for p in pairList %}
         <tr>
-            <td>{{ p.date }}</td>
-            {% if p.p1 != None %}
-                <td>{{ p.p1.state|upper }}</td><td>{{ p.p1.punch.datetime.strftime('%H:%M') }}</td>
-            {% else %}
-                <td></td><td></td>
-            {% endif %}
-            {% if p.p2 != None %}
-                <td>{{ p.p2.state|upper }}</td><td>{{ p.p2.punch.datetime.strftime('%H:%M') }}</td>
-            {% else %}
-                <td></td><td></td>
-            {% endif %}
+            <th class="punch-list-date">Date</th>
+            <th class="punch-list-state">In/Out</th>
+            <th class="punch-list-time">Time</th>
+            <th class="punch-list-state">In/Out</th>
+            <th class="punhc-list-time">Time</th>
+        </tr>
+    {% for p in pairList %}
+        <tr class="{{ loop.cycle('r1','r2') }}">
+            <td class="punch-list-date">{{ p.date }}</td>
+            <td class="punch-list-state">{% if p.p1 != None %}{{ p.p1.state|upper }}{% endif %}</td>
+            <td class="punch-list-time">{% if p.p1 != None %}{{ p.p1.punch.datetime.strftime('%H:%M') }}{% endif %}</td>
+            <td class="punch-list-state">{% if p.p2 != None %}{{ p.p2.state|upper }}{% endif %}</td>
+            <td class="punch-list-time">{% if p.p2 != None %}{{ p.p2.punch.datetime.strftime('%H:%M') }}{% endif %}</td>
         </tr>
     {% endfor %}
     </table>

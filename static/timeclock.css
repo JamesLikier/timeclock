@@ -249,7 +249,13 @@ form input[type="submit"] {
 }
 .punch-list {
     text-align: center;
+    border-collapse: collapse;
 }
+.punch-list tr, .punch-list td, .punch-list th {
+    border: 1px solid #777777;
+    padding: 0.3em;
+}
+
 #numpad-display {
     height: 1.5em;
 }
