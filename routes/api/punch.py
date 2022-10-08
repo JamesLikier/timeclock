@@ -7,6 +7,7 @@ from socket import socket
 from timeclock import PunchController, Punch, EmployeeController, Employee
 import json
 from routes.api.util import Message
+import datetime as dt
 
 rh = settings.ROUTE_HANDLER
 jinja = settings.JINJA
@@ -19,8 +20,11 @@ def punchNew(req: Request, match: Match, sock: socket):
     msg = Message()
     msg.action = "punch/new"
     try:
+        date = dt.date.fromisoformat(req.form.get("date",dt.date.today().isoformat()))
+        time = dt.time.fromisoformat(req.form.get("time",dt.datetime.now().time().isoformat()))
+        datetime = dt.datetime.combine(date,time)
         e = ec.getEmployeeById(req.form["employeeid"].asInt())
-        pc.createPunch(e.id)
+        pc.createPunch(e.id,datetime)
         msg.result = Message.SUCCESS
     except Exception:
         msg.result = Message.FAIL
