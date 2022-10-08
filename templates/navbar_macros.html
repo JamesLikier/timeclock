@@ -4,8 +4,14 @@
             <a class="nav-item" href="/api/comp/login">Login</a>
         </div>
     {% else %}
-        <a class="nav-item" href="/employee/new">New Employee</a>
-        <a class="nav-item" href="/employee/list">List Employees</a>
+        <div class="dropdown">
+            <a class="dropdown-toggle" href="#employee">Employee</a>
+            <div id="menu" class="floating flex-col d-none">
+                <a class="menu-item" href="/employee/new">New Employee</a>
+                <a class="menu-item" href="/employee/list">List Employees</a>
+            </div>
+        </div>
+        <a class="nav-item" href="/api/reload">Reload</a>
         <a class="nav-item" href="/api/logout" data-method="POST">Logout</a>
     {% endif %}
 {% endmacro %}

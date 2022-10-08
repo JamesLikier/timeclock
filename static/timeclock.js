@@ -1,6 +1,7 @@
 (function () {
     const content = document.querySelector("#content");
-    const responseHandlers = new Map()
+    const responseHandlers = new Map();
+    const menuHandlers = new Map();
 
     /* API Hooks */
     document.addEventListener("submit",e=>{
@@ -42,6 +43,38 @@
     });
     /* End API Hooks */
 
+    /* Menu Functions */
+    let menu = null;
+    document.addEventListener("click", e=> {
+        if (e.target.classList.contains("dropdown-toggle")) {
+            e.preventDefault();
+            m = e.target.parentElement.querySelector("#menu");
+            menu = m;
+            menu.classList.toggle("d-none");
+        } else if (menu != null && !menu.contains(e.target)) {
+            menu.classList.add("d-none");
+            menu = null;
+        }
+    });
+    /* End Menu Functions */
+
+    /* Punch Functions */
+    responseHandlers.set("punch/new",o=> {
+    });
+    /* End Punch Functions */
+
+    /* Reload Handler */
+    responseHandlers.set("reload",o=> {
+        const title = "Hot Reload";
+        body = o["result"];
+        if (o["result"] == "success") {
+            displaySuccessModal(title,body,3);
+        } else {
+            displayErrorModal(title,body,3);
+        }
+    });
+    /* End Reload Handler */
+
     /* Employee Functions */
     responseHandlers.set("employee/new",o => {
         content.innerHTML = o["body"];
@@ -53,7 +86,7 @@
     responseHandlers.set("comp/login",o => {
         c = document.querySelector("#login");
         e = document.createElement("div");
-        e.classList.add("login-float");
+        e.classList.add("floating");
         e.innerHTML = o["body"];
         c.append(e);
         loginFloat = e;

@@ -1,3 +1,4 @@
+{% import "util/form_macros.html" as formMacros %}
 {% macro displayNumPad(inputName="numpad-value") %}
     <div id="numpad">
         <table><tr><td id="numpad-display"></td></tr></table>
@@ -23,7 +24,7 @@
                 <td class="numpad-enter">Enter</td>
             </tr>
         </table>
-        <input id="numpad-value" name="{{ inputName }}" type="hidden">
+        {{ formMacros.input(inputName,id="numpad-value",type="hidden")}}
     </div>
 {% endmacro %}
 {% macro displayPunchClock() %}
@@ -31,8 +32,8 @@
         <div class="clock big-clock">00:00:00</div>
         <form id="punch-clock-form" class="mx" action="/api/punchclock" method="POST">
             {{ displayNumPad(inputName="employeeid") }}
-            <input id="pc-employeeid" type="hidden" name="employeeid">
-            <input id="pc-pin" type="hidden" name="pin">
+            {{ formMacros.input("employeeid",id="pc-employeeid",type="hidden")}}
+            {{ formMacros.input("pin",id="pc-pin",type="hidden")}}
         </form>
     </div>
 {% endmacro %}
@@ -56,4 +57,12 @@
         </tr>
     {% endfor %}
     </table>
+{% endmacro %}
+{% macro displayNewPunchForm() %}
+    <form action="/api/punch/new" method="POST">
+        {{ formMacros.input("employeeid") }}
+        {{ formMacros.input("date") }}
+        {{ formMacros.input("time") }}
+        {{ formMacros.input("Submit") }}
+    </form>
 {% endmacro %}
