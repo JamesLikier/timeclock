@@ -80,6 +80,7 @@ body {
     .collapse {
         display: flex;
         flex-direction: row;
+        align-items: center;
     }
 
     .collapse-toggle {
@@ -139,16 +140,18 @@ body {
     font-size: 2em;
 }
 
-.nav-item {
-    width: max-content;
+.dropdown, .nav-item { 
     margin-right: 10px;
-    text-decoration: none;
+}
+.dropdown-toggle, .nav-item {
+    position: relative;
     font-size: 1.2em;
     padding: 0.2em;
-    position: relative;
+    text-decoration: none;
+    width: max-content;
 }
 
-.nav-item:hover {
+.nav-item:hover, .dropdown-toggle:hover {
     outline: 1px solid;
     border-radius: 0.2em;
 }
@@ -262,9 +265,20 @@ form input[type="submit"] {
 .p-r {
     position: relative;
 }
-.login-float {
+.floating {
     position: absolute;
     background-color: white;
+    z-index: 9999;
+    box-shadow: -3px 3px 5px rgba(0, 0, 0, 0.5);
+}
+#menu {
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 15px;
+    border-left: 1px solid black;
+}
+.menu-item {
+    margin-top: 10px;
 }
 .border {
     border: 1px solid;
@@ -274,6 +288,10 @@ form input[type="submit"] {
     display: flex;
     flex-direction: row;
     align-items: center;
+}
+.flex-col {
+    display: flex;
+    flex-direction: column;
 }
 
 .mr {
