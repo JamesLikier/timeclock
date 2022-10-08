@@ -13,12 +13,11 @@ rh = settings.ROUTE_HANDLER
 
 @rh.register(["GET"],"/api/reload$")
 def reloadRoutes(req: Request, match: Match, sock: socket):
-    body = ""
     for k,v in sys.modules.copy().items():
         if "reloadable" in dir(v):
             importlib.reload(v)
     resp = Response()
-    msg = Message(action="reload",result=Message.SUCCESS,body=body)
+    msg = Message(action="reload",result=Message.SUCCESS)
     resp.body = msg.toJSON()
     resp.send(sock)
 
