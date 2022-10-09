@@ -149,6 +149,7 @@ body {
     padding: 0.2em;
     text-decoration: none;
     width: max-content;
+    display: inline-block;
 }
 
 .nav-item:hover, .dropdown-toggle:hover {
