@@ -190,13 +190,13 @@ class Form(MutableMapping):
             header = header.decode()
 
             match: re.Match
-            match = re.search('Content-Disposition: form-data;\s?name="([^"]*)"',header)
+            match = re.search(r'Content-Disposition: form-data;\s?name="([^"]*)"',header)
             name = match.group(1) if match is not None else ""
 
-            match = re.search('filename="([^"]*)"',header)
+            match = re.search(r'filename="([^"]*)"',header)
             filename = match.group(1) if match is not None else None
 
-            match = re.search('Content-Type: ([^;\r\n]+)',header)
+            match = re.search(r'Content-Type: ([^;\r\n]+)',header)
             contenttype = match.group(1) if match is not None else None
 
             f[name] = FormData(name=name,value=body,contentType=contenttype,filename=filename)
@@ -274,7 +274,7 @@ class Request(HTTPBase):
 
         ##per http spec, first line is always startline
         startline,_,headerstr = headerstr.partition('\r\n')
-        m = re.match("([^\s]+) ([^\s]+) ([^\s]+)",startline)
+        m = re.match(r"([^\s]+) ([^\s]+) ([^\s]+)",startline)
         method = m.group(1)
         uri = m.group(2)
         httpvers = m.group(3)
@@ -293,7 +293,7 @@ class Request(HTTPBase):
                 headers[hkey] = hval
         form = None
         if 'Content-Type' in headers:
-            m = re.match("([^;]+);\s?boundary=(.*)",headers["Content-Type"])
+            m = re.match(r"([^;]+);\s?boundary=(.*)",headers["Content-Type"])
             if m is not None:
                 ct = m.group(1)
                 b = m.group(2)

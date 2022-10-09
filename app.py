@@ -13,7 +13,7 @@ rh = settings.ROUTE_HANDLER
 
 @rh.register(["GET"],"/api/reload$")
 def reloadRoutes(req: Request, match: Match, sock: socket):
-    for k,v in sys.modules.copy().items():
+    for v in sys.modules.copy().values():
         if "reloadable" in dir(v):
             importlib.reload(v)
     resp = Response()

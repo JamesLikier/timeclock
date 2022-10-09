@@ -21,14 +21,14 @@ class Punch:
     modifiedByEmployeeId: int = -1
 
     def dateString(self):
-        dt = self.datetime
-        return f'{dt.month}/{dt.day}/{dt.year}'
+        datetime = self.datetime
+        return f'{datetime.month}/{datetime.day}/{datetime.year}'
     def timeString(self):
-        dt = self.datetime
-        return f'{str(dt.hour).zfill(2)}:{str(dt.minute).zfill(2)}'
+        datetime = self.datetime
+        return f'{str(datetime.hour).zfill(2)}:{str(datetime.minute).zfill(2)}'
     def dayString(self):
-        dt = self.datetime
-        return f'{daysofweek[cal.weekday(dt.year,dt.month,dt.day)]}'
+        datetime = self.datetime
+        return f'{daysofweek[cal.weekday(datetime.year,datetime.month,datetime.day)]}'
 
 @dataclass
 class Employee:
