@@ -54,7 +54,7 @@ def routeEmployeeNewGET(req: Request, match: re.Match, sock: socket):
         resp.body = jinja.get_template("user/login_required.html").render()
     resp.send(sock)
 
-@rh.register(["GET"], "/employee/list$|/employee/list\?(\&?(pg|pgSize)=([0-9]+))(\&?(pg|pgSize)=([0-9]+))")
+@rh.register(["GET"], r"/employee/list$|/employee/list\?(\&?(pg|pgSize)=([0-9]+))(\&?(pg|pgSize)=([0-9]+))")
 def routeEmployeeList(req: Request, match: re.Match, sock: socket):
     resp = Response()
     user = User.fromSession(req)

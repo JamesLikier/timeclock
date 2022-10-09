@@ -9,7 +9,7 @@ rh = settings.ROUTE_HANDLER
 jinja = settings.JINJA
 cache = settings.CACHE
 
-@rh.registerstatic("/static/(.*\.(.*)$|.*$)")
+@rh.registerstatic(r"/static/(.*\.(.*)$|.*$)")
 def routeStatic(req: Request, match: re.Match, sock: socket):
     urlFilepath = match.group(1)
     paths = tuple(urlFilepath.split("/"))
