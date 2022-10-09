@@ -1,9 +1,18 @@
 (function () {
     const content = document.querySelector("#content");
     const responseHandlers = new Map();
-    const menuHandlers = new Map();
+    const clickHandlers = new Map();
 
     /* API Hooks */
+    function apiCall(path, options) {
+        fetch(path, options).then(r => {
+            if (r.ok) {
+                r.json().then(o => {
+                    responseHandlers.get(o["action"])(o);
+                });
+            }
+        });
+    }
     document.addEventListener("submit",e=>{
         let form = null
         for(f of document.querySelectorAll("form")){
@@ -15,46 +24,53 @@
         if(form.action.includes("/api/")) {
             e.preventDefault();
             fd = new FormData(form);
-            fetch(form.action, {
+            apiCall(form.action, {
                 "method": form.method,
                 "body": fd
-            }).then(r => {
-                if (r.ok) {
-                    r.json().then(o => {
-                        responseHandlers.get(o["action"])(o);
-                    });
-                }
-            });
+            })
         }
     });
     document.addEventListener("click",e=>{
-        if ('href' in e.target && e.target.href.includes("/api/")) {
+        if ('href' in e.target && e.target.getAttribute("href").includes("#")) {
+            const href = e.target.getAttribute("href");
             e.preventDefault();
-            fetch(e.target.href, {
+            if (clickHandlers.has(href)) {
+                clickHandlers.get(href)(e);
+            }
+        } else if ('href' in e.target && e.target.href.includes("/api/")) {
+            e.preventDefault();
+            apiCall(e.target.href, {
                 "method": e.target.dataset.method || "GET"
-            }).then(r => {
-                if (r.ok) {
-                    r.json().then(o => {
-                        responseHandlers.get(o["action"])(o);
-                    });
-                }
-            });
+            })
         }
     });
     /* End API Hooks */
 
-    /* Menu Functions */
-    let menu = null;
-    document.addEventListener("click", e=> {
-        if (e.target.classList.contains("dropdown-toggle")) {
-            e.preventDefault();
-            m = e.target.parentElement.querySelector("#menu");
-            menu = m;
-            menu.classList.toggle("d-none");
-        } else if (menu != null && !menu.contains(e.target)) {
-            menu.classList.add("d-none");
-            menu = null;
+    /* Float Functions */
+    let float = null;
+    function hideFloat(e) {
+        if (!float.contains(e.target)) {
+            if (float != null) {
+                float.classList.add("d-none");
+                float = null;
+            }
+            document.removeEventListener("click",hideFloat);
         }
+    }
+    function setFloat(e) {
+        if (float != null) {
+            float.classList.add("d-none");
+        }
+        float = e;
+        float.classList.remove("d-none");
+        document.addEventListener("click",hideFloat);
+    }
+    /* End Float Functions */
+
+    /* Menu Functions */
+    clickHandlers.set("#dropdown-toggle", e => {
+        const m = e.target.parentElement.querySelector("#menu");
+        setFloat(m);
     });
     /* End Menu Functions */
 
@@ -64,6 +80,9 @@
     /* End Punch Functions */
 
     /* Reload Handler */
+    clickHandlers.set("#reload", e=> {
+        apiCall("/api/reload",{"method": "GET"});
+    });
     responseHandlers.set("reload",o=> {
         const title = "Hot Reload";
         body = o["result"];
@@ -82,14 +101,12 @@
     /* End Employee Functions */
 
     /* Login/Logout */
-    let loginFloat = null;
-    responseHandlers.set("comp/login",o => {
-        c = document.querySelector("#login");
-        e = document.createElement("div");
-        e.classList.add("floating");
-        e.innerHTML = o["body"];
-        c.append(e);
-        loginFloat = e;
+    clickHandlers.set("#login", e=> {
+        const d = e.target.parentElement.querySelector("#login");
+        setFloat(d);
+    });
+    clickHandlers.set("#logout", e=> {
+        apiCall("/api/logout",{"method": "GET"});
     });
     responseHandlers.set("login",o => {
         if (o["result"] == "success") {
@@ -99,12 +116,6 @@
     responseHandlers.set("logout",o => {
         if (o["result"] == "success") {
             document.location = "/";
-        }
-    });
-    document.addEventListener("click",e=>{
-        if (loginFloat != null && !loginFloat.contains(e.target)) {
-            loginFloat.remove();
-            loginFloat = null;
         }
     });
     /* End Login/Logout */

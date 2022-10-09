@@ -37,7 +37,7 @@ def login(req: Request, match: Match, sock: socket):
     resp.body = msg.toJSON()
     resp.send(sock)
 
-@rh.register(["POST"], "/api/logout")
+@rh.register(["GET"], "/api/logout")
 def logout(req: Request, match: Match, sock: socket):
     resp = Response()
     session.invalidateSession(req=req,resp=resp)
