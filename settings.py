@@ -15,7 +15,7 @@ SERVER_PORT = 80
 EMPLOYEE_FILE = 'employeefile'
 PUNCH_FILE = 'punchfile'
 
-logging.info(f'Config Settings:')
+logging.info('Config Settings:')
 logging.info(f'{SERVER_ADDR=}')
 logging.info(f'{SERVER_PORT=}')
 logging.info(f'{EMPLOYEE_FILE=}')

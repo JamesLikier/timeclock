@@ -33,7 +33,7 @@ class RouteHandler():
         return inner
 
     def register404(self, func):
-        logging.info(f'Registering: 404')
+        logging.info('Registering: 404')
         self.handler404 = func
         return func
 
