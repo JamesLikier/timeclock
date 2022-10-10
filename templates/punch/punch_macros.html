@@ -59,7 +59,8 @@
     </table>
 {% endmacro %}
 {% macro displayNewPunchForm() %}
-    <form id="newPunch" action="/api/punch/new" method="POST">
+    <h2>Create Punch</h2>
+    <form class="border" id="newPunch" action="/api/punch/new" method="POST">
         <table>
         {{ formMacros.input("employeeid",label="Employee ID:",table=True) }}
         {{ formMacros.input("date",label="Date:",table=True) }}
