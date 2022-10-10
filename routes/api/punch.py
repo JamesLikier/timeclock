@@ -9,7 +9,6 @@ import timeclock
 import json
 from routes.api.util import Message
 import datetime as dt
-import logging
 
 rh = settings.ROUTE_HANDLER
 jinja = settings.JINJA

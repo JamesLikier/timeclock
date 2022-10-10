@@ -15,6 +15,12 @@ SERVER_PORT = 80
 EMPLOYEE_FILE = 'employeefile'
 PUNCH_FILE = 'punchfile'
 
+logging.info(f'Config Settings:')
+logging.info(f'{SERVER_ADDR=}')
+logging.info(f'{SERVER_PORT=}')
+logging.info(f'{EMPLOYEE_FILE=}')
+logging.info(f'{PUNCH_FILE=}')
+
 EMPLOYEE_CONTROLLER: tc.EmployeeController = fbc.FileBasedEmployeeController(EMPLOYEE_FILE)
 PUNCH_CONTROLLER: tc.PunchController = fbc.FileBasedPunchController(PUNCH_FILE)
 CACHE = CachedFileManager()
