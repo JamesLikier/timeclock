@@ -8,6 +8,7 @@ class RouteHandler():
         self.statichandlers = dict()
         self.handler404 = None
 
+    @staticmethod
     def default404(req: Request, match: re.Match, sock: socket):
         resp = Response(sock=sock)
         resp.statuscode = STATUS_CODES[404]

@@ -38,11 +38,11 @@ class FileBasedEmployeeController(timeclock.EmployeeController):
                 f.write(line)
 
     def createEmployee(self, fname: string, lname: string, admin: bool = False) -> Employee:
-        id = self.nextEmployeeId
+        nid = self.nextEmployeeId
         self.nextEmployeeId += 1
 
-        e = Employee(id=id, fname=fname, lname=lname, admin=admin)
-        self.employeeDict[id] = e
+        e = Employee(id=nid, fname=fname, lname=lname, admin=admin)
+        self.employeeDict[nid] = e
 
         self.exportFile()
 

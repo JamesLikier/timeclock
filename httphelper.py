@@ -161,13 +161,15 @@ class Form(MutableMapping):
             return self.boundary.encode()
         else:
             return self.boundary
-    def fromURLEncStr(data: str) -> 'Form':
-        f = Form(contentType=CONTENT_TYPES["URLEnc"])
+    @classmethod
+    def fromURLEncStr(cls, data: str) -> 'Form':
+        f = cls(contentType=CONTENT_TYPES["URLEnc"])
         for part in partitions(data,'&'):
             k,_,v = part.partition('=')
             f[k] = FormData(name=k,value=v)
         return f
-    def fromMultiPartBytes(data: bytes, boundary: bytes | str) -> 'Form':
+    @classmethod
+    def fromMultiPartBytes(cls, data: bytes, boundary: bytes | str) -> 'Form':
         boundary = boundary if isinstance(boundary,bytes) else boundary.encode()
         f = Form(contentType=CONTENT_TYPES["MultiPart"],
                 boundary=boundary)
@@ -265,7 +267,8 @@ class Request(HTTPBase):
             cl = (f'Content-Length: {len(b)}\r\n').encode()
         return sl + h + cl + c + b'\r\n' + b
     
-    def fromBytes(data: bytes) -> 'Request':
+    @classmethod
+    def fromBytes(cls, data: bytes) -> 'Request':
         ##per http spec, header and bytes are separated by 2 CRLF
         headerbytes,_,bodybytes = data.partition(b'\r\n\r\n')
 
@@ -303,10 +306,11 @@ class Request(HTTPBase):
                 form = Form.fromURLEncStr(bodybytes.decode())
         body = bodybytes
         
-        return Request(method=method,uri=uri,httpvers=httpvers,headers=headers,
+        return cls(method=method,uri=uri,httpvers=httpvers,headers=headers,
                         cookies=cookies,body=body,form=form,raw=data)
 
-    def fromSocket(sock: socket.socket) -> 'Request':
+    @classmethod
+    def fromSocket(cls, sock: socket.socket) -> 'Request':
         recvsize = 1024
         data = sock.recv(recvsize)
         ##per http spec, headers continue until 2 CRLF
@@ -320,4 +324,4 @@ class Request(HTTPBase):
             cl = int(m.group(1))
             while((len(data) - (hsepIndex + 4)) < cl):
                 data += sock.recv(recvsize)
-        return Request.fromBytes(data)
+        return cls.fromBytes(data)

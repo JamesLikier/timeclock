@@ -10,15 +10,17 @@ class User():
     username: str
     admin: bool
 
-    def fromSession(req: Request) -> 'User':
+    @classmethod
+    def fromSession(cls, req: Request) -> 'User':
         valid, userid = session.validateSession(req=req)
         if valid:
-            return User.fromUserID(userid)
+            return cls.fromUserID(userid)
         return None
     
-    def fromUserID(userid: int) -> 'User':
+    @classmethod
+    def fromUserID(cls, userid: int) -> 'User':
         try:
             employee = settings.EMPLOYEE_CONTROLLER.getEmployeeById(userid)
-            return User(userid=employee.id, username=f'{employee.lname}{employee.fname[0:1]}',admin=employee.admin)
+            return cls(userid=employee.id, username=f'{employee.lname}{employee.fname[0:1]}',admin=employee.admin)
         except Exception:
             return None
