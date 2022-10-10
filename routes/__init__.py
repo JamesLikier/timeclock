@@ -1,2 +1,2 @@
-from routes import employee, main, static
+from routes import employee, main, static, punch
 import reloadable

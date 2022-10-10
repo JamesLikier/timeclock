@@ -5,9 +5,11 @@ from httphelper import Request, Response, STATUS_CODES, CONTENT_TYPES
 from re import Match
 from socket import socket
 from timeclock import PunchController, Punch, EmployeeController, Employee
+import timeclock
 import json
 from routes.api.util import Message
 import datetime as dt
+import logging
 
 rh = settings.ROUTE_HANDLER
 jinja = settings.JINJA
@@ -19,10 +21,14 @@ ec = settings.EMPLOYEE_CONTROLLER
 def punchNew(req: Request, match: Match, sock: socket):
     msg = Message()
     msg.action = "punch/new"
+    logging.debug(f'New Punch Request: {req.form._data=}')
     try:
-        date = dt.date.fromisoformat(req.form.get("date",dt.date.today().isoformat()))
-        time = dt.time.fromisoformat(req.form.get("time",dt.datetime.now().time().isoformat()))
+        isoDate = timeclock.convertDateStrToISO(req.form["date"].asStr()) or dt.date.today().isoformat()
+        date = dt.date.fromisoformat(isoDate)
+        isoTime = req.form["time"].asStr() or dt.datetime.now().time().isoformat()
+        time = dt.time.fromisoformat(isoTime)
         datetime = dt.datetime.combine(date,time)
+        logging.debug(f'Datetime: {datetime}')
         e = ec.getEmployeeById(req.form["employeeid"].asInt())
         pc.createPunch(e.id,datetime)
         msg.result = Message.SUCCESS

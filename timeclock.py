@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from collections import namedtuple
 import string
 from dataclasses import dataclass, field
+import re
 import datetime as dt
 import calendar as cal
 
@@ -165,3 +166,9 @@ def paddedPairPunches(punches: list[Punch], startState, startDate, endDate):
         else:
             result.append(PunchPair(d))
     return result
+
+def convertDateStrToISO(s: str) -> dt.date:
+    m = re.match(r'([0-9]+)/([0-9]+)/([0-9]+)',s)
+    if m is not None:
+        return f'{m.group(3)}-{m.group(1).zfill(2)}-{m.group(2).zfill(2)}'
+    return None

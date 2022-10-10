@@ -76,6 +76,13 @@
 
     /* Punch Functions */
     responseHandlers.set("punch/new",o=> {
+        if (o["result"] == "success") {
+            const f = document.querySelector("#newPunch");
+            f.reset();
+            displaySuccessModal("Punch Result","Success",3);
+        } else {
+            displayErrorModal("Punch Result","Problem Creating Punch",3);
+        }
     });
     /* End Punch Functions */
 

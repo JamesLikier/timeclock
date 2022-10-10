@@ -1,0 +1,8 @@
+{% import "punch/punch_macros.html" as punchMacros %}
+{% import "user/user_macros.html" as userMacros %}
+{% extends "base.html" %}
+{% block title %}Index{% endblock %}
+{% block head %}{{ super() }}{% endblock %}
+{% block content %}
+{{ punchMacros.displayNewPunchForm() }}
+{% endblock %}
