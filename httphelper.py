@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from collections.abc import MutableMapping
 from typing import Any
 import re
+import logging
 
 StatusCode = namedtuple("StatusCode","code text")
 STATUS_CODES = {
@@ -305,6 +306,7 @@ class Request(HTTPBase):
             elif headers['Content-Type'] == CONTENT_TYPES['URLEnc']:
                 form = Form.fromURLEncStr(bodybytes.decode())
         body = bodybytes
+        logging.debug(f'Request Object: {startline}\r\n{headers}\r\n{cookies}\r\n{body}')
         
         return cls(method=method,uri=uri,httpvers=httpvers,headers=headers,
                         cookies=cookies,body=body,form=form,raw=data)

@@ -21,9 +21,9 @@ def punchNew(req: Request, match: Match, sock: socket):
     msg = Message()
     msg.action = "punch/new"
     try:
-        isoDate = timeclock.convertDateStrToISO(req.form["date"].asStr()) or dt.date.today().isoformat()
+        isoDate = timeclock.convertDateStrToISO(req.form["date"].asStr().strip()) or dt.date.today().isoformat()
         date = dt.date.fromisoformat(isoDate)
-        isoTime = req.form["time"].asStr() or dt.datetime.now().time().isoformat()
+        isoTime = timeclock.convertTimeStrToISO(req.form["time"].asStr().strip()) or dt.datetime.now().time().isoformat()
         time = dt.time.fromisoformat(isoTime)
         datetime = dt.datetime.combine(date,time)
         e = ec.getEmployeeById(req.form["employeeid"].asInt())
