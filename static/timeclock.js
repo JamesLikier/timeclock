@@ -84,6 +84,39 @@
             displayErrorModal("Punch Result","Problem Creating Punch",3);
         }
     });
+    let curEditRow = null;
+    let curCell = null;
+    document.addEventListener('click',e=>{
+        if (e.target.classList.contains('punch-list-time')) {
+            if (curEditRow != null && curCell != e.target) {
+                curEditRow.remove();
+                curEditRow = null;
+                curCell.classList.remove("punch-list-modify");
+                curCell = null;
+            }
+            if (curCell != e.target) {
+                const row = e.target.parentElement;
+                const table = row.parentElement;
+                const editRow = document.createElement('tr');
+                const editCell = document.createElement('td');
+                editCell.classList.add("punch-list-modify-buttons");
+                const cancelBtn = document.createElement('button');
+                cancelBtn.textContent = "Cancel";
+                const saveBtn = document.createElement('button');
+                saveBtn.textContent = "Save";
+
+                editCell.appendChild(saveBtn);
+                editCell.appendChild(cancelBtn);
+                editCell.colSpan = 5;
+                editRow.appendChild(editCell);
+                table.insertBefore(editRow, row.nextSibling);
+
+                curEditRow = editRow;
+                curCell = e.target;
+                curCell.classList.add("punch-list-modify");
+            }
+        }
+    });
     /* End Punch Functions */
 
     /* Reload Handler */
