@@ -51,7 +51,12 @@
         <tr class="{{ loop.cycle('r1','r2') }}">
             <td class="punch-list-date">{{ p.date }}</td>
             <td class="punch-list-state">{% if p.p1 != None %}{{ p.p1.state|upper }}{% endif %}</td>
-            <td class="punch-list-time">{% if p.p1 != None %}{{ p.p1.punch.datetime.strftime('%H:%M') }}{% endif %}</td>
+            <td class="punch-list-time">
+                {% if p.p1 != None %}
+                    {{ p.p1.punch.datetime.strftime('%H:%M') }}
+                    {{ formMacros.input("punchid",type="hidden",value=p.id) }}
+                {% endif %}
+            </td>
             <td class="punch-list-state">{% if p.p2 != None %}{{ p.p2.state|upper }}{% endif %}</td>
             <td class="punch-list-time">{% if p.p2 != None %}{{ p.p2.punch.datetime.strftime('%H:%M') }}{% endif %}</td>
         </tr>

@@ -262,10 +262,16 @@ form input[type="submit"] {
 .punch-list-modify {
     background-color: #f3ffb8 !important;
 }
+.punch-list-modify input {
+    width: 4em;
+}
 .punch-list-modify-buttons * {
     margin: 5px;
 }
 
+.highlight-yellow {
+    background-color: yellow;
+}
 #numpad-display {
     height: 1.5em;
 }
