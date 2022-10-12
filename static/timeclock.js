@@ -86,34 +86,55 @@
     });
     let curEditRow = null;
     let curCell = null;
+    let curCellOriginalValue = null;
+    function createPunchListModifyElement() {
+        const editRow = document.createElement('tr');
+        const editCell = document.createElement('td');
+        editCell.classList.add("punch-list-modify-buttons");
+        editCell.colSpan = 5;
+        const cancelBtn = document.createElement('button');
+        cancelBtn.textContent = "Cancel";
+        const saveBtn = document.createElement('button');
+        saveBtn.textContent = "Save";
+
+        editCell.appendChild(saveBtn);
+        editCell.appendChild(cancelBtn);
+        editRow.appendChild(editCell);
+
+        return editRow;
+    }
+    function makeCellInput(e) {
+        inputField = document.createElement('input');
+        inputField.type = 'text';
+        inputField.classList.add('punch-list-input');
+        inputField.value = e.textContent;
+        curCellOriginalValue = inputField.value;
+        e.innerHTML = '';
+        e.appendChild(inputField);
+    }
+    function revertCell() {
+        curCell.innerHTML = '';
+        curCell.textContent = curCellOriginalValue;
+    }
     document.addEventListener('click',e=>{
         if (e.target.classList.contains('punch-list-time')) {
             if (curEditRow != null && curCell != e.target) {
                 curEditRow.remove();
                 curEditRow = null;
+                revertCell();
                 curCell.classList.remove("punch-list-modify");
                 curCell = null;
             }
             if (curCell != e.target) {
                 const row = e.target.parentElement;
                 const table = row.parentElement;
-                const editRow = document.createElement('tr');
-                const editCell = document.createElement('td');
-                editCell.classList.add("punch-list-modify-buttons");
-                const cancelBtn = document.createElement('button');
-                cancelBtn.textContent = "Cancel";
-                const saveBtn = document.createElement('button');
-                saveBtn.textContent = "Save";
-
-                editCell.appendChild(saveBtn);
-                editCell.appendChild(cancelBtn);
-                editCell.colSpan = 5;
-                editRow.appendChild(editCell);
-                table.insertBefore(editRow, row.nextSibling);
-
-                curEditRow = editRow;
+                editRow = createPunchListModifyElement();
                 curCell = e.target;
                 curCell.classList.add("punch-list-modify");
+                makeCellInput(curCell);
+
+                table.insertBefore(editRow, row.nextSibling);
+                curEditRow = editRow;
             }
         }
     });
