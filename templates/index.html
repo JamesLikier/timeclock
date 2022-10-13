@@ -7,6 +7,6 @@
     {% if user == None %}
         {{ punchMacros.displayPunchClock() }}
     {% else %}
-        {{ punchMacros.displayEmployeePunches(startDate,endDate,pairList) }}
+        {{ punchMacros.displayEmployeePunches(startDate,endDate,employeeid,pairList) }}
     {% endif %}
 {% endblock %}

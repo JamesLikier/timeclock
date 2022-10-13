@@ -21,13 +21,26 @@ def punchNew(req: Request, match: Match, sock: socket):
     msg = Message()
     msg.action = "punch/new"
     try:
-        isoDate = timeclock.convertDateStrToISO(req.form["date"].asStr().strip()) or dt.date.today().isoformat()
-        date = dt.date.fromisoformat(isoDate)
-        isoTime = timeclock.convertTimeStrToISO(req.form["time"].asStr().strip()) or dt.datetime.now().time().isoformat()
-        time = dt.time.fromisoformat(isoTime)
+        data = json.loads(req.body)
+        date = dt.date.fromisoformat(data['date'])
+        time = dt.time.fromisoformat(data['time'])
         datetime = dt.datetime.combine(date,time)
-        e = ec.getEmployeeById(req.form["employeeid"].asInt())
+        e = ec.getEmployeeById(int(data["employeeid"]))
         pc.createPunch(e.id,datetime)
+        msg.result = Message.SUCCESS
+    except Exception:
+        msg.result = Message.FAIL
+    resp = Response()
+    resp.body = msg.toJSON()
+    resp.send(sock)
+
+@rh.register(["POST"],"/api/punch/delete")
+def punchDelete(req: Request, match: Match, sock: socket):
+    msg = Message()
+    msg.action = "punch/delete"
+    try:
+        data = json.loads(req.body)
+        pc.deletePunchById(int(data['pid']))
         msg.result = Message.SUCCESS
     except Exception:
         msg.result = Message.FAIL

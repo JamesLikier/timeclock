@@ -4,11 +4,15 @@
     const clickHandlers = new Map();
 
     /* API Hooks */
-    function apiCall(path, options) {
+    function apiCall(path, options, handler = null) {
         fetch(path, options).then(r => {
             if (r.ok) {
                 r.json().then(o => {
-                    responseHandlers.get(o["action"])(o);
+                    if (handler) {
+                        handler(o);
+                    } else {
+                        responseHandlers.get(o["action"])(o);
+                    }
                 });
             }
         });
@@ -48,29 +52,22 @@
 
     /* Float Functions */
     const floatHandlers = new Map();
-    function setFloat(f) {
+    function setFloat(f, closeHandler = null) {
         if (floatHandlers.get(f)) {
             //do nothing, already showing the float
         } else {
             let handler = function (e) {
-                if (!f.parentElement.contains(e.target)) {
+                if (f.parentElement && !f.parentElement.contains(e.target)) {
                     f.classList.add('d-none');
                     document.removeEventListener("click", handler);
                     floatHandlers.delete(f);
+                    closeHandler && closeHandler(f);
                 }
             }
             f.classList.remove("d-none");
             floatHandlers.set(f, handler);
             document.addEventListener("click", handler);
         }
-    }
-    function makeFloat(parent,child) {
-        const f = document.createElement('div');
-        f.classList.add('floating');
-        f.appendChild(child);
-        parent.appendChild(f);
-        setFloat(f);
-        return f;
     }
     /* End Float Functions */
 
@@ -91,52 +88,104 @@
             displayErrorModal("Punch Result","Problem Creating Punch",3);
         }
     });
+    responseHandlers.set("punch/delete",o=>{
+    });
     let curCell = null;
-    let curCellOriginalValue = null;
-    let modifyFloat = null;
-    function makeCellInput(e) {
-        inputField = document.createElement('input');
-        inputField.type = 'text';
-        inputField.classList.add('punch-list-input');
-        inputField.value = e.textContent;
-        curCellOriginalValue = inputField.value;
-        e.innerHTML = '';
-        e.appendChild(inputField);
-    }
-    function revertCell() {
-        curCell.innerHTML = '';
-        curCell.textContent = curCellOriginalValue;
-        curCellOriginalValue = '';
-        curCell.classList.remove("punch-list-modify");
-        curCell = null;
-    }
-    function cancelModifyPunchList() {
-        revertCell();
-    }
+    let curCellFloat = null;
     clickHandlers.set("#punchlist/modify/cancel",e=>{
-        cancelModifyPunchList();
-        modifyFloat.remove();
+        curCell.classList.remove('highlight-yellow');
+        curCellFloat && curCellFloat.remove();
+        curCellFloat = null;
+        curCell = null;
     });
     clickHandlers.set("#punchlist/modify/delete",e=>{
-        modifyFloat.remove();
+        apiCall("/api/punch/delete",{
+            'method': 'POST',
+            'body': JSON.stringify({'pid': curCell.getAttribute('data-pid')})
+        }, o => {
+            if (o["result"] == "success") {
+                document.location = document.location;
+            }
+        });
     });
+    clickHandlers.set("#punchlist/modify/save",e=>{
+        apiCall("/api/punch/new",{
+            'method': 'POST',
+            'body': JSON.stringify({
+                'employeeid': curCell.getAttribute('data-eid'),
+                'date': curCell.getAttribute('data-date'),
+                'time': curCell.querySelector('input').value
+            })
+        }, o => {
+            if (o["result"] == "success") {
+                document.location = document.location;
+            } else {
+                alert('fail');
+            }
+        });
+    });
+    function createSaveFloat() {
+        const cellFloat = document.createElement('div');
+        cellFloat.classList.add('floating');
+        const saveBtn = document.createElement('a');
+        saveBtn.textContent = 'Save';
+        saveBtn.href = "#punchlist/modify/save";
+        const cancelBtn = document.createElement('a');
+        cancelBtn.textContent = 'Cancel';
+        cancelBtn.href = "#punchlist/modify/cancel";
+        cellFloat.appendChild(saveBtn);
+        cellFloat.appendChild(cancelBtn);
+        return cellFloat;
+    }
+    function createDeleteFloat() {
+        const cellFloat = document.createElement('div');
+        cellFloat.classList.add('floating');
+        const deleteBtn = document.createElement('a');
+        deleteBtn.textContent = 'Delete';
+        deleteBtn.href = "#punchlist/modify/delete";
+        const cancelBtn = document.createElement('a');
+        cancelBtn.textContent = 'Cancel';
+        cancelBtn.href = "#punchlist/modify/cancel";
+        cellFloat.appendChild(deleteBtn);
+        cellFloat.appendChild(cancelBtn);
+        return cellFloat;
+    }
+    function setCurCell(cell) {
+        curCell = cell;
+        curCell.classList.add('highlight-yellow');
+        if (curCell.getAttribute('data-pid') == 'new') {
+            const timeInput = document.createElement('input');
+            timeInput.type = "text";
+            timeInput.name = "time";
+            curCell.appendChild(timeInput);
+            curCellFloat = createSaveFloat();
+        } else {
+            curCellFloat = createDeleteFloat();
+        }
+        curCell.appendChild(curCellFloat);
+        setFloat(curCellFloat, f => {
+            f.remove();
+        });
+    }
+    function resetCurCell() {
+        if (curCell) {
+            curCell.classList.remove('highlight-yellow');
+            curCell.textContent = '';
+            curCell = null;
+        }
+    }
     document.addEventListener('click',e=>{
-        if (e.target.classList.contains('punch-list-time')) {
-            //remove hightlight from previous cell
-            if (curCell != null) curCell.classList.remove('highlight-yellow');
-            //highlight cell
-            curCell = e.target;
-            curCell.classList.add('highlight-yellow');
-            const c = document.createElement('div');
-            const deleteBtn = document.createElement('a');
-            deleteBtn.textContent = 'Delete';
-            deleteBtn.href = '#punchlist/modify/delete';
-            const cancelBtn = document.createElement('a');
-            cancelBtn.textContent = 'Cancel';
-            cancelBtn.href = '#punchlist/modify/cancel';
-            if (curCell.textContent != '') c.appendChild(deleteBtn);
-            c.appendChild(cancelBtn);
-            makeFloat(curCell,c);
+        if (e.target == curCell) {
+            //do nothing
+        } else {
+            if (e.target.classList.contains('punch-list-time')) {
+                if (curCell) {
+                    resetCurCell();
+                }
+                setCurCell(e.target);
+            } else if (curCell && !curCell.contains(e.target)) {
+                resetCurCell();
+            }
         }
     });
     /* End Punch Functions */

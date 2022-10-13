@@ -132,6 +132,11 @@ class FileBasedPunchController(timeclock.PunchController):
         if p == None:
             raise PunchNotFound
         return copy.deepcopy(p)
+    
+    def deletePunchById(self, punchId:int ):
+        if punchId in self.punchDict:
+            del self.punchDict[punchId]
+            self.exportFile()
 
     def getPunchesByEmployeeId(self,
                             employeeId: int,

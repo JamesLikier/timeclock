@@ -64,6 +64,10 @@ class PunchController(ABC):
         pass
 
     @abstractmethod
+    def deletePunchById(self, punchId: int):
+        pass
+
+    @abstractmethod
     def getPunchById(self, punchId: int) -> Punch:
         pass
 

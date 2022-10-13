@@ -259,14 +259,8 @@ form input[type="submit"] {
     border: 1px solid #777777;
     padding: 0.3em;
 }
-.punch-list-modify {
-    background-color: #f3ffb8 !important;
-}
-.punch-list-modify input {
+.punch-list input {
     width: 4em;
-}
-.punch-list-modify-buttons * {
-    margin: 5px;
 }
 
 .highlight-yellow {

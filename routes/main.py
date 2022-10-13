@@ -20,7 +20,7 @@ def routeRoot(req: Request, match: re.Match, sock: socket):
     user = User.fromSession(req)
     template = jinja.get_template("index.html")
     args = {
-        "user": user,
+        "user": user
     }
     startDate = dt.date.today() - dt.timedelta(weeks=2)
     endDate = dt.date.today()
@@ -31,6 +31,7 @@ def routeRoot(req: Request, match: re.Match, sock: socket):
             startState = pc.getPunchState(punchList[0])
         pairList = tc.paddedPairPunches(punchList, startState, startDate, endDate)
         args["pairList"] = pairList
+        args["employeeid"] = user.userid
     resp.body = template.render(**args)
     resp.send(sock)
 
