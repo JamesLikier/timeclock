@@ -47,15 +47,22 @@
     /* End API Hooks */
 
     /* Float Functions */
+    const floatHandlers = new Map();
     function setFloat(f) {
-        f.classList.remove("d-none");
-        let handler = function (e) {
-            if (!f.parentElement.contains(e.target)) {
-                f.classList.add('d-none');
-                document.removeEventListener("click", handler);
+        if (floatHandlers.get(f)) {
+            //do nothing, already showing the float
+        } else {
+            let handler = function (e) {
+                if (!f.parentElement.contains(e.target)) {
+                    f.classList.add('d-none');
+                    document.removeEventListener("click", handler);
+                    floatHandlers.delete(f);
+                }
             }
+            f.classList.remove("d-none");
+            floatHandlers.set(f, handler);
+            document.addEventListener("click", handler);
         }
-        document.addEventListener("click",handler);
     }
     function makeFloat(parent,child) {
         const f = document.createElement('div');
@@ -63,6 +70,7 @@
         f.appendChild(child);
         parent.appendChild(f);
         setFloat(f);
+        return f;
     }
     /* End Float Functions */
 
@@ -83,27 +91,9 @@
             displayErrorModal("Punch Result","Problem Creating Punch",3);
         }
     });
-    let curEditRow = null;
     let curCell = null;
     let curCellOriginalValue = null;
-    function createPunchListModifyElement() {
-        const editRow = document.createElement('tr');
-        const editCell = document.createElement('td');
-        editCell.classList.add("punch-list-modify-buttons");
-        editCell.colSpan = 5;
-        const cancelBtn = document.createElement('a');
-        cancelBtn.href = "#punchlist/modify/cancel";
-        cancelBtn.textContent = "Cancel";
-        const saveBtn = document.createElement('a');
-        saveBtn.href = "#punchlist/modify/save";
-        saveBtn.textContent = "Save";
-
-        editCell.appendChild(saveBtn);
-        editCell.appendChild(cancelBtn);
-        editRow.appendChild(editCell);
-
-        return editRow;
-    }
+    let modifyFloat = null;
     function makeCellInput(e) {
         inputField = document.createElement('input');
         inputField.type = 'text';
@@ -122,13 +112,13 @@
     }
     function cancelModifyPunchList() {
         revertCell();
-        curEditRow.remove();
-        curEditRow = null;
     }
     clickHandlers.set("#punchlist/modify/cancel",e=>{
         cancelModifyPunchList();
+        modifyFloat.remove();
     });
-    clickHandlers.set("#punchlist/modify/save",e=>{
+    clickHandlers.set("#punchlist/modify/delete",e=>{
+        modifyFloat.remove();
     });
     document.addEventListener('click',e=>{
         if (e.target.classList.contains('punch-list-time')) {
@@ -138,7 +128,14 @@
             curCell = e.target;
             curCell.classList.add('highlight-yellow');
             const c = document.createElement('div');
-            c.textContent = 'test';
+            const deleteBtn = document.createElement('a');
+            deleteBtn.textContent = 'Delete';
+            deleteBtn.href = '#punchlist/modify/delete';
+            const cancelBtn = document.createElement('a');
+            cancelBtn.textContent = 'Cancel';
+            cancelBtn.href = '#punchlist/modify/cancel';
+            if (curCell.textContent != '') c.appendChild(deleteBtn);
+            c.appendChild(cancelBtn);
             makeFloat(curCell,c);
         }
     });
