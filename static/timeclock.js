@@ -28,9 +28,13 @@
         if(form.action.includes("/api/")) {
             e.preventDefault();
             fd = new FormData(form);
+            data = {};
+            for(pairs of fd.entries()){
+                data[pairs[0]] = pairs[1];
+            }
             apiCall(form.action, {
                 "method": form.method,
-                "body": fd
+                "body": JSON.stringify(data)
             })
         }
     });

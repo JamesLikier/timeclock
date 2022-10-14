@@ -4,6 +4,7 @@ from re import Match
 from socket import socket
 import reloadable
 from routes.api.util import Message
+import json
 
 rh = settings.ROUTE_HANDLER
 session = settings.SESSION_HANDLER
@@ -25,8 +26,9 @@ def login(req: Request, match: Match, sock: socket):
     msg = Message()
     msg.action = "login"
     try:
-        username = req.form["username"].asStr()
-        password = req.form["password"].asStr()
+        data = json.loads(req.body)
+        username = data["username"]
+        password = data["password"]
         userid = int(username)
         session.createSession(userid=userid,resp=resp)
         msg.result = Message.SUCCESS

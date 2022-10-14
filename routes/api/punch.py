@@ -74,7 +74,9 @@ def punchclock(req: Request, match: Match, sock: socket):
     msg = Message()
     msg.action = "punchclock"
     try:
-        e = ec.getEmployeeById(req.form["employeeid"].asInt())
+        data = json.loads(req.body)
+        employeeid = int(data['employeeid'])
+        e = ec.getEmployeeById(employeeid)
         pc.createPunch(e.id)
         msg.result = Message.SUCCESS
         msg.body = f"Punch Accepted: {e.lname}, {e.fname}"

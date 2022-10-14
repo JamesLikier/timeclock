@@ -20,10 +20,11 @@ def employeeNew(req: Request, match: Match, sock: socket):
     msg.action = "employee/new"
     if valid:
         try:
+            data = json.loads(req.body)
             args = {
-                "fname": req.form["fname"].asStr(),
-                "lname": req.form["lname"].asStr(),
-                "admin": True if "admin" in req.form else False
+                "fname": data['fname'],
+                "lname": data['lname'],
+                "admin": True if "admin" in data else False
             }
             e = ec.createEmployee(**args)
             msg.result = Message.SUCCESS
