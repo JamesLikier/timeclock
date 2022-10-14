@@ -218,16 +218,12 @@
 
     /* Reload Handler */
     clickHandlers.set("#reload", e=> {
-        apiCall("/api/reload",{"method": "GET"});
-    });
-    responseHandlers.set("reload",o=> {
         const title = "Hot Reload";
-        body = o["result"];
-        if (o["result"] == "success") {
-            displaySuccessModal(title,body,3);
-        } else {
-            displayErrorModal(title,body,3);
-        }
+        apiCall("/api/reload",{"method": "GET"},o=>{
+            displaySuccessModal(title,"Reload Successful",3);
+        },o=>{
+            displayErrorModal(title,"Reload Failed",3);
+        });
     });
     /* End Reload Handler */
 
