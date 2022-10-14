@@ -4,14 +4,22 @@
     const clickHandlers = new Map();
 
     /* API Hooks */
-    function apiCall(path, options, handler = null) {
+    function apiCall(path, options, success_handler = null, fail_handler = null) {
         fetch(path, options).then(r => {
             if (r.ok) {
                 r.json().then(o => {
-                    if (handler) {
-                        handler(o);
+                    if (o["result"] == "success") {
+                        if(success_handler) {
+                            success_handler(o);
+                        } else {
+                            responseHandlers.get(o["action"])(o);
+                        }
                     } else {
-                        responseHandlers.get(o["action"])(o);
+                        if(fail_handler) {
+                            fail_handler(o);
+                        } else {
+                            responseHandlers.get(o["action"])(o);
+                        }
                     }
                 });
             }
