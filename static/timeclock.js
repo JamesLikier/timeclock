@@ -124,6 +124,10 @@
             }
         });
     });
+    function styleModifyFloat(f) {
+        f.classList.add('modify-float');
+        return f;
+    }
     function createSaveFloat() {
         const cellFloat = document.createElement('div');
         cellFloat.classList.add('floating');
@@ -135,7 +139,7 @@
         cancelBtn.href = "#punchlist/modify/cancel";
         cellFloat.appendChild(saveBtn);
         cellFloat.appendChild(cancelBtn);
-        return cellFloat;
+        return styleModifyFloat(cellFloat);
     }
     function createDeleteFloat() {
         const cellFloat = document.createElement('div');
@@ -148,7 +152,7 @@
         cancelBtn.href = "#punchlist/modify/cancel";
         cellFloat.appendChild(deleteBtn);
         cellFloat.appendChild(cancelBtn);
-        return cellFloat;
+        return styleModifyFloat(cellFloat);
     }
     function setCurCell(cell) {
         curCell = cell;

@@ -262,6 +262,14 @@ form input[type="submit"] {
 .punch-list input {
     width: 4em;
 }
+.modify-float * {
+    margin-left: 1em;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+.modify-float :last-child {
+    margin-right: 1em;
+}
 
 .highlight-yellow {
     background-color: yellow;
