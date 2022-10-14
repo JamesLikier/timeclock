@@ -111,9 +111,7 @@
                 "endDate": document.querySelector("#punchlistEnddate").value
             })
         }, o => {
-            if (o["result"] == "success") {
-                content.innerHTML = o["body"];
-            }
+            content.innerHTML = o["body"];
         });
     }
     document.addEventListener('change',e=>{
@@ -131,9 +129,7 @@
             'method': 'POST',
             'body': JSON.stringify({'pid': curCell.getAttribute('data-pid')})
         }, o => {
-            if (o["result"] == "success") {
-                refreshPunchList();
-            }
+            refreshPunchList();
         });
     });
     clickHandlers.set("#punchlist/modify/save",e=>{
@@ -145,9 +141,7 @@
                 'time': curCell.querySelector('input').value
             })
         }, o => {
-            if (o["result"] == "success") {
-                refreshPunchList();
-            }
+            refreshPunchList();
         });
     });
     function styleModifyFloat(f) {
