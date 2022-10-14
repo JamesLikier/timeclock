@@ -93,10 +93,7 @@
     let curCell = null;
     let curCellFloat = null;
     clickHandlers.set("#punchlist/modify/cancel",e=>{
-        curCell.classList.remove('highlight-yellow');
-        curCellFloat && curCellFloat.remove();
-        curCellFloat = null;
-        curCell = null;
+        resetCurCell();
     });
     clickHandlers.set("#punchlist/modify/delete",e=>{
         apiCall("/api/punch/delete",{
@@ -174,8 +171,10 @@
     function resetCurCell() {
         if (curCell) {
             curCell.classList.remove('highlight-yellow');
-            curCell.textContent = '';
+            let input = curCell.querySelector('input');
+            input && input.remove();
             curCell = null;
+            curCellFloat && curCellFloat.remove();
         }
     }
     document.addEventListener('click',e=>{
