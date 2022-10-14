@@ -90,6 +90,25 @@
     });
     responseHandlers.set("punch/delete",o=>{
     });
+    function refreshPunchList() {
+        apiCall('/api/punch/list', {
+            'method': 'POST',
+            'body': JSON.stringify({
+                "employeeid": 1,
+                "startDate": document.querySelector('#punchlistStartdate').value,
+                "endDate": document.querySelector("#punchlistEnddate").value
+            })
+        }, o => {
+            if (o["result"] == "success") {
+                content.innerHTML = o["body"];
+            }
+        });
+    }
+    document.addEventListener('change',e=>{
+        if (e.target.id == "punchlistStartdate" || e.target.id == "punchlistEnddate"){
+            refreshPunchList();
+        }
+    });
     let curCell = null;
     let curCellFloat = null;
     clickHandlers.set("#punchlist/modify/cancel",e=>{
@@ -101,7 +120,7 @@
             'body': JSON.stringify({'pid': curCell.getAttribute('data-pid')})
         }, o => {
             if (o["result"] == "success") {
-                document.location = document.location;
+                refreshPunchList();
             }
         });
     });
@@ -115,9 +134,7 @@
             })
         }, o => {
             if (o["result"] == "success") {
-                document.location = document.location;
-            } else {
-                alert('fail');
+                refreshPunchList();
             }
         });
     });

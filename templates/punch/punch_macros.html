@@ -39,6 +39,10 @@
 {% endmacro %}
 {% macro displayEmployeePunches(startDate,endDate,employeeid,pairList) %}
     <h2>Punches</h2>
+    <table>
+    {{ formMacros.input("startDate",id="punchlistStartdate",type="date",label="Start Date:",table=True,value=startDate) }}
+    {{ formMacros.input("endDate",id="punchlistEnddate",type="date",label="End Date:",table=True,value=endDate) }}
+    </table>
     <table class="punch-list">
         <tr>
             <th>Date</th>

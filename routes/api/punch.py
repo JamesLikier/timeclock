@@ -48,6 +48,27 @@ def punchDelete(req: Request, match: Match, sock: socket):
     resp.body = msg.toJSON()
     resp.send(sock)
 
+@rh.register(["POST"],"/api/punch/list")
+def punchList(req: Request, match: Match, sock: socket):
+    msg = Message()
+    msg.action = "punch/list"
+    try:
+        msg.result = Message.SUCCESS
+        data = json.loads(req.body)
+        employeeid = int(data["employeeid"])
+        startDate = dt.date.fromisoformat(data["startDate"])
+        endDate = dt.date.fromisoformat(data["endDate"])
+        punchlist = pc.getPunchesByEmployeeId(employeeid,startDate,endDate)
+        startState = pc.getPunchState(punchlist[0])
+        paddedPairs = timeclock.paddedPairPunches(punchlist,startState,startDate,endDate)
+        template = jinja.get_template("api/punch/punchlist.html")
+        msg.body = template.render(startDate=startDate,endDate=endDate,employeeid=employeeid,pairList=paddedPairs)
+    except Exception:
+        msg.result = Message.FAIL
+    resp = Response()
+    resp.body = msg.toJSON()
+    resp.send(sock)
+
 @rh.register(["POST"],"/api/punchclock")
 def punchclock(req: Request, match: Match, sock: socket):
     msg = Message()

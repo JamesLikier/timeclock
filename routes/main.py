@@ -32,6 +32,8 @@ def routeRoot(req: Request, match: re.Match, sock: socket):
         pairList = tc.paddedPairPunches(punchList, startState, startDate, endDate)
         args["pairList"] = pairList
         args["employeeid"] = user.userid
+        args["startDate"] = startDate
+        args["endDate"] = endDate
     resp.body = template.render(**args)
     resp.send(sock)
 
