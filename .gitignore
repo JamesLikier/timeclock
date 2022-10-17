@@ -5,4 +5,5 @@ employeetestfile
 punchtestfile
 employeefile
 punchfile
+*.db
 *.log

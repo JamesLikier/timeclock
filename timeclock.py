@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 from collections import namedtuple
-import string
 from dataclasses import dataclass, field
 import re
 import datetime as dt
@@ -12,35 +11,28 @@ class EmployeeNotFound(Exception):
 class PunchNotFound(Exception):
     pass
 
-daysofweek = ["Mon","Tue","Wed","Thur","Fri","Sat","Sun"]
 @dataclass
 class Punch:
     id: int = -1
     employeeId: int = -1
     datetime: dt.datetime = field(default_factory=lambda : dt.datetime.today())
     createdByEmployeeId: int = -1
-    modifiedByEmployeeId: int = -1
-
-    def dateString(self):
-        datetime = self.datetime
-        return f'{datetime.month}/{datetime.day}/{datetime.year}'
-    def timeString(self):
-        datetime = self.datetime
-        return f'{str(datetime.hour).zfill(2)}:{str(datetime.minute).zfill(2)}'
-    def dayString(self):
-        datetime = self.datetime
-        return f'{daysofweek[cal.weekday(datetime.year,datetime.month,datetime.day)]}'
 
 @dataclass
 class Employee:
     id: int = -1
-    fname: string = ""
-    lname: string = ""
+    username: str = ""
+    fname: str = ""
+    lname: str = ""
     admin: bool = False
 
 class EmployeeController(ABC):
     @abstractmethod
-    def createEmployee(self, fname: string, lname: string, admin: bool = False) -> Employee:
+    def createEmployee(self, 
+            username: str,
+            fname: str,
+            lname: str,
+            admin: bool) -> Employee:
         pass
 
     @abstractmethod
@@ -48,7 +40,7 @@ class EmployeeController(ABC):
         pass
 
     @abstractmethod
-    def getEmployeeList(self, offset: int = 0, count: int = 0, sortBy: string = "") -> list[Employee]:
+    def getEmployeeList(self, offset: int = 0, count: int = 0, sortBy: str = "") -> list[Employee]:
         pass
     
     @abstractmethod
@@ -79,19 +71,11 @@ class PunchController(ABC):
         pass
     
     @abstractmethod
-    def modifyPunch(self, punch: Punch, modifiedByEmployeeId: int) -> Punch:
-        pass
-
-    @abstractmethod
     def getPunchCountUpToPunch(self, punch: Punch) -> int:
         pass
 
     def getPunchState(self, punch: Punch):
         return "in" if self.getPunchCountUpToPunch(punch) % 2 == 0 else "out"
-
-
-class AuthController(ABC):
-    pass
 
 PunchState = namedtuple('PunchState',['punch','state'])
 @dataclass

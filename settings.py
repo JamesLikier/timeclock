@@ -1,6 +1,6 @@
 import jinja2
 import timeclock as tc
-import FileBasedControllers as fbc
+import SQLiteControllers as sc
 from  cachedfilemanager import CachedFileManager
 from routehandler import RouteHandler
 from sessionhandler import SessionHandler
@@ -14,6 +14,7 @@ SERVER_ADDR = '10.0.0.100'
 SERVER_PORT = 80
 EMPLOYEE_FILE = 'employeefile'
 PUNCH_FILE = 'punchfile'
+TIMECLOCK_DBFILE = "timeclock.db"
 
 logging.info('Config Settings:')
 logging.info(f'{SERVER_ADDR=}')
@@ -21,8 +22,10 @@ logging.info(f'{SERVER_PORT=}')
 logging.info(f'{EMPLOYEE_FILE=}')
 logging.info(f'{PUNCH_FILE=}')
 
-EMPLOYEE_CONTROLLER: tc.EmployeeController = fbc.FileBasedEmployeeController(EMPLOYEE_FILE)
-PUNCH_CONTROLLER: tc.PunchController = fbc.FileBasedPunchController(PUNCH_FILE)
+SRQ = sc.SQLRequestQueue(TIMECLOCK_DBFILE)
+SRQ.start()
+EMPLOYEE_CONTROLLER: tc.EmployeeController = sc.EmployeeController(SRQ)
+PUNCH_CONTROLLER: tc.PunchController = sc.PunchController(SRQ)
 CACHE = CachedFileManager()
 ROUTE_HANDLER = RouteHandler()
 SESSION_HANDLER = SessionHandler()
@@ -33,7 +36,3 @@ JINJA = Environment(
 )
 JINJA.filters["floor"] = lambda val, floor: val if val > floor else floor
 JINJA.filters["ceil"] = lambda val, ceil: val if val < ceil else ceil
-
-#create default admin employee for testing
-if len(EMPLOYEE_CONTROLLER.employeeDict) == 0:
-    EMPLOYEE_CONTROLLER.createEmployee("ADMIN","ADMIN",True)
