@@ -47,6 +47,10 @@ class EmployeeController(ABC):
     def modifyEmployee(self, employee: Employee) -> Employee:
         pass
 
+    @abstractmethod
+    def getEmployeeCount(self) -> int:
+        pass
+
 class PunchController(ABC):
     @abstractmethod
     def createPunch(self,

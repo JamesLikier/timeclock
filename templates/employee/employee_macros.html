@@ -23,6 +23,7 @@
     <h2>New Employee</h2>
     <form method="POST" action="/api/employee/new" class="border">
         <table>
+            {{ formMacros.input("username",label="Username:",table=True) }}
             {{ formMacros.input("fname",label="First Name:",table=True)}}
             {{ formMacros.input("lname",label="Last Name:",table=True)}}
             {{ formMacros.input("admin",type="checkbox",label="Admin:",value="True",table=True)}}

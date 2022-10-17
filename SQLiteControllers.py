@@ -143,6 +143,18 @@ class EmployeeController(tc.EmployeeController):
         r = self.srq.createRequestor()
         r.request(query)
         return self.getEmployeeById(employeeId=employee.id)
+    
+    def getEmployeeCount(self) -> int:
+        @SQLTransaction
+        def query(cur: sqlite3.Cursor):
+            cur.execute("""
+                SELECT count(employeeid)
+                FROM employee
+            """)
+            return cur.fetchone()
+        r = self.srq.createRequestor()
+        result = r.request(query)
+        return result[0]
 
 class PunchController(tc.PunchController):
     def __init__(self, sqlRequestQueue: SQLRequestQueue):
@@ -150,8 +162,9 @@ class PunchController(tc.PunchController):
 
     def createPunch(self,
             employeeId: int,
-            datetime: dt.datetime,
+            datetime: dt.datetime = None,
             createdByEmployeeId: int = None) -> tc.Punch:
+        datetime = datetime or dt.datetime.now()
         @SQLTransaction
         def query(cur: sqlite3.Cursor):
             cur.execute("""

@@ -244,6 +244,8 @@
     responseHandlers.set("login",o => {
         if (o["result"] == "success") {
             document.location = "/";
+        } else {
+            displayErrorModal("Login",o["body"],3);
         }
     });
     responseHandlers.set("logout",o => {

@@ -31,6 +31,13 @@ class EmployeeControllerTest(unittest.TestCase):
         l = self.ec.getEmployeeList()
         self.assertEqual(len(l),2)
 
+    def test_getEmployeeCount(self):
+        c = self.ec.getEmployeeCount()
+        self.assertEqual(c,1)
+        self.ec.createEmployee("test","test","test")
+        c = self.ec.getEmployeeCount()
+        self.assertEqual(c,2)
+
 class PunchControllerTest(unittest.TestCase):
     srq = c.SQLRequestQueue("timeclock-test.db")
     srq.start()

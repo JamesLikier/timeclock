@@ -22,6 +22,7 @@ def employeeNew(req: Request, match: Match, sock: socket):
         try:
             data = json.loads(req.body)
             args = {
+                "username": data['username'],
                 "fname": data['fname'],
                 "lname": data['lname'],
                 "admin": True if "admin" in data else False

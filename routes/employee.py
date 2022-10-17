@@ -68,7 +68,7 @@ def routeEmployeeList(req: Request, match: re.Match, sock: socket):
             "pgSize": pgSize,
             "employees": employees,
             "displayCount": len(employees),
-            "totalEmployees": len(ec.employeeDict)
+            "totalEmployees": ec.getEmployeeCount()
         }
         resp.body = jinja.get_template("employee/employeeList.html").render(**args)
     else:
