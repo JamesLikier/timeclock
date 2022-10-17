@@ -163,9 +163,3 @@ class FileBasedPunchController(timeclock.PunchController):
             if p.employeeId == punch.employeeId and p.datetime < punch.datetime:
                 count += 1
         return count
-
-class FileBasedAuthController(timeclock.AuthController):
-    def __init__(self, filename: string):
-        super().__init__(self)
-        self.filename = filename
- 
