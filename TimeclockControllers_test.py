@@ -1,15 +1,15 @@
 import unittest
-import SQLiteControllers as c
+import SQLiteControllers as sc
 import datetime as dt
 
 class EmployeeControllerTest(unittest.TestCase):
-    srq = c.SQLRequestQueue("timeclock-test.db")
+    srq = sc.SQLRequestQueue("timeclock-test.db")
     srq.start()
 
     def setUp(self) -> None:
         r = EmployeeControllerTest.srq.createRequestor()
-        c.createTables(r)
-        self.ec = c.EmployeeController(EmployeeControllerTest.srq)
+        sc.createTables(r)
+        self.ec = sc.EmployeeController(EmployeeControllerTest.srq)
     
     def test_createEmployee(self):
         e = self.ec.createEmployee("bdole","bob","dole",False)
@@ -39,13 +39,13 @@ class EmployeeControllerTest(unittest.TestCase):
         self.assertEqual(c,2)
 
 class PunchControllerTest(unittest.TestCase):
-    srq = c.SQLRequestQueue("timeclock-test.db")
+    srq = sc.SQLRequestQueue("timeclock-test.db")
     srq.start()
 
     def setUp(self) -> None:
         r = PunchControllerTest.srq.createRequestor()
-        c.createTables(r)
-        self.pc = c.PunchController(PunchControllerTest.srq)
+        sc.createTables(r)
+        self.pc = sc.PunchController(PunchControllerTest.srq)
     
     def test_createPunch(self):
         p = self.pc.createPunch(1,dt.datetime.now())
