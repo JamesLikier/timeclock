@@ -5,14 +5,14 @@ import logging
 from httphelper import Request
 
 class Server():
-    def __init__(self,addr: str, port: int, rh: RouteHandler = None):
+    def __init__(self,addr: str, port: int, rh: RouteHandler):
         logging.info(f'Creating Server with {addr=},{port=}')
         self.addr = addr
         self.port = port
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.listenthread = None
         self.listening = False
-        self.rh = rh or RouteHandler()
+        self.rh = rh
     
     def accept(self,conn):
         logging.info(f'Accepted connection from {conn[1]=}')
