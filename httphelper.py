@@ -306,7 +306,7 @@ class Request(HTTPBase):
             elif headers['Content-Type'] == CONTENT_TYPES['URLEnc']:
                 form = Form.fromURLEncStr(bodybytes.decode())
         body = bodybytes
-        logging.debug(f'Request Object: {startline}\r\n{headers}\r\n{cookies}\r\n{body}')
+        logging.debug(f'Request Object: {startline}\n{headers}\n{cookies}\n{body}')
         
         return cls(method=method,uri=uri,httpvers=httpvers,headers=headers,
                         cookies=cookies,body=body,form=form,raw=data)

@@ -31,6 +31,13 @@ CREATE TABLE punch_correction_request (
 
 CREATE INDEX pcr_employeeid_punchdatetime on punch_correction_request (employeeid, punchdatetime DESC);
 
+DROP TABLE IF EXISTS auth;
+CREATE TABLE auth (
+    employeeid INTEGER PRIMARY KEY,
+    password BLOB,
+    FOREIGN KEY (employeeid) REFERENCES employee (employeeid)
+);
+
 INSERT INTO employee (username, fname, lname, admin) values ('admin','admin','admin',1);
 
 COMMIT;

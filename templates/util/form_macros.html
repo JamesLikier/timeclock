@@ -1,4 +1,4 @@
-{% macro input(name, id="", value='', type='text', size=20, label="",table=False,autocomplete="off") %}
+{% macro input(name, id="", value='', type='text', size=20, label="",table=False,autocomplete="off",autofocus=False) %}
     {% if table %}<tr>{% endif %}
     {% if label != "" %}
         {% if table %}<td class="label">{% endif %}
@@ -6,7 +6,11 @@
         {% if table %}</td>{% endif %}
     {% endif %}
     {% if table %}<td class="input">{% endif %}
-    <input id="{{ id }}" type="{{ type }}" name="{{ name }}" value="{{ value|e }}" size="size" autocomplete="{{ autocomplete }}">
+    {% if autofocus %}
+        <input id="{{ id }}" type="{{ type }}" name="{{ name }}" value="{{ value|e }}" size="size" autocomplete="{{ autocomplete }}" autofocus="{{ autofocus }}">
+    {% else %}
+        <input id="{{ id }}" type="{{ type }}" name="{{ name }}" value="{{ value|e }}" size="size" autocomplete="{{ autocomplete }}">
+    {% endif %}
     {% if table %}</td>{% endif %}
     {% if table %}</tr>{% endif %}
 {% endmacro %}

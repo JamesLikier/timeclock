@@ -39,6 +39,7 @@
 {% endmacro %}
 {% macro displayEmployeePunches(startDate,endDate,employeeid,pairList) %}
     <h2>Punches</h2>
+    {{ formMacros.input("employeeId",id="punchlistEmployeeId",type="hidden",value=employeeid) }}
     <table>
     {{ formMacros.input("startDate",id="punchlistStartdate",type="date",label="Start Date:",table=True,value=startDate) }}
     {{ formMacros.input("endDate",id="punchlistEnddate",type="date",label="End Date:",table=True,value=endDate) }}
@@ -66,7 +67,7 @@
     <h2>Create Punch</h2>
     <form class="border" id="newPunch" action="/api/punch/new" method="POST">
         <table>
-        {{ formMacros.input("employeeid",label="Employee ID:",table=True) }}
+        {{ formMacros.input("employeeid",label="Employee ID:",table=True,autofocus=True) }}
         {{ formMacros.input("date",label="Date:",table=True) }}
         {{ formMacros.input("time",label="Time",table=True) }}
         </table>

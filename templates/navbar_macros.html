@@ -8,6 +8,7 @@
             </div>
         </div>
     {% else %}
+        {% if user.admin %}
         <div class="dropdown">
             <a class="dropdown-toggle" href="#dropdown-toggle">Employee</a>
             <div id="menu" class="floating flex-col d-none">
@@ -17,6 +18,13 @@
         </div>
         <a class="nav-item" href="/punch/new">Punch</a>
         <a class="nav-item" href="#reload">Reload</a>
+        {% endif %}
+        <div class="p-r">
+            <a class="nav-item" href="#setpassword">Set Password</a>
+            <div id="setpassword" class="floating d-none">
+                {{ userMacros.displaySetPassword(user) }}
+            </div>
+        </div>
         <a class="nav-item" href="#logout">Logout</a>
     {% endif %}
 {% endmacro %}

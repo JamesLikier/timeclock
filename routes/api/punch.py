@@ -1,23 +1,23 @@
-import re
+from re import Match
+import sys
 import settings
 import reloadable
 from httphelper import Request, Response, STATUS_CODES, CONTENT_TYPES
-from re import Match
-from socket import socket
 from timeclock import PunchController, Punch, EmployeeController, Employee
 import timeclock
 import json
 from routes.api.util import Message
 import datetime as dt
+from sessionhandler import SessionHandler
+import logging
 
 rh = settings.ROUTE_HANDLER
 jinja = settings.JINJA
-session = settings.SESSION_HANDLER
 pc = settings.PUNCH_CONTROLLER
 ec = settings.EMPLOYEE_CONTROLLER
 
 @rh.register(["POST"],"/api/punch/new")
-def punchNew(req: Request, match: Match, sock: socket):
+def punchNew(req: Request, match: Match, resp: Response, session, sessionHandler: SessionHandler):
     msg = Message()
     msg.action = "punch/new"
     try:
@@ -30,12 +30,12 @@ def punchNew(req: Request, match: Match, sock: socket):
         msg.result = Message.SUCCESS
     except Exception:
         msg.result = Message.FAIL
-    resp = Response()
+    
     resp.body = msg.toJSON()
-    resp.send(sock)
+    resp.send()
 
 @rh.register(["POST"],"/api/punch/delete")
-def punchDelete(req: Request, match: Match, sock: socket):
+def punchDelete(req: Request, match: Match, resp: Response, session, sessionHandler: SessionHandler):
     msg = Message()
     msg.action = "punch/delete"
     try:
@@ -44,33 +44,36 @@ def punchDelete(req: Request, match: Match, sock: socket):
         msg.result = Message.SUCCESS
     except Exception:
         msg.result = Message.FAIL
-    resp = Response()
+    
     resp.body = msg.toJSON()
-    resp.send(sock)
+    resp.send()
 
 @rh.register(["POST"],"/api/punch/list")
-def punchList(req: Request, match: Match, sock: socket):
+def punchList(req: Request, match: Match, resp: Response, session, sessionHandler: SessionHandler):
     msg = Message()
     msg.action = "punch/list"
     try:
         msg.result = Message.SUCCESS
         data = json.loads(req.body)
-        employeeid = int(data["employeeid"])
+        logging.debug(data)
+        employeeid = int(data["employeeId"])
         startDate = dt.date.fromisoformat(data["startDate"])
         endDate = dt.date.fromisoformat(data["endDate"])
         punchlist = pc.getPunchesByEmployeeId(employeeid,startDate,endDate)
+        logging.debug(punchlist)
         startState = pc.getPunchState(punchlist[0])
         paddedPairs = timeclock.paddedPairPunches(punchlist,startState,startDate,endDate)
         template = jinja.get_template("api/punch/punchlist.html")
         msg.body = template.render(startDate=startDate,endDate=endDate,employeeid=employeeid,pairList=paddedPairs)
     except Exception:
+        logging.error(sys.exc_info())
         msg.result = Message.FAIL
-    resp = Response()
+    
     resp.body = msg.toJSON()
-    resp.send(sock)
+    resp.send()
 
 @rh.register(["POST"],"/api/punchclock")
-def punchclock(req: Request, match: Match, sock: socket):
+def punchclock(req: Request, match: Match, resp: Response, session, sessionHandler: SessionHandler):
     msg = Message()
     msg.action = "punchclock"
     try:
@@ -83,6 +86,6 @@ def punchclock(req: Request, match: Match, sock: socket):
     except Exception:
         msg.result = Message.FAIL
         msg.body = "Invalid Employee ID or PIN"
-    resp = Response()
+    
     resp.body = msg.toJSON()
-    resp.send(sock)
+    resp.send()

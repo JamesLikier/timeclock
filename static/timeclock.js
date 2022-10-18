@@ -63,20 +63,30 @@
     /* End API Hooks */
 
     /* Float Functions */
+    function firstVisibleInput(form) {
+        const inputs = form.querySelectorAll("input");
+        for (let i of inputs) {
+            if (i.type != "hidden") return i;
+        }
+        return null;
+    }
     const floatHandlers = new Map();
     function setFloat(f, closeHandler = null) {
         if (floatHandlers.get(f)) {
             //do nothing, already showing the float
         } else {
+            const form = f.querySelector("form");
             let handler = function (e) {
                 if (f.parentElement && !f.parentElement.contains(e.target)) {
                     f.classList.add('d-none');
+                    form && form.reset();
                     document.removeEventListener("click", handler);
                     floatHandlers.delete(f);
                     closeHandler && closeHandler(f);
                 }
             }
             f.classList.remove("d-none");
+            form && firstVisibleInput(form).focus();
             floatHandlers.set(f, handler);
             document.addEventListener("click", handler);
         }
@@ -106,7 +116,7 @@
         apiCall('/api/punch/list', {
             'method': 'POST',
             'body': JSON.stringify({
-                "employeeid": 1,
+                "employeeId": document.querySelector("#punchlistEmployeeId").value,
                 "startDate": document.querySelector('#punchlistStartdate').value,
                 "endDate": document.querySelector("#punchlistEnddate").value
             })
@@ -232,6 +242,21 @@
         content.innerHTML = o["body"];
     });
     /* End Employee Functions */
+
+    /* Set Password */
+    clickHandlers.set("#setpassword", e=> {
+        const d = e.target.parentElement.querySelector(".floating");
+        setFloat(d);
+    });
+    responseHandlers.set("setpassword",o=>{
+        if (o["result"] == "success") {
+            displaySuccessModal("Login Result","Successfuly changed password.",3);
+            document.querySelector("body").click();
+        } else {
+            displayErrorModal("Login Result","Unable to change password.",3);
+        }
+    });
+    /* End Set Password */
 
     /* Login/Logout */
     clickHandlers.set("#login", e=> {

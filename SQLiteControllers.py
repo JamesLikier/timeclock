@@ -32,10 +32,13 @@ class SQLRequestQueue():
     def run(self):
         con = sqlite3.connect(self.dbFilename)
         while True:
-            req: SQLRequest
-            req = self.queue.get(block=True)
-            result = req.query(con)
-            if req.responseQueue: req.responseQueue.put(result)
+            try:
+                req: SQLRequest
+                req = self.queue.get(block=True)
+                result = req.query(con)
+                if req.responseQueue: req.responseQueue.put(result)
+            except Exception:
+                logging.error("Encountered error executing SQL Request")
 
     def start(self):
         self.thread.start()
