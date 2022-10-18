@@ -1,5 +1,6 @@
 import timeclock as tc
 import SQLiteControllers as sc
+from SQLiteHelper import *
 from  cachedfilemanager import CachedFileManager
 from routehandler import RouteHandler
 from sessionhandler import SessionHandler
@@ -25,7 +26,7 @@ SALT = None
 with open(SALT_FILE,"rb") as f:
     SALT = f.read()
 
-SRQ = sc.SQLRequestQueue(TIMECLOCK_DBFILE)
+SRQ = SQLRequestQueue(TIMECLOCK_DBFILE)
 SRQ.start()
 EMPLOYEE_CONTROLLER: tc.EmployeeController = sc.EmployeeController(SRQ)
 PUNCH_CONTROLLER: tc.PunchController = sc.PunchController(SRQ)

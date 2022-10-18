@@ -5,11 +5,11 @@ import logging
 from sessionhandler import SessionHandler
 
 class RouteHandler():
-    def __init__(self, sessionHandler):
+    def __init__(self, sessionHandler = None):
         self.handlers = dict()
         self.statichandlers = dict()
         self.handler404 = None
-        self.sessionHandler = sessionHandler
+        self.sessionHandler = sessionHandler or SessionHandler()
 
     @staticmethod
     def default404(req: Request, match: re.Match, resp: Response, session, sessionHandler: SessionHandler):

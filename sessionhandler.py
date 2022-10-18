@@ -1,12 +1,12 @@
 import os
 import sqlite3
 from httphelper import Request, Response
-from SQLiteControllers import SQLRequestQueue,SQLTransaction
+from SQLiteHelper import *
 from typing import Any
 from hashlib import pbkdf2_hmac
 
 class SessionHandler():
-    def __init__(self, srq: SQLRequestQueue, salt: bytes = None):
+    def __init__(self, srq: SQLRequestQueue = None, salt: bytes = None):
         self.sessions = dict()
         self.sessionByteSize = 32
         self.userCookie = 'userid'
@@ -15,6 +15,8 @@ class SessionHandler():
         self.srq = srq
     
     def setPassword(self, username: str, password: str) -> None:
+        if self.srq is None:
+            return None
         hashedPassword = pbkdf2_hmac('sha256',password.encode(),self.salt,500_000)
         @SQLTransaction
         def query(cur: sqlite3.Cursor):
@@ -29,6 +31,8 @@ class SessionHandler():
         r.request(query)
     
     def authUser(self, username: str, password: str, resp: Response = None) -> bool:
+        if self.srq is None:
+            return False
         @SQLTransaction
         def query(cur: sqlite3.Cursor):
             cur.execute("""
