@@ -1,7 +1,7 @@
 import sqlite3
 import timeclock as tc
 import datetime as dt
-from SQLiteHelper import *
+from jlpyutil.SQLiteHelper import *
 
 class EmployeeController(tc.EmployeeController):
     def __init__(self, sqlRequestQueue: SQLRequestQueue):

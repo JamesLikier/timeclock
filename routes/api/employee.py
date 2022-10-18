@@ -1,10 +1,10 @@
 import settings
-from httphelper import Request, Response, STATUS_CODES
+from jlpyhttp.httphelper import Request, Response, STATUS_CODES
 from re import Match
 import json
 import reloadable
 from routes.api.util import Message
-from sessionhandler import SessionHandler
+from jlpyhttp.sessionhandler import SessionHandler
 
 rh = settings.ROUTE_HANDLER
 jinja = settings.JINJA

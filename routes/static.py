@@ -1,7 +1,7 @@
 import settings
-from httphelper import Request, Response, STATUS_CODES, CONTENT_TYPES
+from jlpyhttp.httphelper import Request, Response, STATUS_CODES, CONTENT_TYPES
 from re import Match
-from sessionhandler import SessionHandler
+from jlpyhttp.sessionhandler import SessionHandler
 import reloadable
 
 rh = settings.ROUTE_HANDLER

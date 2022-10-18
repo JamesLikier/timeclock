@@ -1,9 +1,9 @@
 import timeclock as tc
 import SQLiteControllers as sc
-from SQLiteHelper import *
-from  cachedfilemanager import CachedFileManager
-from routehandler import RouteHandler
-from sessionhandler import SessionHandler
+from jlpyutil.SQLiteHelper import *
+from jlpyutil.cachedfilemanager import CachedFileManager
+from jlpyhttp.routehandler import RouteHandler
+from jlpyhttp.sessionhandler import SessionHandler
 from jinja2 import Environment, PackageLoader, select_autoescape, FileSystemLoader
 import logging
 

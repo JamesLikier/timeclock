@@ -1,11 +1,11 @@
 from email import message
 import settings
-from httphelper import Request, Response, STATUS_CODES
+from jlpyhttp.httphelper import Request, Response, STATUS_CODES
 from re import Match
 import reloadable
 from routes.api.util import Message
 import json
-from sessionhandler import SessionHandler
+from jlpyhttp.sessionhandler import SessionHandler
 
 rh = settings.ROUTE_HANDLER
 jinja = settings.JINJA

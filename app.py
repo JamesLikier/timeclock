@@ -1,8 +1,8 @@
 import settings
-import httpserver as httpserver
+import jlpyhttp.httpserver as httpserver
 import routes, routes.api
-from sessionhandler import SessionHandler
-from httphelper import Request, Response
+from jlpyhttp.sessionhandler import SessionHandler
+from jlpyhttp.httphelper import Request, Response
 from re import Match
 import importlib
 import sys
