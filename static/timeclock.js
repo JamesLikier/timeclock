@@ -192,6 +192,7 @@
             timeInput.type = "text";
             timeInput.name = "time";
             curCell.appendChild(timeInput);
+            timeInput.focus();
             curCellFloat = createSaveFloat();
         } else {
             curCellFloat = createDeleteFloat();

@@ -61,7 +61,9 @@ def punchList(req: Request, match: Match, resp: Response, session, sessionHandle
         endDate = dt.date.fromisoformat(data["endDate"])
         punchlist = pc.getPunchesByEmployeeId(employeeid,startDate,endDate)
         logging.debug(punchlist)
-        startState = pc.getPunchState(punchlist[0])
+        startState = 'in'
+        if len(punchlist) > 0:
+            startState = pc.getPunchState(punchlist[0])
         paddedPairs = timeclock.paddedPairPunches(punchlist,startState,startDate,endDate)
         template = jinja.get_template("api/punch/punchlist.html")
         msg.body = template.render(startDate=startDate,endDate=endDate,employeeid=employeeid,pairList=paddedPairs)
