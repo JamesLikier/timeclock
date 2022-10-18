@@ -1,6 +1,6 @@
 import timeclock as tc
 import SQLiteControllers as sc
-from jlpyutil.SQLiteHelper import *
+from jlpyutil.SQLiteHelper import SQLRequestQueue
 from jlpyutil.cachedfilemanager import CachedFileManager
 from jlpyhttp.routehandler import RouteHandler
 from jlpyhttp.sessionhandler import SessionHandler
