@@ -4,7 +4,7 @@ from jlpyutil.SQLiteHelper import SQLRequestQueue
 from jlpyutil.cachedfilemanager import CachedFileManager
 from jlpyhttp.routehandler import RouteHandler
 from jlpyhttp.sessionhandler import SessionHandler
-from jinja2 import Environment, PackageLoader, select_autoescape, FileSystemLoader
+from jinja2 import Environment, select_autoescape, FileSystemLoader
 import logging
 
 logging.basicConfig(filename="timeclock.log", filemode="w", level=logging.DEBUG)

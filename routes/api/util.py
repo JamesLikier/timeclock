@@ -1,6 +1,14 @@
-import reloadable
 import json
+import importlib
+from re import Match
+import sys
 from dataclasses import dataclass, field
+import reloadable
+from jlpyhttp.httphelper import Request, Response
+from jlpyhttp.sessionhandler import SessionHandler
+import settings
+
+rh = settings.ROUTE_HANDLER
 
 @dataclass
 class Message():
@@ -29,3 +37,24 @@ class Message():
         m.body = jd.get("body","")
         m.data = jd.get("data",dict())
         return m
+
+@rh.register(["GET"],"/api/reload$")
+def reloadRoutes(req: Request, match: Match, resp: Response, session, sessionHandler: SessionHandler):
+    for v in sys.modules.copy().values():
+        if "reloadable" in dir(v):
+            importlib.reload(v)
+    
+    msg = Message(action="reload",result=Message.SUCCESS)
+    resp.body = msg.toJSON()
+    resp.send()
+
+@rh.register(["GET"],r"/api/resetadminpw")
+def resetAdminpw(req: Request, match: Match, resp: Response, session, sessionHandler: SessionHandler):
+    msg = Message()
+    try:
+        sessionHandler.setPassword("admin","admin")
+        msg.result = msg.SUCCESS
+    except Exception:
+        msg.result = msg.FAIL
+    resp.body = msg.toJSON()
+    resp.send()
