@@ -4,4 +4,3 @@ import routes
 
 server = httpserver.Server(settings.SERVER_ADDR, settings.SERVER_PORT, settings.ROUTE_HANDLER)
 server.start()
-server.listenthread.join()
