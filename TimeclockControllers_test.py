@@ -85,3 +85,19 @@ class PunchControllerTest(unittest.TestCase):
         self.assertEqual(count,1)
         count = self.pc.getPunchCountUpToPunch(p2)
         self.assertEqual(count,2)
+
+    def test_getPreviousPunch(self):
+        p = self.pc.createPunch(1,dt.datetime.now())
+        prev = self.pc.getPreviousPunch(p)
+        self.assertIsNone(prev)
+
+        p2 = self.pc.createPunch(1,dt.datetime.now())
+        prev = self.pc.getPreviousPunch(p2)
+        self.assertEqual(prev.id, p.id)
+
+        p3 = self.pc.createPunch(1,dt.datetime.now())
+
+        self.assertEqual(prev.id, p.id)
+
+        prev = self.pc.getPreviousPunch(p3)
+        self.assertEqual(prev.id, p2.id)

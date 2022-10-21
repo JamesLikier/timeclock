@@ -18,6 +18,9 @@ class Punch:
     datetime: dt.datetime = field(default_factory=lambda : dt.datetime.today())
     createdByEmployeeId: int = -1
 
+    def hoursDelta(self, punch: 'Punch') -> float:
+        return round(((self.datetime - punch.datetime).seconds / 60 / 60),2)
+
 @dataclass
 class Employee:
     id: int = -1
@@ -80,6 +83,10 @@ class PunchController(ABC):
 
     def getPunchState(self, punch: Punch):
         return "in" if self.getPunchCountUpToPunch(punch) % 2 == 0 else "out"
+
+    @abstractmethod
+    def getPreviousPunch(self, punch: Punch) -> Punch:
+        pass
 
 PunchState = namedtuple('PunchState',['punch','state'])
 @dataclass

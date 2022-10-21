@@ -190,6 +190,23 @@ class PunchController(tc.PunchController):
         result = r.request(query)
         return result[0]
 
+    def getPreviousPunch(self, punch: tc.Punch) -> tc.Punch:
+        @SQLTransaction
+        def query(cur: sqlite3.Cursor):
+            cur.execute("""
+                SELECT punchid
+                FROM punch
+                WHERE employeeid = ? AND punchdatetime < ?
+                ORDER BY punchdatetime DESC
+                LIMIT 1
+            """,(punch.employeeId, punch.datetime))
+            return cur.fetchone()
+        r = self.srq.createRequestor()
+        row = r.request(query)
+        if row:
+            return self.getPunchById(row[0])
+        return None
+
 def createTables(sr: SQLRequestor):
     script = ""
     with open("create_database.sql","r") as f:
