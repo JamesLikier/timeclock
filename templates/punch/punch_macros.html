@@ -37,6 +37,15 @@
         </form>
     </div>
 {% endmacro %}
+{% macro getHours(punchPair) %}
+    {% if punchPair.p1 != None and punchPair.p2 != None %}
+        {% if punchPair.p1.hours > punchPair.p2.hours %}{{ punchPair.p1.hours }}{% else %}{{ punchPair.p2.hours }}{% endif %}
+    {% elif punchPair.p1 != None %}
+        {{ punchPair.p1.hours }}
+    {% elif punchPair.p2 != None %}
+        {{ punchPair.p2.hours }}
+    {% endif %}
+{% endmacro %}
 {% macro displayEmployeePunches(startDate,endDate,employeeid,pairList) %}
     <h2>Punches</h2>
     {{ formMacros.input("employeeId",id="punchlistEmployeeId",type="hidden",value=employeeid) }}
@@ -51,6 +60,7 @@
             <th>Time</th>
             <th>In/Out</th>
             <th>Time</th>
+            <th>Hours</th>
         </tr>
     {% for p in pairList %}
         <tr class="{{ loop.cycle('r1','r2') }}">
@@ -59,6 +69,7 @@
             <td class="punch-list-time" data-eid="{{ employeeid }}" data-date="{{ p.date }}" data-pid="{% if p.p1 != None %}{{ p.p1.id }}{% else %}new{% endif %}">{% if p.p1 != None %}{{ p.p1.datetime.strftime('%H:%M') }}{% endif %}</td>
             <td class="punch-list-state">{% if p.p2 != None %}{{ p.p2.state|upper }}{% endif %}</td>
             <td class="punch-list-time" data-eid="{{ employeeid }}" data-date="{{ p.date }}" data-pid="{% if p.p2 != None %}{{ p.p2.id }}{% else %}new{% endif %}">{% if p.p2 != None %}{{ p.p2.datetime.strftime('%H:%M') }}{% endif %}</td>
+            <td class="punch-list-hours">{{ getHours(p) }}</td>
         </tr>
     {% endfor %}
     </table>
