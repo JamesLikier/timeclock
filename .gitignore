@@ -9,3 +9,4 @@ punchfile
 *.log
 salt
 timeclock-env/
+test.py
