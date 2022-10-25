@@ -17,9 +17,19 @@ class Punch:
     employeeId: int = -1
     datetime: dt.datetime = field(default_factory=lambda : dt.datetime.today())
     createdByEmployeeId: int = -1
+    hours: float = None
+    state: str = None
+    IN: str = "in"
+    OUT: str = "out"
 
     def hoursDelta(self, punch: 'Punch') -> float:
         return round(((self.datetime - punch.datetime).seconds / 60 / 60),2)
+    
+    def setHours(self, prevPunch: 'Punch') -> 'Punch':
+        if prevPunch:
+            self.hours = self.hoursDelta(prevPunch)
+        else:
+            self.hours = 0
 
 @dataclass
 class Employee:
@@ -76,51 +86,55 @@ class PunchController(ABC):
                             startDate: dt.date,
                             endDate: dt.date) -> list[Punch]:
         pass
-    
+
+    def getPunchPairsByEmployeeId(self,
+                            employeeId: int,
+                            startDate: dt.date,
+                            endDate: dt.date,
+                            padded = False):
+        punchList = self.getPunchesByEmployeeId(employeeId, startDate, endDate)
+        pairList: list[PunchPair] = []
+        iterList = punchList
+        while len(iterList) >= 2:
+            p1,p2 = iterList[0],iterList[1]
+            if p1.datetime.date() == p2.datetime.date():
+                pairList.append(PunchPair(p1.datetime.date(),p1,p2))
+                iterList = iterList[2:]
+            else:
+                pairList.append(PunchPair(p1.datetime.date(),p1,None))
+                iterList = iterList[1:]
+        if len(iterList) > 0:
+            pairList.append(PunchPair(iterList[0].datetime.date(),iterList[0],None))
+        if padded:
+            dates = genDates(startDate,endDate)
+            padList = []
+            for d in dates:
+                if len(pairList) > 0 and pairList[0].date == d:
+                    while(len(pairList) > 0 and pairList[0].date == d):
+                        padList.append(pairList.pop(0))
+                else:
+                    padList.append(PunchPair(d,None,None))
+            pairList = padList
+        return pairList
+
     @abstractmethod
     def getPunchCountUpToPunch(self, punch: Punch) -> int:
         pass
 
     def getPunchState(self, punch: Punch):
-        return "in" if self.getPunchCountUpToPunch(punch) % 2 == 0 else "out"
+        return Punch.IN if self.getPunchCountUpToPunch(punch) % 2 == 0 else Punch.OUT
 
     @abstractmethod
     def getPreviousPunch(self, punch: Punch) -> Punch:
         pass
 
-PunchState = namedtuple('PunchState',['punch','state'])
 @dataclass
 class PunchPair():
     date: dt.date = None
-    p1: PunchState = None
-    p2: PunchState = None
-def pairPunches(punches: list[Punch],startState):
-    pairs = []
-    pair = PunchPair()
-    state = startState
-    for p in punches:
-        pair.date = pair.date or p.datetime.date()
-        ps = PunchState(p,state)
+    p1: Punch = None
+    p2: Punch = None
 
-        #new date, so start a fresh pair
-        if pair.date != p.datetime.date():
-            pairs.append(pair)
-            pair = PunchPair()
-            pair.date = p.datetime.date()
-
-        if pair.p1 is None:
-            pair.p1 = ps
-        else:
-            pair.p2 = ps
-            pairs.append(pair)
-            pair = PunchPair()
-        state = 'in' if state == 'out' else 'out'
-
-    if pair.p1 is not None:
-        pairs.append(pair)
-    return pairs
-
-def genDates(startDate, endDate):
+def genDates(startDate, endDate) -> list[dt.date]:
     c = cal.Calendar()
     startYear = startDate.year
     startMonth = startDate.month
@@ -153,17 +167,6 @@ def genDates(startDate, endDate):
                     result += [d for d in c.itermonthdates(y,m) if d.month == m and d.day >= startDate.day]
                 else:
                     result += [d for d in c.itermonthdates(y,m) if d.month == m]
-    return result
-def paddedPairPunches(punches: list[Punch], startState, startDate, endDate):
-    pairs = pairPunches(punches, startState)
-    dates = genDates(startDate, endDate)
-    result = []
-    for d in dates:
-        if len(pairs) > 0 and pairs[0].date == d:
-            while len(pairs) > 0 and pairs[0].date == d:
-                result.append(pairs.pop(0))
-        else:
-            result.append(PunchPair(d))
     return result
 
 def convertDateStrToISO(s: str) -> str:

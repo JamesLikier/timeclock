@@ -150,8 +150,10 @@ class PunchController(tc.PunchController):
                 id=row[0],
                 employeeId=row[1],
                 datetime=dt.datetime.fromisoformat(row[2]),
-                createdByEmployeeId=row[3]
+                createdByEmployeeId=row[3],
             )
+            p.setHours(self.getPreviousPunch(p))
+            p.state = self.getPunchState(p)
             return p
         else:
             return None
@@ -174,6 +176,22 @@ class PunchController(tc.PunchController):
         pList = []
         for row in result:
             pList.append(tc.Punch(id=row[0],employeeId=row[1],datetime=dt.datetime.fromisoformat(row[2]),createdByEmployeeId=row[3]))
+        #generate punchstate for each punch
+        if len(pList) > 0:
+            state = self.getPunchState(pList[0])
+            for p in pList:
+                p: tc.Punch
+                p.state = state
+                state = tc.Punch.IN if state == tc.Punch.OUT else tc.Punch.OUT
+        #generate hours for clockouts
+        if len(pList) > 0:
+            prevPunch = self.getPreviousPunch(pList[0])
+            for p in pList:
+                if p.state == tc.Punch.OUT:
+                    p.setHours(prevPunch)
+                else:
+                    p.hours = 0
+                prevPunch = p
         return pList
 
     def getPunchCountUpToPunch(self, punch: tc.Punch) -> int:
