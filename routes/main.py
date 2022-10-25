@@ -23,11 +23,7 @@ def routeRoot(req: Request, match: Match, resp: Response, session, sessionHandle
     }
     if valid:
         args["user"] = ec.getEmployeeById(eid)
-        punchList = pc.getPunchesByEmployeeId(eid,startDate,endDate)
-        startState = 'in'
-        if len(punchList) > 0:
-            startState = pc.getPunchState(punchList[0])
-        pairList = tc.paddedPairPunches(punchList, startState, startDate, endDate)
+        pairList = pc.getPunchPairsByEmployeeId(eid,startDate,endDate,True)
         args["pairList"] = pairList
         args["employeeid"] = eid
         args["startDate"] = startDate
