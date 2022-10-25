@@ -23,7 +23,7 @@ class Punch:
     OUT: str = "out"
 
     def hoursDelta(self, punch: 'Punch') -> float:
-        return round(((self.datetime - punch.datetime).seconds / 60 / 60),2)
+        return round(((self.datetime - punch.datetime).total_seconds() / 60 / 60),2)
     
     def setHours(self, prevPunch: 'Punch') -> 'Punch':
         if prevPunch:
