@@ -1,6 +1,7 @@
 :root {
-    --body-bg-color: #f0f0f0;
-    --navbar-bg-color: #d0d0d0;
+    --body-bg-color: #f5f5ff;
+    --navbar-bg-color: #0003cc;
+    --navbar-font-color: #ffffff;
     --visited-color: black;
     --row1-bg-color: #c4e2ff;
     --row2-bg-color: #ddf0ff;
@@ -11,8 +12,8 @@
 }
 
 html {
-    height: 100%;
     box-sizing: border-box;
+    background-color: var(--body-bg-color);
 }
 
 * {
@@ -20,8 +21,6 @@ html {
 }
 
 body {
-    height: 100%;
-    background-color: var(--body-bg-color);
     position: relative;
     margin: 0px;
     padding: 0px;
@@ -132,10 +131,10 @@ body {
 
 .navbar {
     display: flex;
+    color: var(--navbar-font-color);
 }
-
-.navbar :any-link {
-    color: var(--visited-color);
+.navbar * {
+    color: inherit;
 }
 
 .nav-brand {
@@ -288,9 +287,11 @@ form input[type="submit"] {
 }
 .floating {
     position: absolute;
-    background-color: white;
+    background-color: var(--body-bg-color);
+    color: black;
     z-index: 9999;
     box-shadow: -3px 3px 5px rgba(0, 0, 0, 0.5);
+    border: 1px solid black;
 }
 #menu {
     padding-left: 10px;
