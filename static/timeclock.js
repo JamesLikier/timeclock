@@ -203,6 +203,7 @@
             const timeInput = document.createElement('input');
             timeInput.type = "text";
             timeInput.name = "time";
+            timeInput.classList.add("time-input");
             curCell.appendChild(timeInput);
             timeInput.focus();
             curCellFloat = createSaveFloat();

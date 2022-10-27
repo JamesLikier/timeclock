@@ -260,7 +260,14 @@ form input[type="submit"] {
     border-collapse: collapse;
 }
 .punch-list td {
-    width: 4em;
+    min-width: 3em;
+}
+.punch-list td input {
+    width: 3em;
+    border: 0px;
+    padding-left: 0px;
+    padding-right: 0px;
+    border-radius: 0px;
 }
 .punch-list tr, .punch-list td, .punch-list th {
     border: 1px solid #777777;
