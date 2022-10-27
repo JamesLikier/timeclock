@@ -3,8 +3,8 @@
     --navbar-bg-color: #0003cc;
     --navbar-font-color: #ffffff;
     --visited-color: black;
-    --row1-bg-color: #c4e2ff;
-    --row2-bg-color: #ddf0ff;
+    --row1-bg-color: rgba(0,3,204,0.07);
+    --row2-bg-color: rgba(204,102,0,0.07);
     --border-color: #aaaaaa;
     --success-color: #99ffb1;
     --error-color: #ffb8b8;
