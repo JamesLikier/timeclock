@@ -47,15 +47,15 @@
         }
     });
     document.addEventListener("click",e=>{
-        if ('href' in e.target && e.target.getAttribute("href").includes("#")) {
-            const href = e.target.getAttribute("href");
+        const href = ('href' in e.target) ? e.target.getAttribute('href') : '';
+        if (href.includes("#")) {
             e.preventDefault();
             if (clickHandlers.has(href)) {
                 clickHandlers.get(href)(e);
             }
-        } else if ('href' in e.target && e.target.href.includes("/api/")) {
+        } else if (href.includes("/api/")) {
             e.preventDefault();
-            apiCall(e.target.href, {
+            apiCall(href, {
                 "method": e.target.dataset.method || "GET"
             })
         }
