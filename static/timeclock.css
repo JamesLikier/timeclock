@@ -259,12 +259,16 @@ form input[type="submit"] {
     text-align: center;
     border-collapse: collapse;
 }
+.punch-list td {
+    width: 4em;
+}
 .punch-list tr, .punch-list td, .punch-list th {
     border: 1px solid #777777;
     padding: 0.3em;
 }
 .punch-list input {
-    width: 4em;
+    width: 100%;
+    text-align: center;
 }
 .modify-float * {
     display: inline-block;

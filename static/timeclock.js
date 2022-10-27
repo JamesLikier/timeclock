@@ -101,7 +101,19 @@
     /* End Menu Functions */
 
     /* Punch Functions */
-    responseHandlers.set("punch/new",o=> {
+    document.addEventListener("change", e => {
+        const el = e.target;
+        if (el.classList.contains("time-input")) {
+            const regex = /([0-9]+):([0-9]+)/;
+            const match = el.value.match(regex);
+            if (match) {
+                const hour = match[1].padStart(2, '0');
+                const min = match[2].padStart(2, '0');
+                el.value = `${hour}:${min}`;
+            }
+        }
+    });
+    responseHandlers.set("punch/new", o => {
         if (o["result"] == "success") {
             const f = document.querySelector("#newPunch");
             f.reset();
