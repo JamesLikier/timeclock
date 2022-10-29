@@ -9,6 +9,10 @@
     --success-color: #99ffb1;
     --error-color: #ffb8b8;
     --warning-color: #f3ffb8;
+    --section-header-bg-color: rgba(0,3,255,0.9);
+    --section-header-text-color: white;
+    --section-body-bg-color: white;
+    --section-body-text-color: black;
 }
 
 html {
@@ -37,8 +41,8 @@ body {
 
 @media (max-width: 800px) {
     .container {
-        margin-left: 10px;
-        margin-right: 0px;
+        margin-left: 5px;
+        margin-right: 5px;
     }
 
     .navbar {
@@ -172,7 +176,7 @@ body {
 }
 
 .employee-list {
-    width: max-content;
+    min-width: 300px;
     border: 1px solid;
     display: flex;
     flex-direction: column;
@@ -296,6 +300,12 @@ form input[type="submit"] {
 .p-r {
     position: relative;
 }
+.min-c {
+    width: min-content;
+}
+.text-c {
+    text-align: center;
+}
 .floating {
     position: absolute;
     background-color: var(--body-bg-color);
@@ -415,3 +425,33 @@ form input[type="submit"] {
     padding-right: 1em;
 }
 /* END MODAL */
+
+/* SECTION */
+.section-header, .section-content {
+    padding: 10px;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+}
+.section-header {
+    background-color: var(--section-header-bg-color);
+    color: var(--section-header-text-color);
+    border-top: 1px solid black;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+.section-content {
+    display: flex;
+    background-color: var(--section-content-bg-color);
+    color: var(--section-content-text-color);
+    border-bottom: 1px solid black;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+/* END SECTION */
+
+.flex-start {
+    justify-content: flex-start;
+}
+.flex-center {
+    justify-content: center;
+}

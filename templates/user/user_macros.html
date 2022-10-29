@@ -1,6 +1,6 @@
 {% import "util/form_macros.html" as formMacros %}
 {% macro displayLogin() %}
-<form id="login" action="/api/login" method="POST" class="border">
+<form id="login" action="/api/login" method="POST">
     <table>
         {{ formMacros.input(name="username",label="Username:",type="text",table=True) }}
         {{ formMacros.input(name="password",label="Password:",type="password",table=True) }}
@@ -9,7 +9,7 @@
 </form>
 {% endmacro %}
 {% macro displaySetPassword(user) %}
-<form action="/api/setpassword" method="POST" class="border">
+<form action="/api/setpassword" method="POST">
     <table>
         {% if user == "None" %}
             {{ formMacros.input(name="username",label="Username:",table=True) }}

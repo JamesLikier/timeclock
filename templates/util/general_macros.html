@@ -1,0 +1,10 @@
+{% macro section(header,justify_content="flex-center") %}
+<div class="section">
+    <div class="section-header">
+        {{ header }}
+    </div>
+    <div class="section-content {{ justify_content }}">
+        <div>{{ caller() }}</div>
+    </div>
+</div>
+{% endmacro %}

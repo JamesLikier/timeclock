@@ -1,4 +1,5 @@
 {% import "util/form_macros.html" as formMacros %}
+{% import "util/general_macros.html" as util %}
 {% macro displayNumPad(inputName="numpad-value") %}
     <div id="numpad">
         <table><tr><td id="numpad-display"></td></tr></table>
@@ -47,41 +48,50 @@
     {% endif %}
 {% endmacro %}
 {% macro displayEmployeePunches(startDate,endDate,employeeid,pairList) %}
-    <h2>Punches</h2>
-    {{ formMacros.input("employeeId",id="punchlistEmployeeId",type="hidden",value=employeeid) }}
-    <table>
-    {{ formMacros.input("startDate",id="punchlistStartdate",type="date",label="Start Date:",table=True,value=startDate) }}
-    {{ formMacros.input("endDate",id="punchlistEnddate",type="date",label="End Date:",table=True,value=endDate) }}
-    </table>
-    <table class="punch-list">
-        <tr>
-            <th>Date</th>
-            <th>In/Out</th>
-            <th>Time</th>
-            <th>In/Out</th>
-            <th>Time</th>
-            <th>Hours</th>
-        </tr>
-    {% for p in pairList %}
-        <tr class="{{ loop.cycle('r1','r2') }}">
-            <td class="punch-list-date">{{ p.date }}</td>
-            <td class="punch-list-state">{% if p.p1 != None %}{{ p.p1.state|upper }}{% endif %}</td>
-            <td class="punch-list-time" data-eid="{{ employeeid }}" data-date="{{ p.date }}" data-pid="{% if p.p1 != None %}{{ p.p1.id }}{% else %}new{% endif %}">{% if p.p1 != None %}{{ p.p1.datetime.strftime('%H:%M') }}{% endif %}</td>
-            <td class="punch-list-state">{% if p.p2 != None %}{{ p.p2.state|upper }}{% endif %}</td>
-            <td class="punch-list-time" data-eid="{{ employeeid }}" data-date="{{ p.date }}" data-pid="{% if p.p2 != None %}{{ p.p2.id }}{% else %}new{% endif %}">{% if p.p2 != None %}{{ p.p2.datetime.strftime('%H:%M') }}{% endif %}</td>
-            <td class="punch-list-hours">{{ getHours(p) }}</td>
-        </tr>
-    {% endfor %}
-    </table>
+    {% call util.section("Punch List") %}
+        {{ formMacros.input("employeeId",id="punchlistEmployeeId",type="hidden",value=employeeid) }}
+        <table>
+            {{ formMacros.input("startDate",id="punchlistStartdate",type="date",label="Start
+            Date:",table=True,value=startDate) }}
+            {{ formMacros.input("endDate",id="punchlistEnddate",type="date",label="End Date:",table=True,value=endDate)
+            }}
+        </table>
+        <br>
+        <table class="punch-list">
+            <tr>
+                <th>Date</th>
+                <th>In/Out</th>
+                <th>Time</th>
+                <th>In/Out</th>
+                <th>Time</th>
+                <th>Hours</th>
+            </tr>
+            {% for p in pairList %}
+            <tr class="{{ loop.cycle('r1','r2') }}">
+                <td class="punch-list-date">{{ p.date.strftime("%m-%d") }}</td>
+                <td class="punch-list-state">{% if p.p1 != None %}{{ p.p1.state|upper }}{% endif %}</td>
+                <td class="punch-list-time" data-eid="{{ employeeid }}" data-date="{{ p.date }}"
+                    data-pid="{% if p.p1 != None %}{{ p.p1.id }}{% else %}new{% endif %}">{% if p.p1 != None %}{{
+                    p.p1.datetime.strftime('%H:%M') }}{% endif %}</td>
+                <td class="punch-list-state">{% if p.p2 != None %}{{ p.p2.state|upper }}{% endif %}</td>
+                <td class="punch-list-time" data-eid="{{ employeeid }}" data-date="{{ p.date }}"
+                    data-pid="{% if p.p2 != None %}{{ p.p2.id }}{% else %}new{% endif %}">{% if p.p2 != None %}{{
+                    p.p2.datetime.strftime('%H:%M') }}{% endif %}</td>
+                <td class="punch-list-hours">{{ getHours(p) }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% endcall %}
 {% endmacro %}
 {% macro displayNewPunchForm() %}
-    <h2>Create Punch</h2>
-    <form class="border" id="newPunch" action="/api/punch/new" method="POST">
+    {% call util.section("New Punch") %}
+    <form id="newPunch" action="/api/punch/new" method="POST">
         <table>
-        {{ formMacros.input("employeeid",label="Employee ID:",table=True,autofocus=True) }}
-        {{ formMacros.input("date",label="Date:",table=True) }}
-        {{ formMacros.input("time",label="Time",table=True) }}
+            {{ formMacros.input("employeeid",label="Employee ID:",table=True,autofocus=True) }}
+            {{ formMacros.input("date",label="Date:",table=True) }}
+            {{ formMacros.input("time",label="Time",table=True) }}
         </table>
         {{ formMacros.input("Submit",value="submit",type="Submit") }}
     </form>
+    {% endcall %}
 {% endmacro %}
