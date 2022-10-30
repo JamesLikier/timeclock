@@ -1,0 +1,75 @@
+.flex-start {
+    justify-content: flex-start;
+}
+
+.flex-center {
+    justify-content: center;
+}
+
+.t-fade {
+    transition: opacity 0.5s;
+}
+
+.t-resize {
+    transition: height 0.5s;
+}
+
+.t-fade-resize {
+    transition: height 0.5s, opacity 0.5s;
+}
+
+.p-r {
+    position: relative;
+}
+
+.min-c {
+    width: min-content;
+}
+
+.text-c {
+    text-align: center;
+}
+
+.flex-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.flex-col {
+    display: flex;
+    flex-direction: column;
+}
+
+.mr {
+    margin-right: auto;
+}
+
+.ml {
+    margin-left: auto;
+}
+
+.mx {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.d-none {
+    display: none !important;
+}
+
+.d-flex {
+    display: flex;
+}
+
+.d-block {
+    display: block;
+}
+
+.d-iblock {
+    display: inline-block;
+}
+
+.d-inline {
+    display: inline;
+}

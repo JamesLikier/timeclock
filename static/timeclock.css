@@ -1,3 +1,5 @@
+@import url("/static/quickaccess.css");
+
 :root {
     --body-bg-color: #ffffff;
     --navbar-bg-color: #0003cc;
@@ -13,6 +15,28 @@
     --section-header-text-color: white;
     --section-body-bg-color: white;
     --section-body-text-color: black;
+}
+/* Message Colors */
+.success {
+    background-color: var(--success-color) !important;
+}
+.warning {
+    background-color: var(--warning-color) !important;
+}
+.error {
+    background-color: var(--error-color) !important;
+}
+.normal {
+    background-color: #c4e2ff;
+}
+/* End Message Colors */
+
+.r1 {
+    background-color: var(--row1-bg-color);
+}
+
+.r2 {
+    background-color: var(--row2-bg-color);
 }
 
 html {
@@ -33,6 +57,11 @@ body {
 .footer {
     margin-top: 2em;
     min-height: 2em;
+}
+
+.container {
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 
 .nav-backdrop {
@@ -105,15 +134,6 @@ body {
         font-size: 3em;
     }
 }
-.t-fade {
-   transition: opacity 0.5s; 
-}
-.t-resize {
-    transition: height 0.5s;
-}
-.t-fade-resize {
-    transition: height 0.5s, opacity 0.5s;
-}
 
 .collapse {
     opacity: 1;
@@ -128,10 +148,6 @@ body {
     opacity: 0;
 }
 
-.container {
-    padding-top: 10px;
-    padding-bottom: 10px;
-}
 
 .navbar {
     display: flex;
@@ -193,13 +209,6 @@ body {
     border-color: inherit;
 }
 
-.r1 {
-    background-color: var(--row1-bg-color);
-}
-
-.r2 {
-    background-color: var(--row2-bg-color);
-}
 
 form {
     width: max-content;
@@ -297,15 +306,6 @@ form input[type="submit"] {
 #numpad-display {
     height: 1.5em;
 }
-.p-r {
-    position: relative;
-}
-.min-c {
-    width: min-content;
-}
-.text-c {
-    text-align: center;
-}
 .floating {
     position: absolute;
     background-color: var(--body-bg-color);
@@ -327,62 +327,6 @@ form input[type="submit"] {
     border: 1px solid;
     border-color: var(--border-color);
 }
-.flex-row {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-}
-.flex-col {
-    display: flex;
-    flex-direction: column;
-}
-
-.mr {
-    margin-right: auto;
-}
-
-.ml {
-    margin-left: auto;
-}
-
-.mx {
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.d-none {
-    display: none !important;
-}
-
-.d-flex {
-    display: flex;
-}
-
-.d-block {
-    display: block;
-}
-
-.d-iblock {
-    display: inline-block;
-}
-
-.d-inline {
-    display: inline;
-}
-/* Message Colors */
-.success {
-    background-color: var(--success-color) !important;
-}
-.warning {
-    background-color: var(--warning-color) !important;
-}
-.error {
-    background-color: var(--error-color) !important;
-}
-.normal {
-    background-color: #c4e2ff;
-}
-/* End Message Colors */
 /* MODAL */
 .modal-bg {
     position: fixed;
@@ -448,10 +392,3 @@ form input[type="submit"] {
     border-bottom-right-radius: 5px;
 }
 /* END SECTION */
-
-.flex-start {
-    justify-content: flex-start;
-}
-.flex-center {
-    justify-content: center;
-}
