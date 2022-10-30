@@ -135,6 +135,11 @@ body {
     }
 }
 
+#content {
+    display: flex;
+    justify-content: center;
+}
+
 .collapse {
     opacity: 1;
 }
@@ -193,7 +198,6 @@ body {
 
 .employee-list {
     min-width: 300px;
-    border: 1px solid;
     display: flex;
     flex-direction: column;
     border-color: var(--border-color);
@@ -204,15 +208,8 @@ body {
 }
 
 .list-footer {
+    margin-top: 0.4em;
     padding: 0.2em;
-    border-top: 1px solid;
-    border-color: inherit;
-}
-
-
-form {
-    width: max-content;
-    padding: 1em;
 }
 
 td.label {
@@ -371,6 +368,9 @@ form input[type="submit"] {
 /* END MODAL */
 
 /* SECTION */
+.section {
+    width: max-content;
+}
 .section-header, .section-content {
     padding: 10px;
     border-left: 1px solid black;
