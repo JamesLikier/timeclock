@@ -3,7 +3,7 @@
     {% if user == None %}
         <div class="p-r">
             <a class="nav-item" href="#login">Login</a>
-            <div id="login" class="floating d-none">
+            <div id="login" class="floating d-none p10">
                 {{ userMacros.displayLogin() }}
             </div>
         </div>
@@ -21,7 +21,7 @@
         {% endif %}
         <div class="p-r">
             <a class="nav-item" href="#setpassword">Set Password</a>
-            <div id="setpassword" class="floating d-none">
+            <div id="setpassword" class="floating d-none p10">
                 {{ userMacros.displaySetPassword(user) }}
             </div>
         </div>

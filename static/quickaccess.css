@@ -54,6 +54,13 @@
     margin-right: auto;
 }
 
+.p5 {
+    padding: 5px;
+}
+.p10 {
+    padding: 10px;
+}
+
 .d-none {
     display: none !important;
 }
