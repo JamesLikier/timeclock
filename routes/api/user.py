@@ -58,7 +58,11 @@ def setPassword(req: Request, match: Match, resp: Response, session, sessionHand
         data = json.loads(req.body)
         username = data["username"]
         password = data["password"]
-        sessionHandler.setPassword(username,password)
+        currentPassword = data["currentPassword"]
+        if sessionHandler.authUser(username,currentPassword):
+            sessionHandler.setPassword(username,password)
+        else:
+            raise Exception
         msg.result = msg.SUCCESS
     except Exception:
         msg.result = msg.FAIL

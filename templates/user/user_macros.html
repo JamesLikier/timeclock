@@ -16,7 +16,8 @@
         {% else %}
             {{ formMacros.input(name="username",value=user.username,type="hidden",table=True) }}
         {% endif %}
-        {{ formMacros.input(name="password",label="Password:",type="password",table=True) }}
+        {{ formMacros.input(name="currentPassword",label="Current Password:",type="password",table=True) }}
+        {{ formMacros.input(name="password",label="New Password:",type="password",table=True) }}
     </table>
     {{ formMacros.input(name="submit",value="Submit",type="submit") }}
 </form>
