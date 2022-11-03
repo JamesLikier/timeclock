@@ -1,5 +1,5 @@
 import settings
-from jlpyhttp.httphelper import Request, Response, STATUS_CODES, CONTENT_TYPES
+from jlpyhttp.http import Request, Response, STATUS_CODES, CONTENT_TYPES
 from re import Match
 from jlpyhttp.sessionhandler import SessionHandler
 import reloadable

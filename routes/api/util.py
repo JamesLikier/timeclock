@@ -4,7 +4,7 @@ from re import Match
 import sys
 from dataclasses import dataclass, field
 import reloadable
-from jlpyhttp.httphelper import Request, Response
+from jlpyhttp.http import Request, Response
 from jlpyhttp.sessionhandler import SessionHandler
 import settings
 

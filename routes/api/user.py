@@ -1,6 +1,6 @@
 from email import message
 import settings
-from jlpyhttp.httphelper import Request, Response, STATUS_CODES
+from jlpyhttp.http import Request, Response, STATUS_CODES
 from re import Match
 import reloadable
 from routes.api.util import Message

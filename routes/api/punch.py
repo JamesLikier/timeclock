@@ -2,7 +2,7 @@ from re import Match
 import sys
 import settings
 import reloadable
-from jlpyhttp.httphelper import Request, Response, STATUS_CODES, CONTENT_TYPES
+from jlpyhttp.http import Request, Response, STATUS_CODES, CONTENT_TYPES
 from timeclock import PunchController, Punch, EmployeeController, Employee
 import timeclock
 import json
