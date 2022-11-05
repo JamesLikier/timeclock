@@ -11,7 +11,7 @@ jinja = settings.JINJA
 ec = settings.EMPLOYEE_CONTROLLER
 
 @rh.register(["POST"],"/api/employee/new")
-def employeeNew(req: Request, match: Match, resp: Response, session, sessionHandler: SessionHandler):
+def employeeNew(resp: Response, session, sessionHandler: SessionHandler, **kwargs):
     valid, userid = session
     msg = Message()
     msg.action = "employee/new"
@@ -38,9 +38,9 @@ def employeeNew(req: Request, match: Match, resp: Response, session, sessionHand
     resp.send()
 
 @rh.register(["POST"],"/api/employee/edit")
-def employeeEdit(req: Request, match: Match, resp: Response, session, sessionHandler: SessionHandler):
+def employeeEdit(resp: Response, **kwargs):
     pass
 
 @rh.register(["POST"], "/api/employee/delete")
-def employeeDelete(req: Request, match: Match, resp: Response, session, sessionHandler: SessionHandler):
+def employeeDelete(resp: Response, **kwargs):
     pass

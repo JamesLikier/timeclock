@@ -9,9 +9,8 @@ jinja = settings.JINJA
 ec = settings.EMPLOYEE_CONTROLLER
 
 @rh.register(["GET"],"/punch/new")
-def routePunchNewGET(req: Request, match: Match, resp: Response, session, sessionHandler: SessionHandler):
+def routePunchNewGET(resp: Response, session, **kwargs):
     valid, eid = session
-    
     if valid:
         args = {
             'user': ec.getEmployeeById(eid)

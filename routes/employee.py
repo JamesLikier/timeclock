@@ -9,8 +9,7 @@ jinja = settings.JINJA
 ec = settings.EMPLOYEE_CONTROLLER
 
 @rh.register(["GET"], "/employee/([0-9]+)$")
-def routeEmployee(req: Request, match: Match, resp: Response, session, sessionHandler: SessionHandler):
-    
+def routeEmployee(match: Match, resp: Response, session, **kwargs):
     valid,eid = session
     if valid:
         user = ec.getEmployeeById(eid)
@@ -25,8 +24,7 @@ def routeEmployee(req: Request, match: Match, resp: Response, session, sessionHa
     resp.send()
 
 @rh.register(["POST"], "/employee/new$")
-def routeEmployeeNewPOST(req: Request, match: Match, resp: Response, session, sessionHandler: SessionHandler):
-    
+def routeEmployeeNewPOST(req: Request, resp: Response, session, **kwargs):
     valid,eid = session
     if valid:
         user = ec.getEmployeeById(eid)
@@ -45,8 +43,7 @@ def routeEmployeeNewPOST(req: Request, match: Match, resp: Response, session, se
     resp.send()
 
 @rh.register(["GET"], "/employee/new$")
-def routeEmployeeNewGET(req: Request, match: Match, resp: Response, session, sessionHandler: SessionHandler):
-    
+def routeEmployeeNewGET(resp: Response, session, **kwargs):
     valid,eid = session
     if valid:
         user = ec.getEmployeeById(eid)
@@ -59,8 +56,7 @@ def routeEmployeeNewGET(req: Request, match: Match, resp: Response, session, ses
     resp.send()
 
 @rh.register(["GET"], r"/employee/list$|/employee/list\?(\&?(pg|pgSize)=([0-9]+))(\&?(pg|pgSize)=([0-9]+))")
-def routeEmployeeList(req: Request, match: Match, resp: Response, session, sessionHandler: SessionHandler):
-    
+def routeEmployeeList(match: Match, resp: Response, session, **kwargs):
     valid,eid = session
     if valid:
         user = ec.getEmployeeById(eid)

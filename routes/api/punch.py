@@ -17,7 +17,7 @@ pc = settings.PUNCH_CONTROLLER
 ec = settings.EMPLOYEE_CONTROLLER
 
 @rh.register(["POST"],"/api/punch/new")
-def punchNew(req: Request, match: Match, resp: Response, session, sessionHandler: SessionHandler):
+def punchNew(req: Request, resp: Response, **kwargs):
     msg = Message()
     msg.action = "punch/new"
     try:
@@ -30,12 +30,11 @@ def punchNew(req: Request, match: Match, resp: Response, session, sessionHandler
         msg.result = Message.SUCCESS
     except Exception:
         msg.result = Message.FAIL
-    
     resp.body = msg.toJSON()
     resp.send()
 
 @rh.register(["POST"],"/api/punch/delete")
-def punchDelete(req: Request, match: Match, resp: Response, session, sessionHandler: SessionHandler):
+def punchDelete(req: Request, resp: Response, **kwargs):
     msg = Message()
     msg.action = "punch/delete"
     try:
@@ -44,12 +43,11 @@ def punchDelete(req: Request, match: Match, resp: Response, session, sessionHand
         msg.result = Message.SUCCESS
     except Exception:
         msg.result = Message.FAIL
-    
     resp.body = msg.toJSON()
     resp.send()
 
 @rh.register(["POST"],"/api/punch/list")
-def punchList(req: Request, match: Match, resp: Response, session, sessionHandler: SessionHandler):
+def punchList(req: Request, resp: Response, **kwargs):
     msg = Message()
     msg.action = "punch/list"
     try:
@@ -65,12 +63,11 @@ def punchList(req: Request, match: Match, resp: Response, session, sessionHandle
     except Exception:
         logging.error(sys.exc_info())
         msg.result = Message.FAIL
-    
     resp.body = msg.toJSON()
     resp.send()
 
 @rh.register(["POST"],"/api/punchclock")
-def punchclock(req: Request, match: Match, resp: Response, session, sessionHandler: SessionHandler):
+def punchclock(req: Request, resp: Response, **kwargs):
     msg = Message()
     msg.action = "punchclock"
     try:
@@ -83,6 +80,5 @@ def punchclock(req: Request, match: Match, resp: Response, session, sessionHandl
     except Exception:
         msg.result = Message.FAIL
         msg.body = "Invalid Employee ID or PIN"
-    
     resp.body = msg.toJSON()
     resp.send()

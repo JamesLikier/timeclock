@@ -6,6 +6,7 @@ from jlpyhttp.routehandler import RouteHandler
 from jlpyhttp.sessionhandler import SessionHandler
 from jinja2 import Environment, select_autoescape, FileSystemLoader
 import logging
+from TimeclockAuthHandler import TimeclockAuthHandler
 
 logging.basicConfig(filename="timeclock.log", filemode="w", level=logging.DEBUG)
 
@@ -31,8 +32,9 @@ SRQ.start()
 EMPLOYEE_CONTROLLER: tc.EmployeeController = sc.EmployeeController(SRQ)
 PUNCH_CONTROLLER: tc.PunchController = sc.PunchController(SRQ)
 CACHE = CachedFileManager()
-SESSION_HANDLER = SessionHandler(srq=SRQ, salt=SALT)
-ROUTE_HANDLER = RouteHandler(sessionHandler=SESSION_HANDLER)
+SESSION_HANDLER = SessionHandler()
+AUTH_HANDLER = TimeclockAuthHandler(srq=SRQ, salt=SALT)
+ROUTE_HANDLER = RouteHandler(sessionHandler=SESSION_HANDLER,authHandler=AUTH_HANDLER)
 
 JINJA = Environment(
     loader = FileSystemLoader("templates"),
@@ -41,4 +43,4 @@ JINJA = Environment(
 JINJA.filters["floor"] = lambda val, floor: val if val > floor else floor
 JINJA.filters["ceil"] = lambda val, ceil: val if val < ceil else ceil
 
-SESSION_HANDLER.setPassword("admin","admin")
+AUTH_HANDLER.setPassword("admin","admin")

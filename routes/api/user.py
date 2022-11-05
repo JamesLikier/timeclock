@@ -1,4 +1,5 @@
 from email import message
+import logging
 import settings
 from jlpyhttp.http import Request, Response, STATUS_CODES
 from re import Match
@@ -6,13 +7,13 @@ import reloadable
 from routes.api.util import Message
 import json
 from jlpyhttp.sessionhandler import SessionHandler
+from jlpyhttp.authhandler import AuthHandler
 
 rh = settings.ROUTE_HANDLER
 jinja = settings.JINJA
 
 @rh.register(["GET"], "/api/comp/login")
-def loginForm(req: Request, match: Match, resp: Response, session, sessionHandler: SessionHandler):
-    
+def loginForm(resp: Response, **kwargs):
     msg = Message()
     msg.action = "comp/login"
     msg.result = Message.SUCCESS
@@ -21,16 +22,16 @@ def loginForm(req: Request, match: Match, resp: Response, session, sessionHandle
     resp.send()
 
 @rh.register(["POST"],"/api/login")
-def login(req: Request, match: Match, resp: Response, session, sessionHandler: SessionHandler):
-    
+def login(req: Request, resp: Response, sessionHandler: SessionHandler, authHandler: AuthHandler, **kwargs):
     msg = Message()
     msg.action = "login"
     try:
         data = json.loads(req.body)
         username = data["username"]
         password = data["password"]
-        valid = sessionHandler.authUser(username,password,resp)
+        valid, eid = authHandler.validateAuth(username,password)
         if valid:
+            sessionHandler.createSession(userid=eid,resp=resp)
             msg.result = Message.SUCCESS
             msg.body = "Login Successful"
         else:
@@ -43,15 +44,14 @@ def login(req: Request, match: Match, resp: Response, session, sessionHandler: S
     resp.send()
 
 @rh.register(["GET"], "/api/logout")
-def logout(req: Request, match: Match, resp: Response, session, sessionHandler: SessionHandler):
-    
+def logout(req: Request, resp: Response, sessionHandler: SessionHandler, **kwargs):
     sessionHandler.invalidateSession(req=req, resp=resp)
     msg = Message(result=Message.SUCCESS, action="logout")
     resp.body = msg.toJSON()
     resp.send()
 
 @rh.register(["POST"], "/api/setpassword")
-def setPassword(req: Request, match: Match, resp: Response, session, sessionHandler: SessionHandler):
+def setPassword(req: Request, resp: Response, sessionHandler: SessionHandler, authHandler: AuthHandler, **kwargs):
     msg = Message()
     msg.action = "setpassword"
     try:
@@ -59,8 +59,9 @@ def setPassword(req: Request, match: Match, resp: Response, session, sessionHand
         username = data["username"]
         password = data["password"]
         currentPassword = data["currentPassword"]
-        if sessionHandler.authUser(username,currentPassword):
-            sessionHandler.setPassword(username,password)
+        valid, eid = authHandler.validateAuth(username, currentPassword)
+        if valid:
+            authHandler.setPassword(username,password)
         else:
             raise Exception
         msg.result = msg.SUCCESS

@@ -39,7 +39,7 @@ class Message():
         return m
 
 @rh.register(["GET"],"/api/reload$")
-def reloadRoutes(req: Request, match: Match, resp: Response, session, sessionHandler: SessionHandler):
+def reloadRoutes(resp: Response, **kwargs):
     for v in sys.modules.copy().values():
         if "reloadable" in dir(v):
             importlib.reload(v)
@@ -49,7 +49,7 @@ def reloadRoutes(req: Request, match: Match, resp: Response, session, sessionHan
     resp.send()
 
 @rh.register(["GET"],r"/api/resetadminpw")
-def resetAdminpw(req: Request, match: Match, resp: Response, session, sessionHandler: SessionHandler):
+def resetAdminpw(resp: Response, sessionHandler: SessionHandler, **kwargs):
     msg = Message()
     try:
         sessionHandler.setPassword("admin","admin")
