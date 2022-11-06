@@ -16,6 +16,8 @@ EMPLOYEE_FILE = 'employeefile'
 PUNCH_FILE = 'punchfile'
 TIMECLOCK_DBFILE = "timeclock.db"
 SALT_FILE = "salt"
+MIN_HOURS_FOR_BREAK = 7.0
+BREAK_MINUTES = 30.0
 
 logging.info('Config Settings:')
 logging.info(f'{SERVER_ADDR=}')
@@ -30,7 +32,7 @@ with open(SALT_FILE,"rb") as f:
 SRQ = SQLRequestQueue(TIMECLOCK_DBFILE)
 SRQ.start()
 EMPLOYEE_CONTROLLER: tc.EmployeeController = sc.EmployeeController(SRQ)
-PUNCH_CONTROLLER: tc.PunchController = sc.PunchController(SRQ)
+PUNCH_CONTROLLER: tc.PunchController = sc.PunchController(SRQ, MIN_HOURS_FOR_BREAK, BREAK_MINUTES)
 CACHE = CachedFileManager()
 SESSION_HANDLER = SessionHandler()
 AUTH_HANDLER = TimeclockAuthHandler(srq=SRQ, salt=SALT)

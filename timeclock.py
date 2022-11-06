@@ -25,9 +25,11 @@ class Punch:
     def hoursDelta(self, punch: 'Punch') -> float:
         return round(((self.datetime - punch.datetime).total_seconds() / 60 / 60),2)
     
-    def setHours(self, prevPunch: 'Punch') -> 'Punch':
+    def setHours(self, prevPunch: 'Punch', minHoursForBreak: float = 0, breakMinutes: float = 0) -> 'Punch':
         if prevPunch:
             self.hours = self.hoursDelta(prevPunch)
+            if self.hours >= minHoursForBreak:
+                self.hours -= (breakMinutes / 60)
         else:
             self.hours = 0
 

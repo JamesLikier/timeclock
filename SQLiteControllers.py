@@ -105,8 +105,10 @@ class EmployeeController(tc.EmployeeController):
         return result[0]
 
 class PunchController(tc.PunchController):
-    def __init__(self, sqlRequestQueue: SQLRequestQueue):
+    def __init__(self, sqlRequestQueue: SQLRequestQueue, minHoursForBreak: float = 0, breakMinutes: float = 0):
         self.srq = sqlRequestQueue
+        self.minHoursForBreak = minHoursForBreak
+        self.breakMinutes = breakMinutes
 
     def createPunch(self,
             employeeId: int,
@@ -152,7 +154,7 @@ class PunchController(tc.PunchController):
                 datetime=dt.datetime.fromisoformat(row[2]),
                 createdByEmployeeId=row[3],
             )
-            p.setHours(self.getPreviousPunch(p))
+            p.setHours(self.getPreviousPunch(p),minHoursForBreak=self.minHoursForBreak,breakMinutes=self.breakMinutes)
             p.state = self.getPunchState(p)
             return p
         else:
@@ -188,7 +190,7 @@ class PunchController(tc.PunchController):
             prevPunch = self.getPreviousPunch(pList[0])
             for p in pList:
                 if p.state == tc.Punch.OUT:
-                    p.setHours(prevPunch)
+                    p.setHours(prevPunch,minHoursForBreak=self.minHoursForBreak,breakMinutes=self.breakMinutes)
                 else:
                     p.hours = 0
                 prevPunch = p
