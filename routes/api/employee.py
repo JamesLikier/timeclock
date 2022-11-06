@@ -11,7 +11,7 @@ jinja = settings.JINJA
 ec = settings.EMPLOYEE_CONTROLLER
 
 @rh.register(["POST"],"/api/employee/new")
-def employeeNew(resp: Response, session, sessionHandler: SessionHandler, **kwargs):
+def employeeNew(req: Request, resp: Response, session, sessionHandler: SessionHandler, **kwargs):
     valid, userid = session
     msg = Message()
     msg.action = "employee/new"
