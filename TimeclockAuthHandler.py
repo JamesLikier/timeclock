@@ -1,6 +1,5 @@
 import sqlite3
 from jlpyhttp.authhandler import AuthHandler
-from jlpyhttp.http import Response
 from jlpyutil.SQLiteHelper import SQLRequestQueue, SQLTransaction
 from hashlib import pbkdf2_hmac
 

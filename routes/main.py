@@ -1,8 +1,6 @@
 import settings
 from jlpyhttp.http import Request, Response, STATUS_CODES
-from re import Match
 import reloadable
-import timeclock as tc
 import datetime as dt
 from jlpyhttp.sessionhandler import SessionHandler
 
