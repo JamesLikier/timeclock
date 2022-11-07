@@ -3,9 +3,20 @@
 {% import "util/general_macros.html" as util %}
 {% macro displayEmployee(employee) %}
     {% call util.section("Employee Information") %}
-    <div>
-        <h2>{{ employee.lname }}, {{ employee.fname }}</h2>
-    </div>
+    <table>
+        <tr>
+            <td class="ta-right">Username:</td>
+            <td>{{ employee.username }}</td>
+        </tr>
+        <tr>
+            <td class="ta-right">Name:</td>
+            <td>{{ employee.lname }}, {{ employee.fname }}</td>
+        </tr>
+        <tr>
+            <td class="ta-right">Admin:</td>
+            <td><input type="checkbox" disabled {% if employee.admin %}checked{% endif %}></td>
+        </tr>
+    </table>
     {% endcall %}
 {% endmacro %}
 {% macro displayEmployeeList(employees,pg,pgSize,displayCount,totalEmployees) %}
