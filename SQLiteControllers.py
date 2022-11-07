@@ -41,7 +41,7 @@ class EmployeeController(tc.EmployeeController):
                 username=result[1],
                 fname=result[2],
                 lname=result[3],
-                admin=result[4]
+                admin=(result[4]==1)
             )
             return e
         else:
