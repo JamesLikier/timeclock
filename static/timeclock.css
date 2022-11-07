@@ -376,6 +376,7 @@ form input[type="submit"] {
 /* SECTION */
 .section {
     width: max-content;
+    min-width: 300px;
 }
 .section-header, .section-content {
     padding: 10px;
