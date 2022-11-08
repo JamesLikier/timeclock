@@ -1,6 +1,6 @@
-{% import "util/form_macros.html" as formMacros %}
-{% import "util/pagination_macros.html" as paginationMacros %}
-{% import "util/general_macros.html" as util %}
+{% import "macros/form.html" as formMacros %}
+{% import "macros/pagination.html" as paginationMacros %}
+{% import "macros/general.html" as util %}
 {% macro displayEmployee(employee) %}
     {% call util.section("Employee Information") %}
     <table>
