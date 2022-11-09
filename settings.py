@@ -44,5 +44,3 @@ JINJA = Environment(
 )
 JINJA.filters["floor"] = lambda val, floor: val if val > floor else floor
 JINJA.filters["ceil"] = lambda val, ceil: val if val < ceil else ceil
-
-AUTH_HANDLER.setPassword("admin","admin")
