@@ -71,6 +71,9 @@
         return null;
     }
     const floatHandlers = new Map();
+    function parentContains(e, t) {
+        return e.parentElement && e.parentElement.contains(t);
+    }
     function setFloat(f, closeHandler = null) {
         if (floatHandlers.get(f)) {
             //do nothing, already showing the float
@@ -78,7 +81,7 @@
             const form = f.querySelector("form");
             let handler = function (e) {
                 const modal = document.querySelector(".modal-bg");
-                if (f.parentElement && !f.parentElement.contains(e.target) && !modal) {
+                if (!parentContains(f, e.target) && !modal) {
                     f.classList.add('d-none');
                     form && form.reset();
                     document.removeEventListener("click", handler);
