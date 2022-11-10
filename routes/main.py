@@ -1,13 +1,13 @@
-import settings
+import bootstrap
 from jlpyhttp.http import Request, Response, STATUS_CODES
 import reloadable
 import datetime as dt
 from jlpyhttp.sessionhandler import SessionHandler
 
-rh = settings.ROUTE_HANDLER
-jinja = settings.JINJA
-ec = settings.EMPLOYEE_CONTROLLER
-pc = settings.PUNCH_CONTROLLER
+rh = bootstrap.ROUTE_HANDLER
+jinja = bootstrap.JINJA
+ec = bootstrap.EMPLOYEE_CONTROLLER
+pc = bootstrap.PUNCH_CONTROLLER
 
 @rh.register(["GET"],"/$")
 def routeRoot(resp: Response, session, **kwargs):

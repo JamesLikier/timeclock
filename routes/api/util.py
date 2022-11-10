@@ -6,9 +6,9 @@ from dataclasses import dataclass, field
 import reloadable
 from jlpyhttp.http import Request, Response
 from jlpyhttp.sessionhandler import SessionHandler
-import settings
+import bootstrap
 
-rh = settings.ROUTE_HANDLER
+rh = bootstrap.ROUTE_HANDLER
 
 @dataclass
 class Message():

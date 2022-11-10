@@ -11,7 +11,7 @@ class Config():
     
     def save(self):
         with open(CONFIG_FILENAME, "w") as f:
-            f.write(json.dumps(self._dict))
+            f.write(json.dumps(self._dict,indent='\t'))
 
     def __getitem__(self, key):
         return self._dict[key]

@@ -1,12 +1,12 @@
-import settings
+import bootstrap
 from jlpyhttp.http import Request, Response, STATUS_CODES, CONTENT_TYPES
 from re import Match
 from jlpyhttp.sessionhandler import SessionHandler
 import reloadable
 
-rh = settings.ROUTE_HANDLER
-jinja = settings.JINJA
-cache = settings.CACHE
+rh = bootstrap.ROUTE_HANDLER
+jinja = bootstrap.JINJA
+cache = bootstrap.CACHE
 
 @rh.registerstatic(r"/static/(.*\.(.*)$|.*$)")
 def routeStatic(match: Match, resp: Response, **kwargs):

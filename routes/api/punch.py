@@ -1,6 +1,6 @@
 from re import Match
 import sys
-import settings
+import bootstrap
 import reloadable
 from jlpyhttp.http import Request, Response, STATUS_CODES, CONTENT_TYPES
 from timeclock import PunchController, Punch, EmployeeController, Employee
@@ -11,10 +11,10 @@ import datetime as dt
 from jlpyhttp.sessionhandler import SessionHandler
 import logging
 
-rh = settings.ROUTE_HANDLER
-jinja = settings.JINJA
-pc = settings.PUNCH_CONTROLLER
-ec = settings.EMPLOYEE_CONTROLLER
+rh = bootstrap.ROUTE_HANDLER
+jinja = bootstrap.JINJA
+pc = bootstrap.PUNCH_CONTROLLER
+ec = bootstrap.EMPLOYEE_CONTROLLER
 
 @rh.register(["POST"],"/api/punch/new")
 def punchNew(req: Request, resp: Response, **kwargs):

@@ -1,4 +1,4 @@
-import settings
+import bootstrap
 from jlpyhttp.http import Request, Response, STATUS_CODES
 from re import Match
 import json
@@ -6,9 +6,9 @@ import reloadable
 from routes.api.util import Message
 from jlpyhttp.sessionhandler import SessionHandler
 
-rh = settings.ROUTE_HANDLER
-jinja = settings.JINJA
-ec = settings.EMPLOYEE_CONTROLLER
+rh = bootstrap.ROUTE_HANDLER
+jinja = bootstrap.JINJA
+ec = bootstrap.EMPLOYEE_CONTROLLER
 
 @rh.register(["POST"],"/api/employee/new")
 def employeeNew(req: Request, resp: Response, session, sessionHandler: SessionHandler, **kwargs):

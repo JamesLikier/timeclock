@@ -1,6 +1,5 @@
-from email import message
 import logging
-import settings
+import bootstrap
 from jlpyhttp.http import Request, Response, STATUS_CODES
 from re import Match
 import reloadable
@@ -9,8 +8,8 @@ import json
 from jlpyhttp.sessionhandler import SessionHandler
 from jlpyhttp.authhandler import AuthHandler
 
-rh = settings.ROUTE_HANDLER
-jinja = settings.JINJA
+rh = bootstrap.ROUTE_HANDLER
+jinja = bootstrap.JINJA
 
 @rh.register(["GET"], "/api/comp/login")
 def loginForm(resp: Response, **kwargs):

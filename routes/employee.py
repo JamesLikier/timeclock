@@ -1,12 +1,12 @@
-import settings
+import bootstrap
 from jlpyhttp.http import Request, Response, STATUS_CODES
 from re import Match
 import reloadable
 from jlpyhttp.sessionhandler import SessionHandler
 
-rh = settings.ROUTE_HANDLER
-jinja = settings.JINJA
-ec = settings.EMPLOYEE_CONTROLLER
+rh = bootstrap.ROUTE_HANDLER
+jinja = bootstrap.JINJA
+ec = bootstrap.EMPLOYEE_CONTROLLER
 
 @rh.register(["GET"], "/employee/([0-9]+)$")
 def routeEmployee(match: Match, resp: Response, session, **kwargs):
