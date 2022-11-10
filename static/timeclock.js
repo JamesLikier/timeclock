@@ -77,7 +77,8 @@
         } else {
             const form = f.querySelector("form");
             let handler = function (e) {
-                if (f.parentElement && !f.parentElement.contains(e.target)) {
+                const modal = document.querySelector(".modal-bg");
+                if (f.parentElement && !f.parentElement.contains(e.target) && !modal) {
                     f.classList.add('d-none');
                     form && form.reset();
                     document.removeEventListener("click", handler);
