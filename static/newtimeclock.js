@@ -9,6 +9,12 @@ const tc = {};
         .then(r => r.json())
         .then(r => callback(r));
     }
+
+    // Display Layer Stack
+    
+    // End Display Layer Stack
+
+    // User Auth Functions
     tc.login = function (username, password) {
         apiCall(
             "/api/login",
@@ -17,10 +23,14 @@ const tc = {};
             body: JSON.stringify({username: username, password: password})
             }, r => {
                 if (r.result == tc.SUCCESS) {
-                    tc.sessionToken = r.data;
+                    tc.sessionToken = r.data.sessionToken;
                 } else {
                     tc.sessionToken = null;
                 }
             });
     }
+    tc.logout = function () {
+        //todo
+    }
+    // End User Auth Functions
 })(tc);
