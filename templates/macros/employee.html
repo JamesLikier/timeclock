@@ -1,7 +1,7 @@
 {% import "macros/form.html" as formMacros %}
 {% import "macros/pagination.html" as paginationMacros %}
 {% import "macros/general.html" as util %}
-{% macro displayEmployee(employee) %}
+{% macro displayEmployee(employee,user) %}
     {% call util.section("Employee Information") %}
     <table>
         <tr>
@@ -12,10 +12,12 @@
             <td class="ta-right">Name:</td>
             <td>{{ employee.lname }}, {{ employee.fname }}</td>
         </tr>
+        {% if user.admin %}
         <tr>
             <td class="ta-right">Admin:</td>
             <td><input type="checkbox" disabled {% if employee.admin %}checked{% endif %}></td>
         </tr>
+        {% endif %}
     </table>
     {% endcall %}
 {% endmacro %}
