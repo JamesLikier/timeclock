@@ -2,9 +2,9 @@ const tc = {};
 (function (tc) {
     tc.SUCCESS = "success";
     tc.FAIL = "fail";
-    tc.sessionToken = null;
+    tc.accessToken = null;
     function apiCall(url, data = {}, callback) {
-        data.sessionToken = tc.sessionToken;
+        data.accessToken = tc.accessToken;
         fetch(url, data)
         .then(r => r.json())
         .then(r => callback(r));
@@ -19,18 +19,27 @@ const tc = {};
         apiCall(
             "/api/login",
             data = {
-            method: "POST",
-            body: JSON.stringify({username: username, password: password})
-            }, r => {
+                method: "POST",
+                body: JSON.stringify({ username: username, password: password })
+            },
+            r => {
                 if (r.result == tc.SUCCESS) {
-                    tc.sessionToken = r.data.sessionToken;
                 } else {
-                    tc.sessionToken = null;
                 }
-            });
+            }
+        );
     }
     tc.logout = function () {
-        //todo
+        apiCall(
+            "/api/logout",
+            data = {
+                method: "POST"
+            }
+        );
     }
     // End User Auth Functions
+
+    // Views
+
+    // End Views
 })(tc);
