@@ -1,0 +1,47 @@
+{% macro section(header,justify_content="flex-center") %}
+<div class="section">
+    <div class="section-header">
+        {{ header }}
+    </div>
+    <div class="section-content {{ justify_content }}">
+        <div>{{ caller() }}</div>
+    </div>
+</div>
+{% endmacro %}
+
+{% macro paginate(url,pgLeftRight,pg,pgSize,totalItems) %}
+    {% set pgStart = ((pg - pgLeftRight) | floor(1)) %}
+    {% set lastPg = ((totalItems/pgSize)|round(method="ceil")) | int %}
+    {% set pgEnd = (pg + pgLeftRight) | ceil(lastPg) %}
+
+    {% if (pg - pgLeftRight > 1) %}
+        <a href="{{url}}?pg=1&pgSize={{pgSize}}" class="page-link"><<</a>
+    {% endif %}
+    {% for num in range(pgStart,pgEnd+1) %}
+        {% if pg != num %}
+            <a href="{{url}}?pg={{num}}&pgSize={{pgSize}}">
+        {% endif %}
+        <span class="page-link {% if pg == num %}page-active{% endif %}">{{num}}</span>
+        {% if pg != num %}</a>{% endif %}
+    {% endfor %}
+    {% if lastPg - pg > pgLeftRight %}
+        <a href="{{url}}?pg={{lastPg}}&pgSize={{pgSize}}" class="page-link">>></a>
+    {% endif %}
+{% endmacro %}
+
+{% macro input(name, id="", value='', type='text', size=20, label="",table=False,autocomplete="off",autofocus=False) %}
+    {% if table %}<tr>{% endif %}
+    {% if label != "" %}
+        {% if table %}<td class="label">{% endif %}
+        <label for="{{ name }}">{{ label|e }}</label>
+        {% if table %}</td>{% endif %}
+    {% endif %}
+    {% if table %}<td class="input">{% endif %}
+    {% if autofocus %}
+        <input id="{{ id }}" type="{{ type }}" name="{{ name }}" value="{{ value|e }}" size="size" autocomplete="{{ autocomplete }}" autofocus="{{ autofocus }}">
+    {% else %}
+        <input id="{{ id }}" type="{{ type }}" name="{{ name }}" value="{{ value|e }}" size="size" autocomplete="{{ autocomplete }}">
+    {% endif %}
+    {% if table %}</td>{% endif %}
+    {% if table %}</tr>{% endif %}
+{% endmacro %}

@@ -13,28 +13,19 @@ rh = bootstrap.ROUTE_HANDLER
 @dataclass
 class Message():
     action: str = ""
-    result: str = ""
-    body: str = ""
+    success: bool = False
+    text: str = ""
     data: dict = field(default_factory=(lambda : dict()))
-    SUCCESS: str = "success"
-    FAIL: str = "fail"
 
-    def toDict(self):
-        return {
-            "action": self.action,
-            "result": self.result,
-            "body": self.body,
-            "data": self.data
-        }
     def toJSON(self):
-        return json.dumps(self.toDict())
+        return json.dumps(vars(self))
 
     @classmethod
     def fromJSON(cls, data: str):
         m = cls()
         jd = json.loads(data)
         m.action = jd.get("action","")
-        m.body = jd.get("body","")
+        m.text = jd.get("text","")
         m.data = jd.get("data",dict())
         return m
 
@@ -44,7 +35,7 @@ def reloadRoutes(resp: Response, **kwargs):
         if "reloadable" in dir(v):
             importlib.reload(v)
     
-    msg = Message(action="reload",result=Message.SUCCESS)
+    msg = Message(action="reload",success=True)
     resp.body = msg.toJSON()
     resp.send()
 
@@ -53,8 +44,8 @@ def resetAdminpw(resp: Response, sessionHandler: SessionHandler, **kwargs):
     msg = Message()
     try:
         sessionHandler.setPassword("admin","admin")
-        msg.result = msg.SUCCESS
+        msg.success = True
     except Exception:
-        msg.result = msg.FAIL
+        msg.success = False
     resp.body = msg.toJSON()
     resp.send()

@@ -26,14 +26,14 @@ def employeeNew(req: Request, resp: Response, session, sessionHandler: SessionHa
             }
             e = ec.createEmployee(**args)
             sessionHandler.setPassword(data["username"],data["password"])
-            msg.result = Message.SUCCESS
-            msg.body = f'Successfully created employee: <a href="/employee/{e.id}">{e.lname}, {e.fname}</a>'
+            msg.success = True
+            msg.text = f'Successfully created employee: <a href="/employee/{e.id}">{e.lname}, {e.fname}</a>'
         except Exception:
-            msg.result = Message.FAIL
-            msg.body = "Error Encountered"
+            msg.success = False
+            msg.text = "Error Encountered"
     else:
-        msg.result = Message.FAIL
-        msg.body = "Unauthorized User"
+        msg.success = False
+        msg.text = "Unauthorized User"
     resp.body = msg.toJSON()
     resp.send()
 

@@ -11,12 +11,11 @@ from jlpyhttp.authhandler import AuthHandler
 rh = bootstrap.ROUTE_HANDLER
 jinja = bootstrap.JINJA
 
-@rh.register(["GET"], "/api/comp/login")
+@rh.register(["GET"], "/api/login")
 def loginForm(resp: Response, **kwargs):
     msg = Message()
-    msg.action = "comp/login"
-    msg.result = Message.SUCCESS
-    msg.body = jinja.get_template("user/loginForm.html").render()
+    msg.success = True
+    msg.text = jinja.get_template("user/loginForm.html").render()
     resp.body = msg.toJSON()
     resp.send()
 
@@ -31,14 +30,14 @@ def login(req: Request, resp: Response, sessionHandler: SessionHandler, authHand
         valid, eid = authHandler.validateAuth(username,password)
         if valid:
             sessionHandler.createSession(userid=eid,resp=resp)
-            msg.result = Message.SUCCESS
-            msg.body = "Login Successful"
+            msg.success = True
+            msg.text = "Login Successful"
         else:
-            msg.result = Message.FAIL
-            msg.body = "Invalid Username or Password"
+            msg.success = False
+            msg.text = "Invalid Username or Password"
     except Exception:
-        msg.result = Message.FAIL
-        msg.body = "Invalid Username or Password"
+        msg.success = False
+        msg.text = "Invalid Username or Password"
     resp.body = msg.toJSON()
     resp.send()
 
@@ -63,8 +62,8 @@ def setPassword(req: Request, resp: Response, sessionHandler: SessionHandler, au
             authHandler.setPassword(username,password)
         else:
             raise Exception
-        msg.result = msg.SUCCESS
+        msg.success = True
     except Exception:
-        msg.result = msg.FAIL
+        msg.success = False
     resp.body = msg.toJSON()
     resp.send()

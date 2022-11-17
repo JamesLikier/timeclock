@@ -1,12 +1,5 @@
-{% import "macros/punch.html" as punchMacros %}
-{% import "macros/user.html" as userMacros %}
 {% extends "base.html" %}
 {% block title %}Index{% endblock %}
 {% block head %}{{ super() }}{% endblock %}
 {% block content %}
-    {% if user == None %}
-        {{ punchMacros.displayPunchClock() }}
-    {% else %}
-        {{ punchMacros.displayEmployeePunches(startDate,endDate,employeeid,pairList) }}
-    {% endif %}
 {% endblock %}

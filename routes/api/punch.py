@@ -1,14 +1,10 @@
-from re import Match
 import sys
 import bootstrap
 import reloadable
-from jlpyhttp.http import Request, Response, STATUS_CODES, CONTENT_TYPES
-from timeclock import PunchController, Punch, EmployeeController, Employee
-import timeclock
+from jlpyhttp.http import Request, Response
 import json
 from routes.api.util import Message
 import datetime as dt
-from jlpyhttp.sessionhandler import SessionHandler
 import logging
 
 rh = bootstrap.ROUTE_HANDLER
@@ -27,9 +23,9 @@ def punchNew(req: Request, resp: Response, **kwargs):
         datetime = dt.datetime.combine(date,time)
         e = ec.getEmployeeById(int(data["employeeid"]))
         pc.createPunch(e.id,datetime)
-        msg.result = Message.SUCCESS
+        msg.success = True
     except Exception:
-        msg.result = Message.FAIL
+        msg.success = False
     resp.body = msg.toJSON()
     resp.send()
 
@@ -40,9 +36,9 @@ def punchDelete(req: Request, resp: Response, **kwargs):
     try:
         data = json.loads(req.body)
         pc.deletePunchById(int(data['pid']))
-        msg.result = Message.SUCCESS
+        msg.success = True
     except Exception:
-        msg.result = Message.FAIL
+        msg.success = False
     resp.body = msg.toJSON()
     resp.send()
 
@@ -51,7 +47,7 @@ def punchList(req: Request, resp: Response, **kwargs):
     msg = Message()
     msg.action = "punch/list"
     try:
-        msg.result = Message.SUCCESS
+        msg.success = True
         data = json.loads(req.body)
         logging.debug(data)
         employeeid = int(data["employeeId"])
@@ -59,10 +55,10 @@ def punchList(req: Request, resp: Response, **kwargs):
         endDate = dt.date.fromisoformat(data["endDate"])
         pairList = pc.getPunchPairsByEmployeeId(employeeid,startDate,endDate,True)
         template = jinja.get_template("api/punch/punchlist.html")
-        msg.body = template.render(startDate=startDate,endDate=endDate,employeeid=employeeid,pairList=pairList)
+        msg.text = template.render(startDate=startDate,endDate=endDate,employeeid=employeeid,pairList=pairList)
     except Exception:
         logging.error(sys.exc_info())
-        msg.result = Message.FAIL
+        msg.success = False
     resp.body = msg.toJSON()
     resp.send()
 
@@ -75,10 +71,10 @@ def punchclock(req: Request, resp: Response, **kwargs):
         employeeid = int(data['employeeid'])
         e = ec.getEmployeeById(employeeid)
         pc.createPunch(e.id)
-        msg.result = Message.SUCCESS
-        msg.body = f"Punch Accepted: {e.lname}, {e.fname}"
+        msg.success = True
+        msg.text = f"Punch Accepted: {e.lname}, {e.fname}"
     except Exception:
-        msg.result = Message.FAIL
-        msg.body = "Invalid Employee ID or PIN"
+        msg.success = False
+        msg.text = "Invalid Employee ID or PIN"
     resp.body = msg.toJSON()
     resp.send()

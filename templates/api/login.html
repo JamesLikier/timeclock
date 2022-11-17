@@ -1,0 +1,6 @@
+{% import "macros/util.html" as util %}
+{% call util.section("Login")%}
+<form method="POST" action="/api/login">
+    {{ util.input("submit",type="submit",value="Login") }}
+</form>
+{% endcall %}
