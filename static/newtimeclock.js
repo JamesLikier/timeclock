@@ -15,12 +15,13 @@ const tc = {};
         apiCall(form.action, {body: fd}, callbacks[form.dataset.callback]);
     });
 
-    // Display Layer Stack
-    // End Display Layer Stack
-
     // User Auth Functions
-    // End User Auth Functions
+    registerCallback("login", r => {
+        if (r.success) {
 
-    // Views
-    // End Views
+        } else {
+
+        }
+    });
+    // End User Auth Functions
 })(tc);
