@@ -44,7 +44,7 @@ def login(req: Request, resp: Response, sessionHandler: SessionHandler, authHand
 @rh.register(["GET"], "/api/logout")
 def logout(req: Request, resp: Response, sessionHandler: SessionHandler, **kwargs):
     sessionHandler.invalidateSession(req=req, resp=resp)
-    msg = Message(result=Message.SUCCESS, action="logout")
+    msg = Message(success=True, action="logout")
     resp.body = msg.toJSON()
     resp.send()
 
