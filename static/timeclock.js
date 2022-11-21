@@ -9,9 +9,13 @@ const tc = {};
 (function (tc) {
     const content = document.querySelector("#content");
     const callbacks = {};
+    const views = {};
     const actions = {};
     function registerCallback(key,fn) {
         callbacks[key] = fn;
+    }
+    function registerView(key,fn) {
+        views[key] = fn;
     }
     function registerAction(key,fn) {
         actions[key] = fn;
@@ -22,40 +26,53 @@ const tc = {};
         .then(r => callback(r));
     }
     document.addEventListener('submit', e => {
+        e.preventDefault();
         const form = e.target;
         const fd = new FormData(form);
-        apiCall(form.action, {method: form.method, body: fd}, callbacks[form.dataset.callback]);
+        const obj = {};
+        for (k of fd.keys()) {
+            obj[k] = fd.get(k);
+        }
+        apiCall(form.action, {method: form.method, body: JSON.stringify(obj)}, callbacks[form.dataset.callback]);
     });
     document.addEventListener('click', e => {
-        const link = e.target;
-        if ('hash' in link && link.baseURI.startsWith(link.origin)) {
-            if (link.hash in actions) {
-                actions[link.hash](e);
+        if (e.target.tagName.toUpperCase() == 'A') {
+            const link = e.target;
+            if (link.dataset.action) {
+                actions[link.dataset.action](e);
             }
         }
     });
 
     // User Auth Functions
-    registerAction("#login", function(e) {
+    registerView("#login", e => {
         apiCall("/api/login",{method:"GET"}, r => {
             content.innerHTML = r.text;
         });
     });
     registerCallback("login", r => {
         if (r.success) {
-
+            document.location = "#main";
         } else {
-
+            document.querySelector("#login-error-msg").textContent = r.text;
         }
+    });
+    registerAction("logout", e => {
+        e.preventDefault();
+        apiCall("/api/logout", {},r => {
+            if (r.success) {
+                document.location = "#main";
+            }
+        });
     });
     // End User Auth Functions
 
     // history support
     window.addEventListener('hashchange', e => {
-        if(window.location.hash in actions) {
-            actions[window.location.hash]();
+        if(window.location.hash in views) {
+            views[window.location.hash]();
         } else {
-            displayPunchClock();
+            views.main();
         }
     });
     // end history support
@@ -65,4 +82,12 @@ const tc = {};
         fetch("/api/main").then(r => r.text()).then(t => content.innerHTML = t);
     }
     displayPunchClock();
+    registerView("main", e => {
+        displayPunchClock();
+    });
+
+    registerAction("reload", e => {
+        apiCall("/api/reload",{method:"GET"},r => {
+        });
+    });
 })(tc);

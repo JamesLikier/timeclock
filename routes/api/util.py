@@ -5,7 +5,7 @@ import sys
 from dataclasses import dataclass, field
 import reloadable
 from jlpyhttp.http import Request, Response
-from jlpyhttp.sessionhandler import SessionHandler
+from jlpyhttp.authhandler import AuthHandler
 import bootstrap
 
 rh = bootstrap.ROUTE_HANDLER
@@ -40,10 +40,10 @@ def reloadRoutes(resp: Response, **kwargs):
     resp.send()
 
 @rh.register(["GET"],r"/api/resetadminpw")
-def resetAdminpw(resp: Response, sessionHandler: SessionHandler, **kwargs):
+def resetAdminpw(resp: Response, auth: AuthHandler, **kwargs):
     msg = Message()
     try:
-        sessionHandler.setPassword("admin","admin")
+        auth.setPassword("admin","admin")
         msg.success = True
     except Exception:
         msg.success = False

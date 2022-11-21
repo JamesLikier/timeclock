@@ -15,7 +15,7 @@ jinja = bootstrap.JINJA
 def loginForm(resp: Response, **kwargs):
     msg = Message()
     msg.success = True
-    msg.text = jinja.get_template("user/loginForm.html").render()
+    msg.text = jinja.get_template("api/login.html").render()
     resp.body = msg.toJSON()
     resp.send()
 
@@ -23,10 +23,12 @@ def loginForm(resp: Response, **kwargs):
 def login(req: Request, resp: Response, sessionHandler: SessionHandler, authHandler: AuthHandler, **kwargs):
     msg = Message()
     msg.action = "login"
+    logging.debug(f'{req.body}')
     try:
         data = json.loads(req.body)
         username = data["username"]
         password = data["password"]
+        logging.debug(f'{username=} and {password=}')
         valid, eid = authHandler.validateAuth(username,password)
         if valid:
             sessionHandler.createSession(userid=eid,resp=resp)
@@ -37,7 +39,7 @@ def login(req: Request, resp: Response, sessionHandler: SessionHandler, authHand
             msg.text = "Invalid Username or Password"
     except Exception:
         msg.success = False
-        msg.text = "Invalid Username or Password"
+        msg.text = "Error during login."
     resp.body = msg.toJSON()
     resp.send()
 

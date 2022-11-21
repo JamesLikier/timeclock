@@ -29,6 +29,9 @@
 .normal {
     background-color: #c4e2ff;
 }
+.login-error {
+    color: #ff0000;
+}
 /* End Message Colors */
 
 .r1 {

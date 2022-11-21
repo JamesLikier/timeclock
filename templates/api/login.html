@@ -1,6 +1,7 @@
 {% import "macros/util.html" as util %}
 {% call util.section("Login")%}
-<form method="POST" action="/api/login">
+<div id="login-error-msg" class="login-error ta-center"></div>
+<form method="POST" action="/api/login" data-callback="login">
     <table>
         {{ util.input("username",label="Username:",table=True) }}
         {{ util.input("password",label="Password:",type="password",table=True) }}
