@@ -10,37 +10,23 @@ rh = bootstrap.ROUTE_HANDLER
 jinja = bootstrap.JINJA
 ec = bootstrap.EMPLOYEE_CONTROLLER
 
-@rh.register(["POST"],"/api/employee/new")
-def employeeNew(req: Request, resp: Response, session, sessionHandler: SessionHandler, **kwargs):
-    valid, userid = session
-    msg = Message()
-    msg.action = "employee/new"
-    if valid:
-        try:
-            data = json.loads(req.body)
-            args = {
-                "username": data['username'],
-                "fname": data['fname'],
-                "lname": data['lname'],
-                "admin": True if "admin" in data else False
-            }
-            e = ec.createEmployee(**args)
-            sessionHandler.setPassword(data["username"],data["password"])
-            msg.success = True
-            msg.text = f'Successfully created employee: <a href="/employee/{e.id}">{e.lname}, {e.fname}</a>'
-        except Exception:
-            msg.success = False
-            msg.text = "Error Encountered"
-    else:
-        msg.success = False
-        msg.text = "Unauthorized User"
-    resp.body = msg.toJSON()
-    resp.send()
+def newEmployee(req: Request, resp: Response, sessionHandler: SessionHandler, **kwargs) -> None:
+    data = json.loads(req.body)
+    employee = ec.createEmployee(
+        username = data["username"],
+        fname = data["fname"],
+        lname = data["lname"],
+        admin = data.get("admin",False)
+    )
 
-@rh.register(["POST"],"/api/employee/edit")
-def employeeEdit(resp: Response, **kwargs):
+def updateEmployee(req: Request, resp: Response, sessionHandler: SessionHandler, **kwargs) -> None:
     pass
 
-@rh.register(["POST"], "/api/employee/delete")
-def employeeDelete(resp: Response, **kwargs):
+def deleteEmployee(req: Request, resp: Response, sessionHandler: SessionHandler, **kwargs) -> None:
+    pass
+
+def getEmployee(req: Request, resp: Response, sessionHandler: SessionHandler, **kwargs) -> None:
+    pass
+
+def getEmployeeList(req: Request, resp: Response, sessionHandler: SessionHandler, **kwargs) -> None:
     pass
