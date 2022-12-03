@@ -11,13 +11,23 @@ jinja = bootstrap.JINJA
 ec = bootstrap.EMPLOYEE_CONTROLLER
 
 def newEmployee(req: Request, resp: Response, sessionHandler: SessionHandler, **kwargs) -> None:
-    data = json.loads(req.body)
-    employee = ec.createEmployee(
-        username = data["username"],
-        fname = data["fname"],
-        lname = data["lname"],
-        admin = data.get("admin",False)
-    )
+    respData = dict()
+    respData["action"] = "employee/new"
+    try:
+        data = json.loads(req.body)
+        employee = ec.createEmployee(
+            username = data["username"],
+            fname = data["fname"],
+            lname = data["lname"],
+            admin = data.get("admin",False)
+        )
+        respData["success"] = True
+        respData["text"] = f"Successfully created employee: {lname}, {fname}."
+    except Exception:
+        respData["success"] = False
+        respData["text"] = "An error occurred while creating new employee."
+    resp.body = json.dumps(respData)
+    resp.send()
 
 def updateEmployee(req: Request, resp: Response, sessionHandler: SessionHandler, **kwargs) -> None:
     pass
